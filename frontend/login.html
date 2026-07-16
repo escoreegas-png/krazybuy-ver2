@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#120B0B">
+<title>Sign in — KrazyBuy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div id="toastArea" aria-live="polite"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark">K</div>
+      <div>
+        <div class="logo-name">Krazy<span class="grad-text">Buy</span></div>
+        <div class="logo-sub">AI Price Intelligence</div>
+      </div>
+    </div>
+    <p class="auth-sub">Sign in with Google to sync your wishlist,<br>favorites &amp; search history across devices</p>
+
+    <div class="gbtn-wrap">
+      <div id="gBtn"></div>
+      <div class="gbtn-loading" id="gLoading">
+        <svg style="animation:spin .8s linear infinite" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Loading Google Sign-In…
+      </div>
+    </div>
+
+    <div class="auth-divider"><span>secure · one tap · no passwords</span></div>
+
+    <a class="auth-guest" href="index.html">Continue as guest →</a>
+    <div class="auth-foot">Powered by <b>Retzo AI</b> · Verified Marketplace Comparison</div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+(() => {
+'use strict';
+const { API_BASE, $, toast, getUser, setUser } = KB;
+
+// ⚠️ Only the CLIENT ID lives in the frontend. The client secret stays on the server — never here.
+const GOOGLE_CLIENT_ID = '4535953854-p934prv6asm01piqq681fgqsb6pqlmtv.apps.googleusercontent.com';
+
+const next = new URLSearchParams(location.search).get('next') || 'index.html';
+
+// already signed in → go home
+if (getUser() && localStorage.getItem('kb_token')) location.replace(next);
+
+async function handleCredential(resp) {
+  try {
+    $('#gLoading').style.display = 'flex';
+    $('#gLoading').innerHTML = 'Signing you in…';
+    const r = await fetch(API_BASE + '/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential: resp.credential }),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.token) throw new Error(data.error || 'Login failed');
+
+    localStorage.setItem('kb_token', data.token);
+    setUser(data.user);
+    toast('success', `Welcome, ${data.user.name.split(' ')[0]}!`, 'Signed in with Google.');
+    setTimeout(() => location.href = next, 600);
+  } catch (err) {
+    $('#gLoading').style.display = 'none';
+    toast('error', 'Sign in failed', err.message);
+  }
+}
+
+function initGoogle() {
+  if (!window.google?.accounts?.id) { setTimeout(initGoogle, 200); return; }
+  $('#gLoading').style.display = 'none';
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredential,
+    auto_select: false,
+  });
+  google.accounts.id.renderButton($('#gBtn'), {
+    theme: document.documentElement.dataset.theme === 'light' ? 'outline' : 'filled_black',
+    size: 'large', shape: 'pill', width: 300, text: 'continue_with', logo_alignment: 'left',
+  });
+  google.accounts.id.prompt(); // One Tap
+}
+initGoogle();
+})();
+</script>
+</body>
+</html>

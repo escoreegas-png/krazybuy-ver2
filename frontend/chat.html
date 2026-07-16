@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08060D">
+<title>Wishlist — KrazyBuy</title>
+<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+<link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="toastArea" aria-live="polite"></div>
+<div class="overlay" id="overlay"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main">
+    <header class="top">
+      <div class="top-q">
+        <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <span>Wishlist</span>
+      </div>
+      <div class="status"><span class="sdot online"></span><span id="wlCount">0 saved</span></div>
+    </header>
+
+    <div class="thread">
+      <div class="content">
+        <div class="section-title">
+          <span class="sec-dot" style="background:var(--primary)"></span>
+          Saved Products
+          <span class="sec-hint">· tap ♥ on any product card to save it here</span>
+        </div>
+        <div class="wl-grid" id="wlGrid"></div>
+        <div class="state" id="wlEmpty" style="display:none">
+          <div class="state-ic">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>
+          </div>
+          <h3>Your wishlist is empty</h3>
+          <p>Search for a product and tap the heart on any card to save it here for later.</p>
+          <a class="btn btn-primary" href="index.html">Start Searching</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, esc, fmtPrice, timeAgo, toast, getWL, removeWL, mountSidebar } = KB;
+
+mountSidebar('wishlist');
+
+function render(){
+  const items=getWL();
+  $('#wlCount').textContent=`${items.length} saved`;
+  const grid=$('#wlGrid');
+  if(!items.length){ grid.innerHTML=''; $('#wlEmpty').style.display=''; return; }
+  $('#wlEmpty').style.display='none';
+
+  grid.innerHTML=items.map((it,i)=>`
+    <div class="wl-card" style="animation-delay:${Math.min(i,10)*50}ms" data-id="${esc(it.id)}">
+      <div class="wl-img"><img src="${esc(it.image||'')}" alt="${esc(it.title)}" loading="lazy"></div>
+      <div class="wl-body">
+        <div class="wl-name">${esc(it.title)}</div>
+        <div class="wl-price">${fmtPrice(it.price)}</div>
+        <div class="wl-meta">${it.store?esc(it.store)+' · ':''}Saved ${timeAgo(it.added)}</div>
+        <div class="wl-acts">
+          ${it.url&&it.url!=='#'?`<a class="wl-buy" href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">Buy Now</a>`:''}
+          <a class="wl-re" href="index.html?q=${encodeURIComponent(it.query||it.title)}" title="Re-analyze with Retzo AI">Re-check</a>
+          <button class="wl-rm" data-rm="${esc(it.id)}" aria-label="Remove">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{
+    removeWL(b.dataset.rm);
+    toast('info','Removed from wishlist');
+    render();
+    mountSidebar('wishlist'); // refresh badge
+  }));
+}
+
+render();
+})();
+</script>
+</body>
+</html>

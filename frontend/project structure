@@ -1,0 +1,8 @@
+krazybuy/
+├── index.html      → main search + AI verdicts (redesigned, offers fixed)
+├── login.html      → login / signup
+├── wishlist.html   → saved products
+├── chat.html       → Retzo AI chat
+├── history.html    → search history
+├── css/style.css   → shared design system
+└── js/common.js    → shared utils (auth, wishlist, history, toasts, sidebar)
