@@ -4,43 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#08060D">
-
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
-
 <meta name="description" content="KrazyBuy — AI-powered price comparison and deal analysis, powered by Retzo AI.">
-
-<!-- SEO -->
-<meta name="robots" content="index, follow">
-<meta name="author" content="KrazyBuy">
-<meta name="keywords" content="KrazyBuy, price comparison, AI shopping assistant, best deals, product comparison, Retzo AI">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="KrazyBuy — AI Price Intelligence">
-<meta property="og:description" content="Compare prices from verified retailers with AI-powered deal analysis.">
-<meta property="og:image" content="https://krazybuy.online/images/logo.png">
-<meta property="og:url" content="https://krazybuy.online/">
-<meta property="og:site_name" content="KrazyBuy">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="KrazyBuy — AI Price Intelligence">
-<meta name="twitter:description" content="Compare prices with Retzo AI.">
-<meta name="twitter:image" content="https://krazybuy.online/images/logo.png">
-
-<!-- Favicon -->
-<link rel="icon" href="images/logo.png" type="image/png">
-
-<!-- Canonical -->
-<link rel="canonical" href="https://krazybuy.online/">
-
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- CSS -->
 <link rel="stylesheet" href="css/style.css">
+<!-- ── KrazyBuy Logo / Favicon ── -->
+<link rel="icon" type="image/png" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<link rel="shortcut icon" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<link rel="apple-touch-icon" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<link rel="icon" sizes="192x192" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+
 </head>
 <body>
 
@@ -188,9 +163,24 @@ const ICONS = {
 };
 
 function lowest(p){
-  if(p.lowestPrice||p.analytics?.lowest_price) return Number(p.lowestPrice||p.analytics.lowest_price);
-  const pr=(p.offers||[]).map(o=>Number(o.price||0)).filter(x=>x>0);
-  return pr.length?Math.min(...pr):0;
+
+    if (p.retzo?.verified_price)
+        return Number(p.retzo.verified_price);
+
+    if (p.retzo?.best_offer?.price)
+        return Number(p.retzo.best_offer.price);
+
+    if (p.bestOffer?.price)
+        return Number(p.bestOffer.price);
+
+    if (p.lowestPrice)
+        return Number(p.lowestPrice);
+
+    const prices = (p.offers || [])
+        .map(o => Number(o.price))
+        .filter(x => x > 100);
+
+    return prices.length ? Math.min(...prices) : 0;
 }
 function pidOf(p){ return String(p.normalized_product_id || p.url || p.title || p.name || ''); }
 
@@ -661,8 +651,31 @@ async function poll(){
   }
 }
 
+function normalizeAmazonUrl(url) {
+    try {
+        const u = new URL(url);
+
+        if (!u.hostname.includes("amazon.")) return url;
+
+        const m = u.pathname.match(/\/dp\/([A-Z0-9]{10})/i);
+
+        if (m) {
+            return `${u.protocol}//${u.hostname}/dp/${m[1]}`;
+        }
+
+        return url;
+    } catch {
+        return url;
+    }
+}
+
 async function search(query){
+ 
   query=(query||'').trim();
+
+if(query.startsWith("http")){
+    query = normalizeAmazonUrl(query);
+}
   if(!query){ toast('warning','Enter a search term','Type or speak a product name.'); $('#sinput').focus(); return; }
   stopPolling();
   state.query=query; state.products=[]; state.jobId=null; state.retries=0; state.done=false;
