@@ -1,26 +1,68 @@
 /* ============================================================
-   KRAZYBUY — SHARED UTILITIES (auth, wishlist, history, toast, nav, theme)
+   KRAZYBUY — SHARED UTILITIES v3
+   auth · wishlist · history · toast · nav · theme · network
+   + smart Amazon URL normalization (AI-first pipeline)
 ============================================================ */
 window.KB = (() => {
 'use strict';
 
-const API_BASE = "https://api.viscocompare.online";
+const API_BASE = window.__KB_API__ || atob('aHR0cHM6Ly9hcGkudmlzY29jb21wYXJlLm9ubGluZQ==');
 
-/* ── Theme (applied immediately to avoid flash) ── */
-const getTheme = () => localStorage.getItem('kb_theme') || 'dark';
+/* ── Theme ── */
+const getTheme = () => localStorage.getItem('kb_theme') || 'light';
 function applyTheme(t){
   document.documentElement.dataset.theme = t;
   localStorage.setItem('kb_theme', t);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = t === 'light' ? '#F7F0E6' : '#120B0B';
+  if (meta) meta.content = t === 'dark' ? '#131211' : '#FAF7F2';
 }
 applyTheme(getTheme());
 
+/* ── Helpers ── */
 const $  = (s,c=document)=>c.querySelector(s);
 const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\]/g,'\\$&');
 const fmtPrice = n => { const x=Number(n); return (!x||isNaN(x)||x<=0) ? '—' : '₹'+x.toLocaleString('en-IN',{maximumFractionDigits:0}); };
+const debounce = (fn,ms=250)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+
+/* ── Smart Amazon URL normalization ──
+   Extracts the ASIN from ANY Amazon URL format and returns a
+   clean canonical DP URL. Strips ref / tag / qid / dib / sr /
+   keywords / affiliate / tracking — everything.
+   Supported paths: /dp/ · /gp/product/ · /gp/aw/d/ · /product/
+   Non-Amazon input is returned unchanged. */
+function normalizeAmazonUrl(input){
+  if (!input) return input;
+
+  input = String(input).trim();
+
+  let url;
+  try{
+    url = new URL(input);
+  }catch{
+    return input;
+  }
+
+  const host = url.hostname
+    .toLowerCase()
+    .replace(/^www\./,'')
+    .replace(/^m\./,'');
+
+  if(!/^amazon\.[a-z.]+$/.test(host))
+    return input;
+
+  const m = url.pathname.match(
+    /(?:\/dp\/|\/gp\/product\/|\/gp\/aw\/d\/|\/product\/)([A-Z0-9]{10})/i
+  );
+
+  if(!m)
+    return input;
+
+  const asin = m[1].toUpperCase();
+
+  return `https://www.${host}/dp/${asin}`;
+}
 
 function timeAgo(ts){
   const s=Math.floor((Date.now()-(typeof ts==='string'?new Date(ts).getTime():ts))/1000);
@@ -29,6 +71,13 @@ function timeAgo(ts){
   if(s<86400) return Math.floor(s/3600)+'h ago';
   if(s<604800) return Math.floor(s/86400)+'d ago';
   return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+
+/* Remove element with micro-animation, then run callback */
+function animateOut(el, cb){
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches){ cb(); return; }
+  el.classList.add('removing');
+  setTimeout(cb, 270);
 }
 
 /* ── Toasts ── */
@@ -45,12 +94,12 @@ function toast(type,title,msg='',dur=4000){
   t.innerHTML=`<span class="toast-icon">${icons[type]||icons.info}</span>
     <div><div class="toast-title">${esc(title)}</div>${msg?`<div class="toast-msg">${esc(msg)}</div>`:''}</div>
     <button class="toast-close" aria-label="Close"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
-  const kill=()=>{ if(t._d)return; t._d=1; clearTimeout(t._t); t.classList.add('out'); setTimeout(()=>t.remove(),300); };
+  const kill=()=>{ if(t._d)return; t._d=1; clearTimeout(t._t); t.classList.add('out'); setTimeout(()=>t.remove(),250); };
   t.querySelector('.toast-close').onclick=kill;
   area.appendChild(t); t._t=setTimeout(kill,dur);
 }
 
-/* ── Auth (Google via backend JWT) ── */
+/* ── Auth ── */
 const getToken = () => localStorage.getItem('kb_token');
 const getUser  = () => { try{ return JSON.parse(localStorage.getItem('kb_user')); }catch{ return null; } };
 const setUser  = u => localStorage.setItem('kb_user', JSON.stringify(u));
@@ -69,7 +118,6 @@ const requireAuth = () => {
   return true;
 };
 
-/* Authenticated fetch — auto-attaches JWT, kicks to login on 401 */
 async function authFetch(path, opts={}){
   const token=getToken();
   const res=await fetch(API_BASE+path,{
@@ -83,7 +131,7 @@ async function authFetch(path, opts={}){
   return res;
 }
 
-/* ── Wishlist (localStorage + best-effort server sync when logged in) ── */
+/* ── Wishlist (with price-drop tracking) ── */
 const getWL = () => { try{ return JSON.parse(localStorage.getItem('kb_wishlist')||'[]'); }catch{ return []; } };
 const saveWL = w => localStorage.setItem('kb_wishlist', JSON.stringify(w));
 const inWL = id => getWL().some(x=>x.id===id);
@@ -95,6 +143,9 @@ function toggleWL(id,item){
     if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
     return false;
   }
+  /* ★ CHANGED: always store the clean canonical URL, never a tracking URL */
+  if(item && item.url) item = { ...item, url: normalizeAmazonUrl(item.url) };
+  if(item && item.query) item = { ...item, query: normalizeAmazonUrl(item.query) };
   w.unshift({ id, ...item, added:Date.now() });
   saveWL(w.slice(0,100));
   if(getToken()) authFetch('/favorites',{method:'POST',body:JSON.stringify({product_id:id,...item})}).catch(()=>{});
@@ -104,8 +155,14 @@ function removeWL(id){
   saveWL(getWL().filter(x=>x.id!==id));
   if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
 }
+/* Call this whenever Retzo AI returns a fresh verified price for a saved product */
+function updateWLPrice(id, newPrice){
+  const w=getWL(); const i=w.findIndex(x=>x.id===id);
+  if(i<0 || !Number(newPrice)) return;
+  if(Number(newPrice)!==Number(w[i].price)){ w[i].prevPrice=w[i].price; w[i].price=Number(newPrice); w[i].priceTs=Date.now(); saveWL(w); }
+}
+const priceDrop = item => (item.prevPrice && item.prevPrice > item.price) ? item.prevPrice - item.price : 0;
 
-/* Pull server favorites into local on login (call once per page if signed in) */
 async function syncWL(){
   if(!getToken()) return;
   try{
@@ -116,7 +173,9 @@ async function syncWL(){
     favorites.forEach(f=>{
       if(!ids.has(f.product_id)) local.push({
         id:f.product_id, title:f.title, image:f.image, price:f.price,
-        store:f.store, url:f.url, query:f.query,
+        store:f.store,
+        url:normalizeAmazonUrl(f.url),          /* ★ CHANGED: clean server data too */
+        query:normalizeAmazonUrl(f.query),      /* ★ CHANGED */
         added:new Date(f.created_at).getTime(),
       });
     });
@@ -124,23 +183,68 @@ async function syncWL(){
   }catch{}
 }
 
-/* ── History (localStorage + server sync) ── */
+/* ── History (always stores the NORMALIZED clean URL) ── */
 const getHist = () => { try{ return JSON.parse(localStorage.getItem('kb_hist')||'[]'); }catch{ return []; } };
+const saveHist = h => localStorage.setItem('kb_hist', JSON.stringify(h));
+
 function addHist(entry){
-  let h=getHist().filter(x=>x.q.toLowerCase()!==entry.q.toLowerCase());
-  h.unshift({ ...entry, ts:Date.now() });
-  localStorage.setItem('kb_hist', JSON.stringify(h.slice(0,50)));
+  entry = { ...entry, q: normalizeAmazonUrl(entry.q) };   // never save 1000-char tracking URLs
+  let h=getHist();
+  const prev=h.find(x=>x.q.toLowerCase()===entry.q.toLowerCase());
+  h=h.filter(x=>x.q.toLowerCase()!==entry.q.toLowerCase());
+  h.unshift({ ...entry, fav:prev?.fav||false, ts:Date.now() });
+  saveHist(h.slice(0,50));
 }
 function updateHist(q,patch){
+  q = normalizeAmazonUrl(q);
   const h=getHist();
   const i=h.findIndex(x=>x.q.toLowerCase()===q.toLowerCase());
-  if(i>-1){ h[i]={...h[i],...patch}; localStorage.setItem('kb_hist',JSON.stringify(h)); }
+  if(i>-1){ h[i]={...h[i],...patch}; saveHist(h); }
   if(getToken()) authFetch('/history',{method:'POST',body:JSON.stringify({query:q,products:patch.products||0,low:patch.low||0})}).catch(()=>{});
 }
-function removeHist(q){
-  localStorage.setItem('kb_hist', JSON.stringify(getHist().filter(x=>x.q!==q)));
-}
+function removeHist(q){ saveHist(getHist().filter(x=>x.q!==q)); }
 function clearHist(){ localStorage.removeItem('kb_hist'); }
+function toggleHistFav(q){
+  const h=getHist(); const i=h.findIndex(x=>x.q===q);
+  if(i<0) return false;
+  h[i].fav=!h[i].fav; saveHist(h); return h[i].fav;
+}
+/* Groups: Today · Yesterday · Last Week · Older */
+function groupHist(list){
+  const now=new Date();
+  const dayStart=d=>new Date(now.getFullYear(),now.getMonth(),now.getDate()-d).getTime();
+  const g={ Today:[], Yesterday:[], 'Last Week':[], Older:[] };
+  (list||getHist()).forEach(h=>{
+    if(h.ts>=dayStart(0)) g.Today.push(h);
+    else if(h.ts>=dayStart(1)) g.Yesterday.push(h);
+    else if(h.ts>=dayStart(7)) g['Last Week'].push(h);
+    else g.Older.push(h);
+  });
+  return g;
+}
+
+/* ── Lazy image loading ── */
+const _io = 'IntersectionObserver' in window ? new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ const img=e.target; if(img.dataset.src){ img.src=img.dataset.src; delete img.dataset.src; } _io.unobserve(img); } });
+},{rootMargin:'240px'}) : null;
+function lazyImages(root=document){
+  $$('img[data-src]',root).forEach(img=>{ _io ? _io.observe(img) : (img.src=img.dataset.src); });
+}
+
+/* ── Network monitor ── */
+function initNet(){
+  if(!$('#netBanner')){
+    const b=document.createElement('div');
+    b.id='netBanner'; b.className='net-banner'; b.setAttribute('role','status');
+    b.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M9 9a9 9 0 0 1 11.5 1M5 12.5a13 13 0 0 1 4-2.7M12 20h.01"/></svg> You’re offline — showing saved data';
+    document.body.appendChild(b);
+  }
+  const upd=()=>document.body.classList.toggle('offline', !navigator.onLine);
+  addEventListener('online', ()=>{ upd(); toast('success','Back online'); });
+  addEventListener('offline',()=>{ upd(); toast('warning','You’re offline','Cached wishlist & history still work.'); });
+  upd();
+}
+document.readyState==='loading' ? document.addEventListener('DOMContentLoaded',initNet) : initNet();
 
 /* ── Shared sidebar ── */
 const NAV_ICONS = {
@@ -161,14 +265,14 @@ function mountSidebar(active){
   sb.innerHTML=`
     <div class="sb-head">
       <a href="index.html" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-        <div class="logo-mark">K</div>
+        <div class="logo-mark"><img src="[krazybuy.online](https://www.krazybuy.online/images/logo.png)" alt="KrazyBuy" loading="eager" onerror="this.parentNode.textContent='K'"></div>
         <div>
           <div class="logo-name">Krazy<span class="grad-text">Buy</span></div>
-          <div class="logo-sub">AI Price Intelligence</div>
+          <div class="logo-sub">Price Intelligence</div>
         </div>
       </a>
       <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle light/dark">
-        ${theme==='light'?NAV_ICONS.moon:NAV_ICONS.sun}
+        ${theme==='dark'?NAV_ICONS.sun:NAV_ICONS.moon}
       </button>
     </div>
     <nav class="sb-nav">
@@ -199,9 +303,8 @@ function mountSidebar(active){
   if(lo) lo.onclick=logout;
 
   $('#themeBtn',sb).onclick=()=>{
-    const next=getTheme()==='light'?'dark':'light';
-    applyTheme(next);
-    mountSidebar(active); // refresh icon
+    applyTheme(getTheme()==='dark'?'light':'dark');
+    mountSidebar(active);
   };
 
   const burger=$('#burger'), ov=$('#overlay');
@@ -209,16 +312,17 @@ function mountSidebar(active){
   if(ov) ov.onclick=()=>{ sb.classList.remove('open'); ov.classList.remove('active'); };
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ sb.classList.remove('open'); ov?.classList.remove('active'); } });
 
-  // pull server favorites once per page load when signed in
   if(user && getToken() && !window.__kbSynced){ window.__kbSynced=true; syncWL().then(()=>{}); }
 }
 
+
 function closeSidebar(){ $('#sidebar')?.classList.remove('open'); $('#overlay')?.classList.remove('active'); }
 
-return { API_BASE, $, $$, esc, cssEsc, fmtPrice, timeAgo, toast,
+return { API_BASE, $, $$, esc, cssEsc, fmtPrice, timeAgo, debounce, toast, animateOut,
+  normalizeAmazonUrl,
   getUser, setUser, getToken, logout, requireAuth, authFetch,
-  getWL, inWL, toggleWL, removeWL, syncWL,
-  getHist, addHist, updateHist, removeHist, clearHist,
-  getTheme, applyTheme,
+  getWL, inWL, toggleWL, removeWL, syncWL, updateWLPrice, priceDrop,
+  getHist, addHist, updateHist, removeHist, clearHist, toggleHistFav, groupHist,
+  lazyImages, getTheme, applyTheme,
   mountSidebar, closeSidebar };
 })();
