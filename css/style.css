@@ -82,7 +82,22 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   --shadow:0 2px 6px rgba(0,0,0,.35),0 16px 40px rgba(0,0,0,.3);
   --shadow-lift:0 4px 10px rgba(0,0,0,.4),0 24px 54px rgba(0,0,0,.35);
 }
+.logo-mark{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+}
 
+.logo-mark img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
 body{
   min-height:100vh;min-height:100dvh;overflow-x:hidden;
   background:var(--bg);color:var(--text);
@@ -105,6 +120,150 @@ a{color:inherit;text-decoration:none}
 :where(a,button,input,[role="button"],[tabindex]):focus-visible{
   outline:2px solid var(--text);outline-offset:3px;border-radius:4px;
 }
+
+/* ============================================================
+   FLOATING MARKETPLACE LOGOS + BRAND LOGO ADDITIONS
+============================================================ */
+
+/* Hero must be the positioning context */
+.hero{position:relative;overflow:hidden}
+
+/* Floating logo chips */
+.float-logos{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero > *:not(.float-logos){position:relative;z-index:1}
+
+.flogo{
+  position:absolute;
+  width:46px;height:46px;
+  border-radius:14px;
+  background:var(--card);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;
+  animation:
+    flogoIn .6s var(--ease) forwards,
+    floaty var(--f,7s) ease-in-out infinite;
+  animation-delay:var(--d,0s), calc(var(--d,0s) + .6s);
+  will-change:transform;
+}
+.flogo img{width:24px;height:24px;object-fit:contain;border-radius:6px}
+.float-logos{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+}
+
+.flogo{
+    position:absolute;
+    width:72px;
+    height:72px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(20px);
+    animation:floatLogo var(--f,7s) ease-in-out infinite;
+    animation-delay:var(--d,0s);
+    opacity:.9;
+}
+
+.flogo img{
+    width:70%;
+    height:70%;
+    object-fit:contain;
+}
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width:768px){
+
+.hero{
+    padding:90px 18px 40px;
+    overflow:hidden;
+}
+
+.hero h1{
+    font-size:34px;
+    line-height:1.1;
+}
+
+.hero p{
+    font-size:15px;
+    line-height:1.6;
+}
+
+.hero-badge{
+    font-size:12px;
+}
+
+.flogo{
+    width:46px;
+    height:46px;
+    border-radius:12px;
+    opacity:.18;
+}
+
+.flogo img{
+    width:60%;
+    height:60%;
+}
+
+}
+
+@media (max-width:480px){
+
+.flogo{
+    width:34px;
+    height:34px;
+    opacity:.12;
+}
+
+.hero{
+    padding-top:75px;
+}
+
+.hero h1{
+    font-size:28px;
+}
+
+.hero p{
+    font-size:14px;
+}
+
+}
+@keyframes flogoIn{
+  from{opacity:0;transform:translateY(14px) scale(.85)}
+  to{opacity:.9;transform:translateY(0) scale(1)}
+}
+@keyframes floaty{
+  0%,100%{transform:translateY(0) rotate(-2deg)}
+  50%{transform:translateY(-16px) rotate(2deg)}
+}
+
+/* Logo inside the hero badge */
+.hero-badge-logo{width:16px;height:16px;object-fit:contain;border-radius:4px}
+
+/* Slight dim in dark theme so chips don't glare */
+[data-theme="dark"] .flogo{opacity:0;background:var(--card2)}
+[data-theme="dark"] .flogo img{filter:brightness(1.05)}
+
+/* Mobile: fewer, smaller, pushed to edges */
+@media (max-width:600px){
+  .flogo{width:36px;height:36px;border-radius:11px}
+  .flogo img{width:19px;height:19px}
+  .flogo:nth-child(n+7){display:none}
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion:reduce){
+  .flogo{animation:flogoIn .01ms forwards;opacity:.85}
+}
+
 
 /* ── Motion (subtle, 200ms) ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
