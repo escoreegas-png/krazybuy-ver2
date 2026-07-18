@@ -3,1249 +3,1060 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#FAF7F2">
-<title>KrazyBuy — Launch Film</title>
+<title>KrazyBuy — AI Price Intelligence · Launch Film</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ============ FOUNDATION ============ */
+/* ============================================================
+   KRAZYBUY LAUNCH FILM V5 — 30 SECOND CINEMA CUT
+   Apple keynote cinematography · OpenAI minimalism
+   Full cinematic score + convolver reverb · Web Audio only
+   1080×1920 · 30s · pure CSS/JS · zero audio files
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#FAF7F2}
+body{font-family:"Inter",-apple-system,sans-serif;color:#111;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
 :root{
-  --cream:#FAF7F2; --cream2:#F3EDE3; --card:#FFFFFF;
-  --ink:#141311; --ink2:#5B564E; --ink3:#8A847A;
-  --line:rgba(20,19,17,.08);
-  --green:#0E9F5B; --green-soft:rgba(14,159,91,.10);
+  --bg:#FAF7F2; --card:#FFFFFF; --card2:#F5F2EC;
+  --border:#E7E5E4; --border2:#D6D3D1;
+  --ink:#111111; --soft:#292524; --muted:#6B7280; --muted2:#9CA3AF;
+  --green:#16A34A; --green-deep:#15803D; --green-bg:rgba(22,163,74,.08);
   --ease:cubic-bezier(.22,1,.36,1);
-  --easeio:cubic-bezier(.65,0,.35,1);
-  --spring:cubic-bezier(.34,1.56,.64,1);
-  --spring2:cubic-bezier(.22,1.6,.36,1);
-  --sh1:0 1px 2px rgba(24,18,8,.04), 0 10px 30px rgba(24,18,8,.07);
-  --sh2:0 2px 8px rgba(24,18,8,.05), 0 30px 80px rgba(24,18,8,.12);
-  --sh3:0 4px 14px rgba(24,18,8,.06), 0 50px 120px rgba(24,18,8,.16);
+  --spring:cubic-bezier(.34,1.45,.4,1);
+  --snap:cubic-bezier(.83,0,.17,1);
+  --shadow:0 2px 6px rgba(17,17,17,.05),0 16px 40px rgba(17,17,17,.08);
+  --shadow-lift:0 8px 20px rgba(17,17,17,.07),0 30px 70px rgba(17,17,17,.12);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  background:radial-gradient(120% 100% at 50% 0%, #FDFBF7 0%, var(--cream) 55%, var(--cream2) 100%);
-  color:var(--ink); overflow:hidden;
-  -webkit-font-smoothing:antialiased;
+
+/* ── Stage ── */
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#111}
+#stage{position:relative;width:1080px;height:1920px;flex:none;overflow:hidden;
+  background:var(--bg);transform-origin:center center}
+
+/* ── Handheld camera drift ── */
+#cam{position:absolute;inset:0;will-change:transform;
+  animation:handheld 16s ease-in-out infinite}
+@keyframes handheld{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  22%{transform:translate3d(4px,-5px,0) rotate(.05deg)}
+  47%{transform:translate3d(-4px,4px,0) rotate(-.04deg)}
+  72%{transform:translate3d(3px,5px,0) rotate(.03deg)}
 }
-#film{position:fixed;inset:0;overflow:hidden;perspective:1200px}
-.vignette{position:absolute;inset:0;pointer-events:none;z-index:50;
-  background:radial-gradient(90% 90% at 50% 45%, transparent 60%, rgba(24,18,8,.07) 100%)}
-#grain{position:absolute;inset:-100px;pointer-events:none;z-index:49;opacity:.028;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 7s steps(6) infinite}
-@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-30px,20px)}40%{transform:translate(20px,-30px)}
-  60%{transform:translate(-20px,-20px)}80%{transform:translate(30px,10px)}100%{transform:translate(0,0)}}
-#ambient{position:absolute;inset:0;pointer-events:none;z-index:1}
-#glow{position:absolute;width:70vmax;height:70vmax;left:50%;top:50%;pointer-events:none;z-index:0;
-  transform:translate(-50%,-50%);border-radius:50%;
-  background:radial-gradient(closest-side, rgba(14,159,91,.05), transparent 70%);
-  animation:glowdrift 16s ease-in-out infinite alternate}
-@keyframes glowdrift{from{transform:translate(-58%,-54%) scale(1)}to{transform:translate(-42%,-46%) scale(1.15)}}
 
-/* ============ SCENES ============ */
-.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;opacity:0;visibility:hidden;z-index:2;
-  transition:opacity 1s var(--ease), visibility 0s 1s}
-.scene.on{opacity:1;visibility:visible;transition:opacity 1s var(--ease)}
-.kicker{font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--ink3);margin-bottom:14px}
+/* ── Play gate ── */
+#playgate{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:56px;background:var(--bg)}
+#playgate .pg-logo{width:140px;height:140px;border-radius:38px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:66px;font-weight:800;
+  box-shadow:0 26px 70px rgba(17,17,17,.24);animation:logoFloat 5s ease-in-out infinite;overflow:hidden}
+#playgate .pg-logo img{width:74%;height:74%;object-fit:contain}
+#playbtn{padding:30px 90px;border-radius:999px;border:0;cursor:pointer;font:inherit;
+  font-size:36px;font-weight:800;color:#fff;background:var(--ink);
+  box-shadow:0 20px 56px rgba(17,17,17,.26);transition:transform .35s var(--spring)}
+#playbtn:hover{transform:scale(1.05)}
+#playgate span{font-size:24px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2)}
+#playgate.gone{opacity:0;visibility:hidden;transform:scale(1.03);
+  transition:opacity .9s ease,visibility .9s,transform 1.2s var(--ease)}
 
-/* ============ SCENE 0 — INTRO ============ */
-#s0{background:#0E0D0B;z-index:40}
-#s0 .iline{font-size:clamp(15px,2vw,19px);font-weight:500;color:rgba(250,247,242,.7);
-  letter-spacing:.01em;opacity:0;display:flex;align-items:center;gap:2px}
-#s0.on .iline{animation:fade 1.4s var(--ease) .5s both}
-#s0 .icaret{width:2px;height:1.1em;background:rgba(250,247,242,.8);animation:blink 1.05s steps(1) infinite}
-#s0 .idot{position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;
-  background:#FAF7F2;transform:translate(-50%,-50%) scale(0);
-  box-shadow:0 0 40px 8px rgba(250,247,242,.5)}
-#s0.expand .iline{animation:fadeout .5s var(--ease) both}
-#s0.expand .idot{animation:dotgrow 1.6s var(--easeio) .2s both}
-@keyframes dotgrow{0%{transform:translate(-50%,-50%) scale(0)}
-  30%{transform:translate(-50%,-50%) scale(1)}
-  100%{transform:translate(-50%,-50%) scale(300)}}
-@keyframes fadeout{to{opacity:0}}
-@keyframes fade{to{opacity:1}}
+/* ── Aurora ── */
+.aurora{position:absolute;inset:-15%;z-index:1;pointer-events:none;opacity:.9}
+.aurora i{position:absolute;border-radius:50%;filter:blur(120px);will-change:transform}
+.aurora i:nth-child(1){width:900px;height:900px;top:-12%;left:-14%;
+  background:radial-gradient(circle,rgba(255,251,240,.9),transparent 65%);
+  animation:au1 22s ease-in-out infinite alternate}
+.aurora i:nth-child(2){width:800px;height:800px;bottom:-10%;right:-12%;
+  background:radial-gradient(circle,rgba(239,235,226,.95),transparent 65%);
+  animation:au2 26s ease-in-out infinite alternate}
+.aurora i:nth-child(3){width:640px;height:640px;top:38%;left:30%;
+  background:radial-gradient(circle,rgba(22,163,74,.045),transparent 62%);
+  animation:au3 30s ease-in-out infinite alternate}
+@keyframes au1{to{transform:translate3d(90px,120px,0) scale(1.12)}}
+@keyframes au2{to{transform:translate3d(-110px,-90px,0) scale(1.08)}}
+@keyframes au3{to{transform:translate3d(-70px,110px,0) scale(1.15)}}
 
-/* ============ SCENE 1 — BROWSER CHAOS ============ */
-#s1 .cam{position:absolute;inset:0;transform-style:preserve-3d}
-#s1.on .cam{animation:camZoom 8.2s var(--easeio) both}
-@keyframes camZoom{0%{transform:scale(1.06) translateY(6px)}55%{transform:scale(1.01)}
-  100%{transform:scale(1.18) translateY(-8px)}}
-.bwin{position:absolute;width:min(340px,42vw);background:var(--card);border-radius:14px;
-  border:1px solid var(--line);box-shadow:var(--sh2);overflow:hidden;
-  left:calc(50% + var(--x));top:calc(50% + var(--y));opacity:0;
-  transform:translate(-50%,-50%) scale(.6) rotate(var(--r));
-  will-change:transform,opacity}
-.bwin::before{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;z-index:3;
-  background:linear-gradient(160deg,rgba(255,255,255,.55),transparent 34%)}
-#s1.on .bwin{animation:winIn 1.1s var(--spring) var(--d) both,
-  winDrift var(--dd) ease-in-out calc(var(--d) + 1.1s) infinite alternate}
-@keyframes winIn{0%{opacity:0;transform:translate(-50%,-36%) scale(.55) rotate(calc(var(--r) * 2.2))}
-  70%{opacity:1;transform:translate(-50%,-52%) scale(1.03) rotate(var(--r))}
-  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(var(--r))}}
-@keyframes winDrift{to{transform:translate(-50%,calc(-50% - 12px)) rotate(calc(var(--r) + .6deg))}}
-.bchrome{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line);background:#FBFAF7}
-.tl{width:9px;height:9px;border-radius:50%;background:#E8E2D6}
-.btab{display:flex;align-items:center;gap:7px;margin-left:10px;padding:4px 12px;background:var(--card);
-  border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;color:var(--ink2)}
-.fav{width:9px;height:9px;border-radius:3px;flex-shrink:0}
-.fav.spin{border-radius:50%;border:2px solid var(--line);border-top-color:var(--ink2);background:transparent !important;
-  animation:favspin .8s linear infinite}
-@keyframes favspin{to{transform:rotate(360deg)}}
-.tlogo{height:11px;max-width:66px;object-fit:contain;display:block}
-.burl{font-size:10px;color:var(--ink3);padding:7px 14px;border-bottom:1px solid var(--line);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
-.lock{width:8px;height:8px;flex-shrink:0;color:var(--green)}
-.bload{height:2px;overflow:hidden}
-.bload i{display:block;height:100%;width:40%;border-radius:2px;background:var(--ink);opacity:.45;
-  transform:translateX(-110%)}
-.bbody{display:flex;gap:12px;padding:14px;align-items:center;position:relative}
-.bimg{width:54px;height:54px;border-radius:10px;flex-shrink:0;overflow:hidden;position:relative;
-  background:linear-gradient(135deg,#F2EDE3,#E9E2D4)}
-.bimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:4px}
-.shimmer::after{content:"";position:absolute;inset:0;z-index:2;
-  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.75) 50%,transparent 70%);
-  transform:translateX(-120%);animation:shim 1.4s var(--easeio) infinite}
-@keyframes shim{to{transform:translateX(120%)}}
-.blines{flex:1;min-width:0}
-.blines i{display:block;height:8px;border-radius:4px;background:#EFEADF;margin-bottom:7px;position:relative;overflow:hidden}
-.blines i:last-child{width:60%}
-.blines b{display:block;font-size:12px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.blines span{display:block;font-size:10.5px;color:var(--ink3);margin-top:2px}
-.bprice{font-size:17px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
-  opacity:0;transform:translateY(6px);transition:opacity .5s var(--ease),transform .5s var(--spring)}
-.bprice.live{opacity:1;transform:none}
-.bprice.tick{animation:ptick .4s var(--spring)}
-@keyframes ptick{30%{transform:translateY(-3px)}}
-.toast{position:absolute;z-index:8;left:calc(50% + var(--tx));top:calc(50% + var(--ty));
-  transform:translate(-50%,-50%) translateY(10px) scale(.9);opacity:0;
-  background:rgba(255,255,255,.72);backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);
-  border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh2);
-  padding:9px 14px;font-size:11.5px;font-weight:700;display:flex;gap:8px;align-items:center;
-  transition:opacity .6s var(--spring),transform .6s var(--spring);white-space:nowrap;will-change:transform}
-.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.toast .tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-#fcursor{position:absolute;z-index:9;left:50%;top:50%;pointer-events:none;opacity:0;
-  transition:transform 1.4s var(--easeio),opacity .6s ease;will-change:transform;
-  filter:drop-shadow(0 2px 6px rgba(24,18,8,.25))}
-#fcursor.show{opacity:1}
-.s1cap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);text-align:center;z-index:5;opacity:0}
-#s1.on .s1cap{animation:rise 1.1s var(--ease) 3.4s both}
-.s1cap h2{font-size:clamp(22px,3.6vw,36px);font-weight:800;letter-spacing:-.035em}
-.s1cap p{color:var(--ink2);margin-top:8px;font-size:clamp(13px,1.6vw,16px)}
-@keyframes rise{from{opacity:0;transform:translate(-50%,28px)}to{opacity:1;transform:translate(-50%,0)}}
+/* ── Lens bloom ── */
+.bloom{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:soft-light;
+  background:radial-gradient(38% 26% at 30% 20%,rgba(255,255,255,.9),transparent 70%);
+  animation:bloomDrift 24s ease-in-out infinite alternate;will-change:transform;opacity:.7}
+@keyframes bloomDrift{to{transform:translate3d(220px,340px,0) scale(1.25)}}
 
-/* ============ SCENE 2 — COLLAPSE → LOGO ============ */
-#pcanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
-#s2 .g{position:absolute;left:50%;top:50%;width:170px;height:110px;border-radius:12px;
-  background:var(--card);border:1px solid var(--line);box-shadow:var(--sh1);
-  transform:translate(calc(-50% + var(--gx)),calc(-50% + var(--gy))) rotate(var(--gr));
-  will-change:transform,opacity,filter}
-#s2.on .g{animation:shake .5s ease-in-out var(--d), collapse 1s var(--easeio) calc(var(--d) + .45s) both}
-@keyframes shake{0%,100%{transform:translate(calc(-50% + var(--gx)),calc(-50% + var(--gy))) rotate(var(--gr))}
-  25%{transform:translate(calc(-50% + var(--gx) - 5px),calc(-50% + var(--gy) + 3px)) rotate(calc(var(--gr) - 1.5deg))}
-  75%{transform:translate(calc(-50% + var(--gx) + 5px),calc(-50% + var(--gy) - 3px)) rotate(calc(var(--gr) + 1.5deg))}}
-@keyframes collapse{40%{opacity:1;filter:blur(0)}
-  to{transform:translate(-50%,-50%) scale(.04) rotate(0deg);opacity:0;filter:blur(3px)}}
-.lockup{display:flex;align-items:center;gap:20px;position:relative;z-index:3}
-#s2.on .lockup{animation:push 4.4s var(--easeio) 2.2s both}
-@keyframes push{from{transform:scale(.94)}to{transform:scale(1.06)}}
-.pill{position:relative;width:88px;height:88px;border-radius:26px;background:var(--card);
-  border:1px solid var(--line);box-shadow:var(--sh3), 0 0 0 8px rgba(255,255,255,.35);
-  display:flex;align-items:center;justify-content:center;opacity:0;overflow:hidden;flex-shrink:0}
-#s2.on .pill{animation:pillIn 1s var(--spring2) 3s both, pillfloat 4s ease-in-out 4s infinite alternate}
-@keyframes pillIn{0%{opacity:0;transform:scale(.3) rotate(-8deg)}
-  70%{opacity:1;transform:scale(1.06) rotate(1deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
-@keyframes pillfloat{to{transform:translateY(-6px)}}
-.pillshadow{position:absolute;left:50%;bottom:-30px;width:90px;height:16px;border-radius:50%;
-  background:rgba(24,18,8,.14);filter:blur(8px);transform:translateX(-50%);opacity:0}
-#s2.on .pillshadow{animation:fade .8s ease 3.4s both, shbreathe 4s ease-in-out 4s infinite alternate}
-@keyframes shbreathe{to{transform:translateX(-50%) scale(.82);opacity:.6}}
-.pill .k{font-size:42px;font-weight:800;letter-spacing:-.04em;opacity:0;transform:scale(.4)}
-.pill .pklogo{position:absolute;inset:0;margin:auto;width:66%;height:66%;object-fit:contain;
-  border-radius:14px;display:none;opacity:0;transform:scale(.4)}
-.pill.haslogo .k{display:none}
-.pill.haslogo .pklogo{display:block}
-#s2.on .pill .k, #s2.on .pill .pklogo{animation:kIn .8s var(--spring2) 3.5s both}
-@keyframes kIn{to{opacity:1;transform:scale(1)}}
-.pill::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.9) 50%,transparent 70%);
-  transform:translateX(-140%) skewX(-8deg)}
-#s2.on .pill::after{animation:sweep 1.4s var(--easeio) 4.2s both}
-@keyframes sweep{to{transform:translateX(140%) skewX(-8deg)}}
-.word{max-width:0;overflow:hidden;opacity:0;white-space:nowrap}
-#s2.on .word{animation:wordIn 1.1s var(--ease) 4.1s both}
-@keyframes wordIn{to{max-width:380px;opacity:1}}
-.word b{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.04em}
-.word b em{font-style:normal;color:var(--ink3)}
-.word span{display:block;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-top:4px}
+/* ── Film grain ── */
+.grain{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1.1s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-4px,3px)}
+  50%{transform:translate(3px,-4px)}75%{transform:translate(-3px,-3px)}100%{transform:translate(0,0)}}
 
-/* ============ SCENE 3 — SEARCH ============ */
-#s3 .sbox{width:min(580px,88vw);transition:transform 1s var(--easeio),opacity .7s ease;will-change:transform}
-#s3.zoomin .sbox{transform:scale(3.2);opacity:0}
-#s3 .sbar{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
-  border-radius:999px;padding:19px 26px;box-shadow:var(--sh2);opacity:0;position:relative;
-  transition:box-shadow .6s var(--ease)}
-#s3 .sbar.focus{box-shadow:var(--sh3), 0 0 0 5px rgba(20,19,17,.04)}
-#s3.on .sbar{animation:rise2 1s var(--spring) .2s both}
-@keyframes rise2{from{opacity:0;transform:translateY(26px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-#s3 .sicon{flex-shrink:0;color:var(--ink2)}
-#s3.on .sicon{animation:tilt 1s var(--spring) 1s both}
-@keyframes tilt{0%{transform:rotate(0)}45%{transform:rotate(-14deg) scale(1.08)}100%{transform:rotate(0)}}
-.stext{font-size:clamp(15px,2.2vw,19px);font-weight:500;white-space:nowrap;overflow:hidden}
-.ghosttext{color:var(--ink3)}
-.caret{display:inline-block;width:2px;height:1.15em;background:var(--ink);vertical-align:-2px;margin-left:1px;
-  animation:blink 1.05s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.sugs{margin-top:12px;background:rgba(255,255,255,.78);backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);
-  border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh2);overflow:hidden;
-  opacity:0;transform:translateY(10px) scale(.98);transition:all .8s var(--spring)}
-.sugs.show{opacity:1;transform:translateY(0) scale(1)}
-.sug{display:flex;align-items:center;gap:12px;padding:12px 22px;font-size:14px;color:var(--ink2);
-  opacity:0;transform:translateX(-12px);transition:all .6s var(--spring)}
-.sug.show{opacity:1;transform:translateX(0)}
-.sug.hl{background:rgba(20,19,17,.035)}
-.sug b{color:var(--ink);font-weight:600}
-.sug + .sug{border-top:1px solid var(--line)}
-.sug svg{color:var(--ink3);flex-shrink:0}
-.sug .ai{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.14em;color:var(--green);
-  background:var(--green-soft);padding:3px 9px;border-radius:999px}
-.chips{display:flex;gap:9px;justify-content:center;margin-top:22px;flex-wrap:wrap}
-.chip3{padding:7px 16px;border-radius:999px;background:var(--card);border:1px solid var(--line);
-  font-size:12px;font-weight:600;color:var(--ink2);opacity:0;transform:scale(.8) translateY(6px);
-  transition:all .7s var(--spring2)}
-.chip3.show{opacity:1;transform:scale(1) translateY(0)}
+/* ── Vignette ── */
+.vignette{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(130% 95% at 50% 50%,transparent 62%,rgba(17,17,17,.07) 100%)}
 
-/* ============ SCENE 4 — SEARCHING + COMPARISON ============ */
-#s4{transition:transform 1s var(--easeio)}
-.s4pre{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;
-  background:rgba(255,255,255,.7);backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);
-  border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh2);
-  padding:28px 38px;display:flex;flex-direction:column;gap:11px;width:min(380px,88vw);
-  transition:opacity .7s var(--ease),transform .7s var(--easeio)}
-.s4pre.bye{opacity:0;transform:translate(-50%,-50%) scale(.9);pointer-events:none}
-.chkline{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:600;color:var(--ink2);
-  opacity:0;transform:translateX(-10px);transition:all .6s var(--spring)}
-.chkline.show{opacity:1;transform:none}
-.chk{width:17px;height:17px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--ink2);
-  animation:favspin .7s linear infinite;flex-shrink:0;position:relative}
-.chkline.done{color:var(--ink)}
-.chkline.done .chk{animation:chkpop .45s var(--spring2);border-color:transparent;background:var(--green)}
-@keyframes chkpop{from{transform:scale(.4)}to{transform:scale(1)}}
-.chkline.done .chk::after{content:"";position:absolute;left:5.5px;top:3px;width:4px;height:8px;
-  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
-.chkchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
-.chkchips span{font-size:11px;font-weight:600;color:var(--ink2);background:var(--card);border:1px solid var(--line);
-  padding:5px 12px;border-radius:999px;opacity:0;transform:scale(.7);transition:all .55s var(--spring2)}
-.chkchips span.show{opacity:1;transform:scale(1)}
-#s4 .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;width:min(1280px,96vw);padding:0 12px}
-.cmp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:17px;
-  box-shadow:var(--sh1);opacity:0;position:relative;will-change:transform,opacity;
-  transition:opacity .9s var(--ease),filter .9s var(--ease)}
-#s4.cards .cmp.fl{animation:fromL 1.1s var(--spring) var(--d) both}
-#s4.cards .cmp.fr{animation:fromR 1.1s var(--spring) var(--d) both}
-#s4.cards .cmp.ft{animation:fromT 1.1s var(--spring) var(--d) both}
-#s4.cards .cmp.fb{animation:fromB 1.1s var(--spring) var(--d) both}
-@keyframes fromL{0%{opacity:0;transform:translateX(-90px) rotate(-4deg)}70%{opacity:1;transform:translateX(6px) rotate(.6deg)}100%{opacity:1;transform:none}}
-@keyframes fromR{0%{opacity:0;transform:translateX(90px) rotate(4deg)}70%{opacity:1;transform:translateX(-6px) rotate(-.6deg)}100%{opacity:1;transform:none}}
-@keyframes fromT{0%{opacity:0;transform:translateY(-90px) rotate(2deg)}70%{opacity:1;transform:translateY(6px)}100%{opacity:1;transform:none}}
-@keyframes fromB{0%{opacity:0;transform:translateY(90px) rotate(-2deg)}70%{opacity:1;transform:translateY(-6px)}100%{opacity:1;transform:none}}
-#s4.won .cmp:not(.best){opacity:.45;filter:saturate(.7)}
-.cmp.best{border-color:rgba(14,159,91,.35);box-shadow:var(--sh2), 0 0 0 4px var(--green-soft)}
-#s4.cards .cmp.best{animation:fromB 1.1s var(--spring) var(--d) both,
-  bestGlow 2.6s ease-in-out calc(var(--d) + 1.1s) infinite alternate}
-#s4.won .cmp.best{animation:bestFloat 3.4s ease-in-out infinite alternate, bestGlow 2.6s ease-in-out infinite alternate}
-@keyframes bestFloat{from{transform:translateY(0)}to{transform:translateY(-8px)}}
-@keyframes bestGlow{from{box-shadow:var(--sh2),0 0 0 4px var(--green-soft),0 18px 50px rgba(14,159,91,.06)}
-  to{box-shadow:var(--sh2),0 0 0 8px rgba(14,159,91,.16),0 24px 70px rgba(14,159,91,.14)}}
-.ribbon{position:absolute;top:-11px;left:50%;transform:translateX(-50%) scale(.6);background:var(--green);color:#fff;
-  font-size:10px;font-weight:800;letter-spacing:.12em;padding:4px 14px;border-radius:999px;opacity:0;
-  box-shadow:0 6px 18px rgba(14,159,91,.35)}
-#s4.cards .ribbon{animation:ribIn .7s var(--spring2) calc(var(--d) + .6s) both}
-@keyframes ribIn{to{opacity:1;transform:translateX(-50%) scale(1)}}
-.chead{display:flex;align-items:center;gap:8px;margin-bottom:14px;min-height:26px}
-.hlogo{height:17px;max-width:88px;object-fit:contain;flex-shrink:0}
-.mlogo{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-weight:800;font-size:13px;flex-shrink:0;box-shadow:inset 0 -6px 10px rgba(0,0,0,.15)}
-.chead b{font-size:13px;font-weight:700}
-.mrate{margin-left:auto;font-size:11px;font-weight:600;color:var(--ink2)}
-.cprice{font-size:clamp(17px,1.9vw,23px);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:12px}
-.badges4{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.bdg{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--cream);
-  border:1px solid var(--line);color:var(--ink2);opacity:0;transform:scale(.6)}
-#s4.cards .bdg{animation:popB .6s var(--spring2) var(--d) both}
-@keyframes popB{to{opacity:1;transform:scale(1)}}
-.bdg.sv{background:var(--green-soft);border-color:rgba(14,159,91,.25);color:var(--green)}
-#s4.won .bdg.sv{animation:couponpulse 1.8s ease-in-out infinite alternate}
-@keyframes couponpulse{to{box-shadow:0 0 0 4px rgba(14,159,91,.12)}}
-.crow{font-size:11.5px;color:var(--ink3);display:flex;align-items:center;gap:6px}
-.crow .dot2{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;
-  animation:stockpulse 2s ease-out infinite}
-@keyframes stockpulse{0%{box-shadow:0 0 0 0 rgba(14,159,91,.3)}100%{box-shadow:0 0 0 7px rgba(14,159,91,0)}}
-.save{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:12px;color:var(--ink2)}
-.save b{color:var(--green);font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
-#s4 .s4cap{margin-bottom:30px;text-align:center;opacity:0}
-#s4.cards .s4cap{animation:rise2 1s var(--ease) both}
-.s4cap h2{font-size:clamp(22px,3.2vw,32px);font-weight:800;letter-spacing:-.035em}
+/* ── Letterbox ── */
+.lbox{position:absolute;left:0;right:0;height:0;z-index:12;background:#111;
+  transition:height 1.4s var(--snap)}
+.lbox.top{top:0}.lbox.bot{bottom:0}
+#stage.film .lbox{height:110px}
 
-/* ============ SCENE 5 — CHART ============ */
-#s5 .wrap5{display:flex;gap:20px;width:min(1060px,94vw);align-items:stretch;padding:0 12px}
-.chartcard{flex:1.7;background:var(--card);border:1px solid var(--line);border-radius:22px;
-  padding:24px;box-shadow:var(--sh2);opacity:0;min-width:0;position:relative;overflow:hidden}
-.chartcard::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(150deg,rgba(255,255,255,.6),transparent 30%)}
-#s5.on .chartcard{animation:rise2 1s var(--spring) .1s both}
-.chartcard h3{font-size:15px;font-weight:700;margin-bottom:2px}
-.chartcard p{font-size:12px;color:var(--ink3);margin-bottom:16px}
-.chartbox{position:relative;width:100%}
-.chartbox svg{width:100%;height:auto;display:block}
-.gridline{stroke:rgba(20,19,17,.05);stroke-width:1}
-.cdot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--ink);
-  border:3px solid #fff;box-shadow:var(--sh1);transform:translate(-50%,-50%);opacity:0;will-change:left,top}
-.ctip{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
-  font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.ctip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:5px solid transparent;border-top-color:var(--ink)}
-.lowmark{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--green);
-  transform:translate(-50%,-50%);opacity:0}
-#s5.on .lowmark{animation:markIn .6s var(--spring2) 2.9s both, pulse 1.8s ease-out 3.4s infinite}
-@keyframes markIn{from{opacity:0;transform:translate(-50%,-50%) scale(0)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,159,91,.35)}100%{box-shadow:0 0 0 16px rgba(14,159,91,0)}}
-.lowlabel{position:absolute;transform:translate(-50%,10px);font-size:10.5px;font-weight:700;color:var(--green);
-  white-space:nowrap;opacity:0}
-#s5.on .lowlabel{animation:fade .6s var(--ease) 3.2s both}
-.axis{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);margin-top:10px}
-.side5{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
-.minicard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;
-  box-shadow:var(--sh1);opacity:0;position:relative}
-#s5.on .minicard.m1{animation:fromR 1s var(--spring) 1s both}
-#s5.on .minicard.m2{animation:fromR 1s var(--spring) 1.7s both}
-.mhead{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;margin-bottom:12px}
-.heart{color:#D6453D;flex-shrink:0}
-#s5.on .heart{animation:beat 1.6s var(--spring) 2s both}
-@keyframes beat{0%,100%{transform:scale(1)}20%{transform:scale(1.4)}40%{transform:scale(1)}60%{transform:scale(1.22)}}
-.hp{position:absolute;font-size:10px;pointer-events:none;opacity:0}
-.bell{flex-shrink:0}
-#s5.on .bell{animation:ring 1.2s var(--spring) 2.6s both}
-@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(18deg)}40%{transform:rotate(-13deg)}
-  60%{transform:rotate(8deg)}80%{transform:rotate(-4deg)}}
-.wlrow{display:flex;gap:12px;align-items:center}
-.wlthumb{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,#F2EDE3,#E7DFCF);flex-shrink:0;
-  overflow:hidden;position:relative}
-.wlthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:3px}
-.wlrow b{font-size:13px;display:block}
-.wlrow span{font-size:11px;color:var(--ink3)}
-.wlprice{margin-left:auto;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
-.mcount{margin-left:auto;font-size:11px;font-weight:700;background:var(--cream);border:1px solid var(--line);
-  padding:3px 9px;border-radius:999px;color:var(--ink2)}
-/* iOS-style notification */
-#iosnotif{position:absolute;top:26px;right:26px;z-index:20;width:min(330px,84vw);
-  background:rgba(255,255,255,.72);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);
-  border:1px solid rgba(255,255,255,.7);border-radius:18px;box-shadow:var(--sh3);
-  padding:13px 15px;display:flex;gap:11px;align-items:center;
-  transform:translateY(-140%);opacity:0;transition:transform .9s var(--spring2),opacity .5s ease;will-change:transform}
-#iosnotif.show{transform:translateY(0);opacity:1}
-#iosnotif .napp{width:34px;height:34px;border-radius:9px;background:var(--ink);color:var(--cream);
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0}
-#iosnotif b{font-size:12.5px;display:block}
-#iosnotif b i{font-style:normal;color:var(--green)}
-#iosnotif span{font-size:11px;color:var(--ink3)}
-#iosnotif small{margin-left:auto;font-size:10px;color:var(--ink3);align-self:flex-start}
+/* ── Progress ── */
+#progress{position:absolute;left:0;bottom:0;height:6px;width:0;z-index:13;
+  background:linear-gradient(90deg,var(--ink),var(--green))}
+#progress.run{transition:width 30s linear;width:100%}
 
-/* ============ SCENE 6 — RETZO AI ============ */
-#s6{background:radial-gradient(70% 60% at 50% 45%, rgba(20,19,17,.03), transparent 70%)}
-#aicanvas{position:absolute;inset:0;pointer-events:none;z-index:1}
-#s6 .core{position:relative;width:130px;height:130px;margin-bottom:8px;z-index:2}
-.corein{position:absolute;inset:0;border-radius:38px;background:var(--ink);color:var(--cream);
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:40px;
-  box-shadow:var(--sh3), 0 0 60px rgba(14,159,91,.12);overflow:hidden}
-.corein::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%);
-  transform:translateX(-150%)}
-#s6.on .corein{animation:corebreathe 2.4s var(--easeio) infinite alternate}
-#s6.on .corein::after{animation:sweep 2.8s var(--easeio) 1s infinite}
-@keyframes corebreathe{from{transform:scale(1)}to{transform:scale(1.06)}}
-.corering{position:absolute;inset:-18px;border-radius:50%;border:1.5px dashed rgba(20,19,17,.2)}
-#s6.on .corering{animation:spin6 10s linear infinite}
-.corering2{position:absolute;inset:-34px;border-radius:50%;border:1px solid rgba(20,19,17,.07)}
-#s6.on .corering2{animation:spin6 26s linear infinite reverse}
-@keyframes spin6{to{transform:rotate(360deg)}}
-.beam{position:absolute;inset:-120px;border-radius:50%;pointer-events:none;
-  background:conic-gradient(from 0deg, rgba(14,159,91,.13), transparent 22%);
-  -webkit-mask:radial-gradient(closest-side, transparent 30%, #000 32%);
-  mask:radial-gradient(closest-side, transparent 30%, #000 32%);opacity:0}
-#s6.on .beam{opacity:1;animation:spin6 3.6s linear infinite}
-.orbit{position:absolute;left:50%;top:50%;width:0;height:0}
-#s6.on .orbit{animation:spin6 24s linear infinite}
-.ochip{position:absolute;left:0;top:0;transform:rotate(var(--a)) translateX(var(--rad)) rotate(calc(-1 * var(--a)));opacity:0}
-#s6.on .ochip{animation:ochipIn .9s var(--spring2) var(--d) both}
-@keyframes ochipIn{from{opacity:0}to{opacity:1}}
-.ochip > span{display:inline-block;transform:translate(-50%,-50%);background:rgba(255,255,255,.8);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:11.5px;font-weight:600;
-  color:var(--ink2);white-space:nowrap;box-shadow:var(--sh1)}
-#s6.on .ochip > span{animation:counterspin 24s linear infinite}
-@keyframes counterspin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
-.thinklabel{margin-top:160px;font-size:14px;color:var(--ink2);font-weight:600;display:flex;gap:10px;align-items:center;z-index:2}
-.thinklabel b{font-variant-numeric:tabular-nums;color:var(--ink);min-width:44px;text-align:right}
-.tdots i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink2);margin-right:3px;
-  animation:tdot 1.2s ease-in-out var(--td) infinite}
-@keyframes tdot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
-#s6 .thinkstage{display:flex;flex-direction:column;align-items:center;
-  transition:opacity .8s var(--ease),transform .8s var(--easeio)}
-#s6.verdict .thinkstage{opacity:0;transform:scale(.72);pointer-events:none}
-#s6.verdict #aicanvas{opacity:0;transition:opacity .6s ease}
-.vcard{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:26px;
-  padding:36px 44px;box-shadow:var(--sh3);text-align:center;opacity:0;transform:scale(.8) translateY(20px);
-  transition:opacity .9s var(--spring2) .35s, transform .9s var(--spring2) .35s;width:min(500px,90vw);z-index:3;
-  overflow:hidden}
-.vcard::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(150deg,rgba(255,255,255,.7),transparent 32%)}
-#s6.verdict .vcard{opacity:1;transform:scale(1) translateY(0)}
-.vcard .vk{font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
-.vstars{color:#E8A33D;font-size:17px;letter-spacing:4px;margin-bottom:8px;opacity:0;transform:scale(.7);
-  transition:opacity .7s var(--spring2) 1.5s, transform .7s var(--spring2) 1.5s}
-#s6.verdict .vstars{opacity:1;transform:scale(1)}
-.vtitle{font-size:clamp(22px,3.4vw,30px);font-weight:800;letter-spacing:-.03em;min-height:1.3em}
-.vsave{font-size:15px;font-weight:800;color:var(--green);margin-top:8px;font-variant-numeric:tabular-nums;
-  opacity:0;transform:translateY(8px);transition:all .7s var(--spring) 2.2s}
-#s6.verdict .vsave{opacity:1;transform:none}
-.vstats{display:flex;gap:16px;justify-content:center;margin-top:24px;align-items:center}
-.vstat{background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:14px 20px;min-width:120px}
-.vstat span{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
-.vstat b{font-size:17px;font-weight:800}
-.ringwrap{position:relative;width:74px;height:74px}
-.ringwrap svg{transform:rotate(-90deg)}
-.ringbg{stroke:var(--line);fill:none;stroke-width:5}
-.ringfg{stroke:var(--green);fill:none;stroke-width:5;stroke-linecap:round;
-  stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset 1.8s var(--easeio) 1s}
-#s6.verdict .ringfg{stroke-dashoffset:3.27}
-.ringnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+/* ── Green flash ── */
+#flash{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 55%,rgba(22,163,74,.18),rgba(22,163,74,.05) 45%,transparent 70%)}
+#flash.go{animation:flashGo 1.1s var(--ease)}
+@keyframes flashGo{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
 
-/* ============ SCENE 7 — FINALE ============ */
-#s7{background:radial-gradient(60% 55% at 50% 42%, #FFFDF9 0%, transparent 70%)}
-#s7::before{content:"";position:absolute;inset:0;background:#FFFEFB;opacity:0;transition:opacity 6s ease 1s}
-#s7.on::before{opacity:.55}
-#s7 > *{position:relative;z-index:2}
-#s7.on{animation:s7zoom 9s var(--easeio) both}
-@keyframes s7zoom{from{transform:scale(1)}to{transform:scale(1.045)}}
-#s7 .flogo{width:104px;height:104px;border-radius:30px;background:var(--ink);color:var(--cream);
-  display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:800;
-  box-shadow:var(--sh3), 0 0 90px rgba(14,159,91,.1);position:relative;overflow:hidden;opacity:0}
-#s7 .flogo .fklogo{position:absolute;inset:0;margin:auto;width:72%;height:72%;object-fit:contain;
-  border-radius:18px;display:none}
-#s7 .flogo.haslogo{background:#fff}
-#s7 .flogo.haslogo .fk{display:none}
-#s7 .flogo.haslogo .fklogo{display:block}
-#s7.on .flogo{animation:logoIn 1.3s var(--spring2) .2s both, pillfloat 4.4s ease-in-out 1.6s infinite alternate}
-@keyframes logoIn{0%{opacity:0;transform:scale(.5) translateY(40px)}
-  70%{opacity:1;transform:scale(1.05) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
-#s7 .flogo::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.34) 50%,transparent 68%);
-  transform:translateX(-150%)}
-#s7.on .flogo::after{animation:sweep 1.6s var(--easeio) 1.4s both}
-.ftag{margin-top:28px;text-align:center;font-size:clamp(26px,4.4vw,46px);font-weight:800;letter-spacing:-.04em;line-height:1.12}
-.ftag div{opacity:0}
-#s7.on .ftag div:nth-child(1){animation:rise2 1.1s var(--ease) 1.5s both}
-#s7.on .ftag div:nth-child(2){animation:rise2 1.1s var(--ease) 1.85s both}
-.ftag .dim{color:var(--ink3)}
-.fai{margin-top:20px;font-size:12px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ink3);opacity:0}
-#s7.on .fai{animation:fade 1s var(--ease) 2.6s both}
-.fstores{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;justify-content:center}
-.fstore{padding:8px 18px;border-radius:999px;background:var(--card);border:1px solid var(--line);
-  font-size:13px;font-weight:600;color:var(--ink2);box-shadow:var(--sh1);opacity:0;transform:translateY(14px) scale(.92)}
-#s7.on .fstore{animation:storeIn .8s var(--spring2) var(--d) both}
-@keyframes storeIn{to{opacity:1;transform:translateY(0) scale(1)}}
-.fbottom{display:flex;align-items:center;gap:26px;margin-top:36px;opacity:0}
-#s7.on .fbottom{animation:rise2 1.1s var(--ease) 4.4s both}
-.qrbox{position:relative;width:96px;height:96px;background:#fff;border:1px solid var(--line);
-  border-radius:14px;padding:8px;box-shadow:var(--sh1);overflow:hidden;flex-shrink:0}
-.qrbox > img{width:100%;height:100%;display:block;image-rendering:pixelated}
-.qrmask{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)}
-.qrmask i{background:#fff;transition:opacity .35s var(--ease) var(--qd), transform .35s var(--ease) var(--qd)}
-#s7.qrgo .qrmask i{opacity:0;transform:scale(.2)}
-.qrfk{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(15,1fr);gap:1px}
-.qrfk i{border-radius:1px}
-.qrfk i.f{background:var(--ink);opacity:0;transform:scale(0);transition:all .3s var(--spring2) var(--qd)}
-#s7.qrgo .qrfk i.f{opacity:1;transform:scale(1)}
-.furl{font-size:clamp(20px,3.4vw,32px);font-weight:800;letter-spacing:-.03em;min-height:1.2em}
-.furl small{display:block;font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.04em;margin-top:4px}
-#replay{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:60;
-  padding:10px 26px;border-radius:999px;border:1px solid var(--line);background:var(--card);
-  font-family:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
-  box-shadow:var(--sh1);opacity:0;pointer-events:none;transition:all .8s var(--ease)}
-#replay.show{opacity:1;pointer-events:auto}
-#replay:hover{transform:translateX(-50%) translateY(-3px);box-shadow:var(--sh2)}
-#replay:active{transform:translateX(-50%) translateY(-1px) scale(.97)}
+/* ── Scanning beam ── */
+.beam{position:absolute;top:0;bottom:0;left:-30%;width:24%;z-index:7;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(17,17,17,.035) 45%,rgba(17,17,17,.06) 50%,rgba(17,17,17,.035) 55%,transparent);
+  filter:blur(4px);will-change:transform,left}
+.beam.run{animation:beamSweep 1.5s var(--snap) forwards}
+@keyframes beamSweep{0%{left:-30%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:110%;opacity:0}}
 
-/* ============ PROGRESS ============ */
-#prog{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(20,19,17,.06);z-index:55}
-#prog i{display:block;height:100%;width:0;background:var(--ink);opacity:.55}
+/* ── Whiteout ── */
+#whiteout{position:absolute;inset:0;z-index:30;background:#fff;opacity:0;
+  pointer-events:none;transition:opacity 2.2s ease}
+#whiteout.go{opacity:1}
 
-/* ============ RESPONSIVE ============ */
-@media (max-width:1180px){
-  #s4 .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media (max-width:900px){
-  #s4 .grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  #s5 .wrap5{flex-direction:column}
-  .bwin{width:min(280px,72vw)}
-  .ochip{--rad:140px !important}
-}
-@media (max-width:520px){
-  #s4 .grid{grid-template-columns:1fr 1fr;gap:9px}
-  .cmp{padding:13px;border-radius:15px}
-  .s4pre{padding:22px 24px}
-  .vstats{flex-wrap:wrap}
-  .vcard{padding:26px 22px}
-  .thinklabel{margin-top:120px}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
-  #grain,#glow{display:none}
-}
+/* ── Scenes ── */
+.scene{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:80px;text-align:center;
+  opacity:0;visibility:hidden;filter:blur(16px);transform:scale(1.02) translate3d(0,0,0);
+  will-change:transform,opacity,filter;
+  transition:opacity .65s ease,filter .65s ease,transform .75s var(--ease)}
+.scene.on{opacity:1;visibility:visible;filter:blur(0);transform:scale(1)}
+.scene.on .dolly{animation:dolly 6.5s linear forwards;will-change:transform}
+@keyframes dolly{from{transform:scale(1)}to{transform:scale(1.05)}}
+.scene.off{transition:opacity .5s ease,filter .5s ease,transform .55s var(--snap);
+  opacity:0;filter:blur(14px);transform:scale(.985)}
+
+.rv{opacity:0;transform:translate3d(0,34px,0);filter:blur(8px);will-change:transform,opacity,filter;
+  transition:opacity .75s var(--ease),transform .8s var(--spring),filter .75s var(--ease)}
+.rv.in{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}
+
+/* ── Logo ── */
+.logo{display:flex;align-items:center;gap:26px}
+.logo-mark{width:118px;height:118px;border-radius:32px;flex:none;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 24px 60px rgba(17,17,17,.14);animation:logoFloat 5s ease-in-out infinite}
+.logo-mark img{width:72%;height:72%;object-fit:contain}
+.logo-mark.fb{background:var(--ink);border:0;color:#fff;font-size:56px;font-weight:800;letter-spacing:-.04em}
+@keyframes logoFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-8px,0)}}
+.logo-name{font-size:72px;font-weight:800;letter-spacing:-.035em;color:var(--ink)}
+.logo-name em{font-style:normal;color:var(--muted)}
+
+/* ── Scene 1 ── */
+#s1{background:#111;color:#fff;z-index:6}
+#s1 .hookline{position:absolute;inset:0;display:flex;flex-direction:column;gap:36px;
+  align-items:center;justify-content:center;padding:100px;
+  opacity:0;transform:scale(.98) translate3d(0,10px,0);filter:blur(12px);will-change:transform,opacity,filter;
+  transition:opacity .75s var(--ease),transform 1s var(--ease),filter .75s var(--ease)}
+#s1 .hookline.in{opacity:1;transform:scale(1) translate3d(0,0,0);filter:blur(0)}
+#s1 .hookline.out{opacity:0;transform:scale(1.04) translate3d(0,-14px,0);filter:blur(12px)}
+.h-big{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:1.15;color:#fff}
+.h-big span{color:#9CA3AF;font-weight:300}
+.h-now{font-size:104px;font-weight:800;letter-spacing:-.04em;color:#fff}
+#s1 .logo-name{color:#fff}
+#s1 .logo-name em{color:#9CA3AF}
+
+/* ── Scene 2 ── */
+.searchbar{display:flex;align-items:center;gap:22px;width:880px;height:124px;
+  padding:0 20px 0 40px;border-radius:999px;background:var(--card);
+  border:1.5px solid var(--border2);box-shadow:var(--shadow);
+  transition:border-color .45s,box-shadow .45s}
+.searchbar.focus{border-color:var(--ink);box-shadow:0 0 0 4px rgba(17,17,17,.06),var(--shadow-lift);
+  animation:barGlow 2.4s ease-in-out infinite}
+@keyframes barGlow{0%,100%{box-shadow:0 0 0 4px rgba(17,17,17,.06),var(--shadow-lift)}
+  50%{box-shadow:0 0 0 6px rgba(17,17,17,.04),0 0 44px rgba(255,255,255,.9),var(--shadow-lift)}}
+.searchbar svg{flex:none;opacity:.4}
+.stext{flex:1;text-align:left;font-size:42px;font-weight:500;white-space:nowrap;overflow:hidden;color:var(--ink)}
+.stext .ph{color:var(--muted2)}
+.caret{display:inline-block;width:3px;height:46px;margin-left:6px;vertical-align:-8px;
+  background:var(--ink);border-radius:2px;animation:blink 1.06s cubic-bezier(.8,0,.2,1) infinite}
+@keyframes blink{0%,45%{opacity:1}55%,95%{opacity:0}100%{opacity:1}}
+.sbtn{flex:none;height:86px;padding:0 46px;border:0;border-radius:999px;cursor:default;
+  font:inherit;font-size:30px;font-weight:700;color:#fff;background:var(--ink);
+  transition:transform .28s var(--spring),box-shadow .3s;will-change:transform}
+.sbtn.glow{animation:btnShimmer 1.5s ease-in-out infinite}
+.sbtn.pressed{animation:none;transform:scale(.92)}
+@keyframes btnShimmer{0%,100%{box-shadow:0 8px 24px rgba(17,17,17,.22)}
+  50%{box-shadow:0 14px 44px rgba(17,17,17,.34);transform:translate3d(0,-2px,0)}}
+.hint{margin-top:44px;font-size:24px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted2)}
+
+/* ── Scene 3 ── */
+#pfield{position:absolute;inset:0;pointer-events:none;z-index:0}
+#pfield i{position:absolute;width:7px;height:7px;border-radius:50%;
+  background:rgba(17,17,17,.12);will-change:transform,opacity;
+  animation:pdrift var(--d,9s) ease-in-out var(--dl,0s) infinite alternate}
+#pfield i.g{background:rgba(22,163,74,.22)}
+@keyframes pdrift{from{transform:translate3d(0,0,0) scale(.7);opacity:.25}
+  to{transform:translate3d(var(--x,40px),var(--y,-60px),0) scale(1.2);opacity:.85}}
+.corelight{position:absolute;left:50%;top:50%;width:760px;height:760px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(22,163,74,.09),transparent 60%);
+  transition:opacity 1s ease;filter:blur(10px)}
+.corelight.on{opacity:1}
+.scanlist{display:flex;flex-direction:column;gap:24px;width:780px;position:relative;z-index:1}
+.scanline{position:relative;display:flex;align-items:center;gap:28px;padding:28px 40px 34px;
+  border-radius:26px;background:var(--card);border:1px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden;will-change:transform,opacity,filter;
+  opacity:0;transform:translate3d(0,48px,0) scale(.93);filter:blur(8px);
+  transition:opacity .6s var(--ease),transform .65s var(--spring),filter .6s var(--ease)}
+.scanline.in{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+.scanline::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;
+  background:linear-gradient(90deg,transparent,rgba(17,17,17,.04),transparent);
+  animation:rowSweep 2.2s var(--snap) infinite}
+@keyframes rowSweep{0%{left:-60%}60%,100%{left:120%}}
+.scanline .slogo{height:50px;max-width:220px;object-fit:contain;object-position:left}
+.slogo-fb{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;
+  justify-content:center;font-size:28px;font-weight:800;background:var(--card2);
+  border:1px solid var(--border);flex:none}
+.scan-status{margin-left:auto;display:flex;align-items:center;gap:14px;
+  font-size:24px;font-weight:600;color:var(--muted)}
+.scan-status.done{color:var(--green-deep)}
+.sd{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none;
+  animation:pulseDot 1.1s ease-in-out infinite}
+@keyframes pulseDot{50%{opacity:.25;transform:scale(.7)}}
+.pline{position:absolute;left:40px;right:40px;bottom:13px;height:4px;border-radius:4px;
+  background:var(--card2);overflow:hidden}
+.pline i{display:block;height:100%;width:0;border-radius:4px;
+  background:linear-gradient(90deg,var(--ink),var(--green));transition:width 1.7s var(--ease)}
+.scanwrap{position:relative}
+.scanwrap.merge .scanline{opacity:0;transform:scale(.4) translate3d(0,0,0);filter:blur(8px);
+  transition:opacity .5s var(--snap),transform .55s var(--snap),filter .5s var(--snap)}
+.mchip{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.45);opacity:0;
+  display:inline-flex;align-items:center;gap:16px;padding:26px 54px;border-radius:999px;
+  background:var(--ink);color:#fff;font-size:32px;font-weight:700;white-space:nowrap;
+  box-shadow:0 18px 50px rgba(17,17,17,.3);will-change:transform,opacity;
+  transition:opacity .55s var(--spring),transform .6s var(--spring)}
+.mchip.in{opacity:1;transform:translate(-50%,-50%) scale(1);animation:mchipGlow 1.6s ease-in-out infinite}
+@keyframes mchipGlow{0%,100%{box-shadow:0 18px 50px rgba(17,17,17,.3)}
+  50%{box-shadow:0 18px 50px rgba(17,17,17,.3),0 0 48px rgba(22,163,74,.3)}}
+.mchip .sd{box-shadow:0 0 12px rgba(22,163,74,.8)}
+.mring{position:absolute;left:50%;top:50%;width:220px;height:220px;border-radius:50%;
+  border:2px solid rgba(22,163,74,.5);transform:translate(-50%,-50%) scale(.4);opacity:0;pointer-events:none}
+.mring.go{animation:ringOut 1.1s var(--ease) forwards}
+@keyframes ringOut{0%{opacity:.9;transform:translate(-50%,-50%) scale(.4)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(3.2)}}
+
+/* ── Scene 4 ── */
+.sec-kicker{font-size:25px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--muted2);margin-bottom:44px}
+.rlist{display:flex;flex-direction:column;gap:22px;width:920px;perspective:1400px}
+.rcard{display:flex;align-items:center;gap:30px;padding:30px 42px;border-radius:28px;
+  background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);
+  will-change:transform,opacity,filter;
+  opacity:0;transform:translate3d(0,90px,0) rotateX(14deg) scale(.9);filter:blur(9px);
+  transition:opacity .65s var(--ease),transform .75s var(--spring),filter .65s var(--ease),
+    box-shadow .6s ease,border-color .6s ease}
+.rcard.in{opacity:1;transform:translate3d(0,0,0) rotateX(0) scale(1);filter:blur(0)}
+.rcard.dim{opacity:.32;filter:saturate(.4) blur(1px);transform:scale(.982)}
+.rcard.win{border:1.5px solid var(--green);
+  box-shadow:0 0 0 5px var(--green-bg),var(--shadow-lift);transform:scale(1.035);
+  animation:winBreathe 2.2s ease-in-out infinite}
+@keyframes winBreathe{0%,100%{box-shadow:0 0 0 5px var(--green-bg),var(--shadow-lift)}
+  50%{box-shadow:0 0 0 10px rgba(22,163,74,.12),var(--shadow-lift)}}
+.rlogo{width:160px;height:72px;flex:none;border-radius:20px;display:flex;align-items:center;
+  justify-content:center;background:var(--card);padding:10px}
+.rlogo img{max-width:100%;max-height:100%;object-fit:contain}
+.rname{flex:1;text-align:left}
+.rname b{display:block;font-size:33px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.rname span{font-size:21px;color:var(--muted);font-weight:500}
+.rprice{height:58px;overflow:hidden;font-size:46px;font-weight:800;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.rcard.win .rprice{color:var(--green-deep)}
+.odo-track{display:flex;flex-direction:column;will-change:transform;
+  transition:transform .34s var(--spring)}
+.odo-track span{display:block;height:58px;line-height:58px}
+.best-badge{margin-top:44px;display:inline-flex;align-items:center;gap:16px;
+  padding:20px 46px;border-radius:999px;font-size:30px;font-weight:800;
+  color:#fff;background:var(--green-deep);box-shadow:0 16px 44px rgba(21,128,61,.32);
+  opacity:0;transform:scale(.55);filter:blur(6px);will-change:transform,opacity;
+  transition:opacity .6s var(--spring),transform .65s var(--spring),filter .6s var(--ease)}
+.best-badge.in{opacity:1;transform:scale(1);filter:blur(0)}
+
+/* ── Scene 5 ── */
+.chat-card{width:900px;padding:52px;border-radius:36px;text-align:left;
+  background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow-lift)}
+.chat-head{display:flex;align-items:center;gap:24px;margin-bottom:40px}
+.avatar{width:88px;height:88px;flex:none;border-radius:26px;display:flex;align-items:center;
+  justify-content:center;background:var(--ink);animation:avatarBreathe 3s ease-in-out infinite}
+@keyframes avatarBreathe{0%,100%{box-shadow:0 10px 30px rgba(17,17,17,.2)}
+  50%{box-shadow:0 16px 48px rgba(17,17,17,.32)}}
+.avatar svg{animation:starSpin 8s linear infinite}
+@keyframes starSpin{0%,72%{transform:rotate(0)}86%{transform:rotate(72deg)}100%{transform:rotate(72deg)}}
+.chat-head b{font-size:38px;font-weight:800;color:var(--ink)}
+.chat-head span{display:block;font-size:21px;color:var(--muted2);font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.live-chip{margin-left:auto;display:inline-flex;align-items:center;gap:10px;
+  padding:10px 24px;border-radius:999px;background:var(--green-bg);
+  color:var(--green-deep);font-size:21px;font-weight:700}
+.bub{max-width:82%;padding:26px 34px;border-radius:26px;font-size:30px;line-height:1.55;
+  font-weight:500;margin-bottom:22px;opacity:0;transform:translate3d(0,26px,0) scale(.96);
+  filter:blur(6px);will-change:transform,opacity,filter;transform-origin:bottom left;
+  transition:opacity .55s var(--ease),transform .6s var(--spring),filter .55s var(--ease)}
+.bub.in{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+.bub.user{margin-left:auto;background:var(--ink);color:#fff;transform-origin:bottom right;
+  border-radius:26px 26px 8px 26px;box-shadow:0 12px 32px rgba(17,17,17,.18)}
+.bub.ai{background:var(--card2);border:1px solid var(--border);color:var(--soft);
+  border-radius:8px 26px 26px 26px;min-height:96px}
+.bub.ai b{color:var(--ink)}
+.bub.ai .hl{color:var(--green-deep);font-weight:700}
+.tdots{display:inline-flex;gap:10px;padding:6px 2px}
+.tdots i{width:12px;height:12px;border-radius:50%;background:var(--muted2);animation:tp 1.2s infinite}
+.tdots i:nth-child(2){animation-delay:.15s}.tdots i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-9px);opacity:1}}
+.score-row{display:flex;gap:16px;margin-top:8px;opacity:0;transform:translate3d(0,18px,0);
+  transition:opacity .55s var(--ease),transform .6s var(--spring)}
+.score-row.in{opacity:1;transform:translate3d(0,0,0)}
+.score{display:inline-flex;align-items:center;gap:12px;padding:14px 26px;border-radius:999px;
+  font-size:23px;font-weight:700;background:var(--card);border:1px solid var(--border);color:var(--soft);
+  font-variant-numeric:tabular-nums}
+.score.green{background:var(--green-bg);border-color:rgba(22,163,74,.3);color:var(--green-deep)}
+
+/* ── Scene 6 ── */
+.offer-card{width:900px;padding:50px;border-radius:36px;background:var(--card);
+  border:1px solid var(--border);box-shadow:var(--shadow-lift);
+  display:flex;align-items:center;gap:36px;text-align:left}
+.offer-img{width:150px;height:150px;flex:none;border-radius:28px;background:var(--card2);
+  border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;
+  justify-content:center;font-size:56px}
+.offer-img img{width:100%;height:100%;object-fit:cover}
+.offer-body b{display:block;font-size:36px;font-weight:800;color:var(--ink)}
+.offer-body .oshop{display:flex;align-items:center;gap:12px;margin-top:8px}
+.offer-body .oshop img{height:30px;object-fit:contain}
+.offer-body span{font-size:23px;color:var(--muted);font-weight:500}
+.offer-price{margin-left:auto;text-align:right}
+.offer-price b{display:block;font-size:52px;font-weight:800;color:var(--green-deep);
+  font-variant-numeric:tabular-nums}
+.offer-price small{font-size:22px;color:var(--muted2);text-decoration:line-through;font-weight:600}
+.cta-wrap{position:relative;margin-top:64px}
+.cta-btn{height:128px;min-width:520px;padding:0 90px;border:0;border-radius:999px;
+  cursor:default;font:inherit;font-size:40px;font-weight:800;color:#fff;background:var(--ink);
+  box-shadow:0 20px 56px rgba(17,17,17,.26);will-change:transform;
+  transition:background .5s ease,transform .5s var(--spring),box-shadow .5s ease;
+  animation:ctaBreathe 1.9s ease-in-out infinite}
+@keyframes ctaBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
+.cta-btn.done{background:var(--green-deep);animation:none;transform:scale(1.02);
+  box-shadow:0 20px 60px rgba(21,128,61,.35),0 0 60px rgba(22,163,74,.25)}
+.cta-ring{position:absolute;inset:-4px;border-radius:999px;border:2px solid rgba(22,163,74,.55);
+  opacity:0;pointer-events:none}
+.cta-ring.go{animation:ctaRing 1s var(--ease) forwards}
+@keyframes ctaRing{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
+.saved-line{margin-top:34px;font-size:34px;font-weight:800;color:var(--green-deep);
+  opacity:0;transform:translate3d(0,16px,0) scale(.88);
+  transition:opacity .55s var(--spring),transform .6s var(--spring)}
+.saved-line.in{opacity:1;transform:translate3d(0,0,0) scale(1)}
+
+/* ── Scene 7 ── */
+.outro-line{position:absolute;inset:0;display:flex;flex-direction:column;gap:20px;
+  align-items:center;justify-content:center;padding:80px;
+  opacity:0;transform:scale(.97);filter:blur(10px);will-change:transform,opacity,filter;
+  transition:opacity .8s var(--ease),transform .9s var(--ease),filter .8s var(--ease)}
+.outro-line.in{opacity:1;transform:scale(1);filter:blur(0)}
+.outro-line.out{opacity:0;transform:scale(1.02);filter:blur(10px)}
+.o-head{font-size:110px;font-weight:800;letter-spacing:-.04em;line-height:1.12;color:var(--ink)}
+.o-head em{font-style:normal;color:var(--green-deep)}
+.o-sub{margin-top:30px;font-size:38px;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--muted)}
+.o-web{margin-top:60px;font-size:52px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
+.o-ig{font-size:30px;font-weight:500;color:var(--muted2)}
+
+/* ── Replay ── */
+#replay{position:absolute;bottom:170px;left:50%;transform:translateX(-50%);z-index:40;
+  padding:20px 52px;border-radius:999px;border:1px solid var(--border2);cursor:pointer;
+  background:var(--card);color:var(--ink);font:inherit;font-size:26px;font-weight:700;
+  box-shadow:var(--shadow);opacity:0;visibility:hidden;transition:opacity .8s ease,visibility .8s}
+#replay.show{opacity:1;visibility:visible}
+#replay:hover{background:var(--card2)}
 </style>
 </head>
 <body>
-<div id="film">
-  <div id="glow"></div>
-  <canvas id="ambient"></canvas>
-  <div id="grain"></div>
 
-  <!-- SCENE 0 · INTRO -->
-  <section class="scene on" id="s0">
-    <div class="iline"><span id="iType"></span><span class="icaret"></span></div>
-    <div class="idot"></div>
-  </section>
+<div id="viewport">
+  <div id="stage">
+    <div class="aurora"><i></i><i></i><i></i></div>
+    <div class="bloom"></div>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+    <div class="beam" id="beam"></div>
+    <div id="flash"></div>
+    <div class="lbox top"></div>
+    <div class="lbox bot"></div>
+    <div id="progress"></div>
+    <div id="whiteout"></div>
 
-  <!-- SCENE 1 · CHAOS -->
-  <section class="scene" id="s1">
-    <div class="cam" id="s1cam"></div>
-    <svg id="fcursor" width="18" height="18" viewBox="0 0 24 24"><path d="M5 3l14 8-6.5 1.5L9 19z" fill="#141311" stroke="#fff" stroke-width="1.4"/></svg>
-    <div class="s1cap">
-      <h2>5 stores. 5 tabs. 5 different prices.</h2>
-      <p>Shopping online shouldn't feel like this.</p>
-    </div>
-  </section>
+    <div id="cam">
 
-  <!-- SCENE 2 · COLLAPSE → LOGO -->
-  <section class="scene" id="s2">
-    <canvas id="pcanvas"></canvas>
-    <div class="g" style="--gx:-300px;--gy:-170px;--gr:-7deg;--d:.05s"></div>
-    <div class="g" style="--gx:280px;--gy:-140px;--gr:5deg;--d:.15s"></div>
-    <div class="g" style="--gx:-250px;--gy:150px;--gr:4deg;--d:.25s"></div>
-    <div class="g" style="--gx:300px;--gy:170px;--gr:-6deg;--d:.35s"></div>
-    <div class="g" style="--gx:0px;--gy:-220px;--gr:2deg;--d:.45s"></div>
-    <div class="lockup">
-      <div class="pill">
-        <span class="k">K</span>
-        <img class="pklogo" src="https://krazybuy.online/logo.png" alt="KrazyBuy"
-          onload="this.parentNode.classList.add('haslogo')" onerror="this.remove()">
-        <div class="pillshadow"></div>
+    <!-- SCENE 1 · 0–3.5s -->
+    <section class="scene" id="s1">
+      <div class="hookline" id="h1">
+        <div class="h-big">You paid more.<br><span>Someone else paid less.</span></div>
       </div>
-      <div class="word">
-        <b>Krazy<em>Buy</em></b>
-        <span>AI Price Intelligence</span>
+      <div class="hookline" id="h2">
+        <div class="h-now">Never again.</div>
       </div>
-    </div>
-  </section>
-
-  <!-- SCENE 3 · SEARCH -->
-  <section class="scene" id="s3">
-    <div class="sbox">
-      <div class="sbar" id="sbar">
-        <svg class="sicon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <div class="stext"><span id="typed"></span><span class="ghosttext" id="ghost"></span><span class="caret"></span></div>
+      <div class="hookline" id="h3">
+        <div class="logo">
+          <div class="logo-mark"><img class="kb-logo" src="https://krazybuy.online/logo.png" alt="KrazyBuy"></div>
+          <div class="logo-name">Krazy<em>Buy</em></div>
+        </div>
       </div>
-      <div class="sugs" id="sugs">
-        <div class="sug"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>iphone 16 pro</div>
-        <div class="sug"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>iphone 16 pro <b>price comparison</b><span class="ai">RETZO AI</span></div>
-        <div class="sug"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>iphone 16 pro <b>lowest price</b></div>
-        <div class="sug"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.6L20 10l-6.1 1.4L12 17l-1.9-5.6L4 10l6.1-1.4z"/></svg>iphone 16 pro <b>AI summary</b><span class="ai">RETZO AI</span></div>
-        <div class="sug"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>iphone 16 pro <b>price history</b></div>
+    </section>
+
+    <!-- SCENE 2 · 3.5–7s -->
+    <section class="scene" id="s2">
+      <div class="dolly" style="display:flex;flex-direction:column;align-items:center">
+        <div class="searchbar rv" id="sbar">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <div class="stext"><span class="ph" id="sph">Search any product…</span><span id="styped"></span><span class="caret" id="scaret" style="display:none"></span></div>
+          <button class="sbtn" id="sbtn">Analyze</button>
+        </div>
+        <div class="hint rv" id="shint">Retzo AI · Price Intelligence</div>
       </div>
-      <div class="chips">
-        <span class="chip3">Amazon</span><span class="chip3">Flipkart</span><span class="chip3">Croma</span>
-        <span class="chip3">Reliance Digital</span><span class="chip3">Vijay Sales</span>
+    </section>
+
+    <!-- SCENE 3 · 7–13s -->
+    <section class="scene" id="s3">
+      <div id="pfield"></div>
+      <div class="corelight" id="corelight"></div>
+      <div class="scanwrap rv dolly" id="scanwrap">
+        <div class="scanlist" id="scanlist"></div>
+        <span class="mring" id="mring"></span>
+        <span class="mchip" id="mchip"><span class="sd"></span>Retzo AI · Scanning 2,483 prices</span>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SCENE 4 · SEARCHING + COMPARISON -->
-  <section class="scene" id="s4">
-
-    <div class="s4pre" id="s4pre">
-      <div class="chkline"><span class="chk"></span>Searching Amazon</div>
-      <div class="chkline"><span class="chk"></span>Searching Flipkart</div>
-      <div class="chkline"><span class="chk"></span>Searching Croma</div>
-      <div class="chkline"><span class="chk"></span>Searching Reliance Digital</div>
-      <div class="chkline"><span class="chk"></span>Searching Vijay Sales</div>
-      <div class="chkchips">
-        <span>Comparing prices</span><span>Checking coupons</span><span>Seller rating</span>
-        <span>Warranty</span><span>Delivery</span><span>12,480 reviews</span>
+    <!-- SCENE 4 · 13–18s -->
+    <section class="scene" id="s4">
+      <div class="dolly" style="display:flex;flex-direction:column;align-items:center">
+        <div class="sec-kicker rv" id="s4k">Live Price Comparison · iPhone 16 Pro</div>
+        <div class="rlist" id="rlist"></div>
+        <div class="best-badge" id="bestBadge">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
+          Best Deal Found
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="s4cap"><div class="kicker">One search · Every marketplace</div>
-      <h2>Compared in seconds. Not hours.</h2></div>
-
-    <div class="grid">
-
-      <article class="cmp fl" style="--d:.15s">
-        <div class="chead">
-          <img class="hlogo" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon"
-            onload="this.nextElementSibling.remove();this.nextElementSibling.remove()" onerror="this.remove()">
-          <span class="mlogo" style="background:#232F3E">a</span><b>Amazon</b>
-          <span class="mrate">★ 4.4</span>
+    <!-- SCENE 5 · 18–24s -->
+    <section class="scene" id="s5">
+      <div class="chat-card rv dolly" id="chatCard">
+        <div class="chat-head">
+          <div class="avatar"><svg width="44" height="44" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg></div>
+          <div><b>Retzo AI</b><span>Your shopping copilot</span></div>
+          <span class="live-chip"><span class="sd"></span>Live analysis</span>
         </div>
-        <div class="cprice" data-to="105900">₹0</div>
-        <div class="badges4">
-          <span class="bdg" style="--d:.9s">Prime</span>
-          <span class="bdg" style="--d:1.05s">No-cost EMI</span>
-          <span class="bdg" style="--d:1.2s">HDFC 10% off</span>
+        <div class="bub user" id="bubU1">Is this worth buying?</div>
+        <div class="bub ai" id="bubA1"><span class="tdots" id="td1"><i></i><i></i><i></i></span><span id="ai1"></span></div>
+        <div class="bub ai" id="bubA2"><span id="ai2"></span></div>
+        <div class="score-row" id="scoreRow">
+          <span class="score green">Deal Score · <span id="dealScore">0</span>/100</span>
+          <span class="score">Lowest in 14 days</span>
+          <span class="score">5 retailers scanned</span>
         </div>
-        <div class="crow"><span class="dot2"></span>In stock · Delivery Sat, 18 Jul</div>
-      </article>
-
-      <article class="cmp best fb" style="--d:.3s">
-        <span class="ribbon">BEST DEAL</span>
-        <div class="chead">
-          <img class="hlogo" src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Flipkart_logo.png" alt="Flipkart"
-            onload="this.nextElementSibling.remove();this.nextElementSibling.remove()" onerror="this.remove()">
-          <span class="mlogo" style="background:#2874F0">f</span><b>Flipkart</b>
-          <span class="mrate">★ 4.6</span>
-        </div>
-        <div class="cprice" data-to="104400">₹0</div>
-        <div class="badges4">
-          <span class="bdg" style="--d:1s">Assured</span>
-          <span class="bdg sv" style="--d:1.15s">₹1,500 coupon</span>
-          <span class="bdg" style="--d:1.3s">No-cost EMI</span>
-        </div>
-        <div class="crow"><span class="dot2"></span>In stock · Delivery Tomorrow</div>
-        <div class="save">Save <b id="saveAmt">₹0</b> with coupon</div>
-      </article>
-
-      <article class="cmp ft" style="--d:.45s">
-        <div class="chead">
-          <img class="hlogo" src="https://tse3.mm.bing.net/th/id/OIP.TPR_igaCCQ0HMVE72wetgAHaHa?r=0&pid=Api&P=0&h=180" alt="Croma"
-            onload="this.nextElementSibling.remove();this.nextElementSibling.remove()" onerror="this.remove()">
-          <span class="mlogo" style="background:#141311">c</span><b>Croma</b>
-          <span class="mrate">★ 4.3</span>
-        </div>
-        <div class="cprice" data-to="106490">₹0</div>
-        <div class="badges4">
-          <span class="bdg" style="--d:1.1s">Croma Verified</span>
-          <span class="bdg" style="--d:1.25s">ICICI ₹2,000 off</span>
-          <span class="bdg" style="--d:1.4s">EMI available</span>
-        </div>
-        <div class="crow"><span class="dot2"></span>In stock · Delivery Mon, 20 Jul</div>
-      </article>
-
-      <article class="cmp fr" style="--d:.6s">
-        <div class="chead">
-          <img class="hlogo" src="https://www.reliancedigital.in/build/client/images/loaders/rd-logo.svg" alt="Reliance Digital"
-            onload="this.nextElementSibling.remove();this.nextElementSibling.remove()" onerror="this.remove()">
-          <span class="mlogo" style="background:#5B564E">r</span><b>Reliance Digital</b>
-          <span class="mrate">★ 4.2</span>
-        </div>
-        <div class="cprice" data-to="107200">₹0</div>
-        <div class="badges4">
-          <span class="bdg" style="--d:1.2s">rVerified</span>
-          <span class="bdg" style="--d:1.35s">Bank offer</span>
-          <span class="bdg" style="--d:1.5s">Only 3 left</span>
-        </div>
-        <div class="crow"><span class="dot2"></span>Delivery Tue, 21 Jul · Store pickup</div>
-      </article>
-
-      <article class="cmp fr" style="--d:.75s">
-        <div class="chead">
-          <img class="hlogo" src="https://www.vijaysales.com/assets/images/logo.svg" alt="Vijay Sales"
-            onload="this.nextElementSibling.remove();this.nextElementSibling.remove()" onerror="this.remove()">
-          <span class="mlogo" style="background:#B0403A">v</span><b>Vijay Sales</b>
-          <span class="mrate">★ 4.3</span>
-        </div>
-        <div class="cprice" data-to="105490">₹0</div>
-        <div class="badges4">
-          <span class="bdg" style="--d:1.3s">VS Verified</span>
-          <span class="bdg" style="--d:1.45s">₹1,000 bank offer</span>
-          <span class="bdg" style="--d:1.6s">EMI available</span>
-        </div>
-        <div class="crow"><span class="dot2"></span>In stock · Delivery Wed, 22 Jul</div>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- SCENE 5 · PRICE HISTORY -->
-  <section class="scene" id="s5">
-    <div id="iosnotif">
-      <div class="napp">K</div>
-      <div><b>Price dropped <i>−₹2,100</i> on Flipkart</b>
-      <span>Target ₹1,05,000 hit · Tap to view</span></div>
-      <small>now</small>
-    </div>
-    <div class="wrap5">
-      <div class="chartcard">
-        <h3>Price history — iPhone 16 Pro</h3>
-        <p>Last 6 months across all marketplaces</p>
-        <div class="chartbox" id="chartbox">
-          <svg viewBox="0 0 600 200" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="fillg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#141311" stop-opacity=".08"/>
-                <stop offset="100%" stop-color="#141311" stop-opacity="0"/>
-              </linearGradient>
-              <linearGradient id="predfill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#0E9F5B" stop-opacity=".07"/>
-                <stop offset="100%" stop-color="#0E9F5B" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <line class="gridline" x1="0" y1="50" x2="600" y2="50"/>
-            <line class="gridline" x1="0" y1="100" x2="600" y2="100"/>
-            <line class="gridline" x1="0" y1="150" x2="600" y2="150"/>
-            <rect id="predzone" x="480" y="0" width="120" height="200" fill="url(#predfill)" opacity="0"/>
-            <path id="areapath" d="M0,120 C30,108 40,98 60,95 C85,92 100,124 120,130 C145,137 160,92 180,85 C205,78 220,102 240,110 C265,120 280,144 300,150 C325,157 340,110 360,100 C385,88 400,76 420,70 C445,63 460,82 480,88 L480,200 L0,200 Z"
-              fill="url(#fillg)" opacity="0"/>
-            <path id="linepath" d="M0,120 C30,108 40,98 60,95 C85,92 100,124 120,130 C145,137 160,92 180,85 C205,78 220,102 240,110 C265,120 280,144 300,150 C325,157 340,110 360,100 C385,88 400,76 420,70 C445,63 460,82 480,88"
-              fill="none" stroke="#141311" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path id="predpath" d="M480,88 C505,82 520,78 540,72 C562,65 580,62 600,58" fill="none" stroke="#0E9F5B"
-              stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" opacity="0"/>
-          </svg>
-          <div class="cdot" id="cdot"><div class="ctip" id="ctip">₹1,05,900</div></div>
-          <div class="lowmark" id="lowmark"></div>
-          <div class="lowlabel" id="lowlabel">Lowest · ₹98,999</div>
-          <div class="lowlabel" id="predlabel" style="color:var(--green)">AI forecast ↑ 3 days</div>
-        </div>
-        <div class="axis"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span style="color:var(--green)">forecast</span></div>
       </div>
-      <div class="side5">
-        <div class="minicard m1">
-          <div class="mhead">
-            <svg class="heart" id="heartIcon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>
-            Wishlist <span class="mcount" id="wlnum">0 saved</span>
+    </section>
+
+    <!-- SCENE 6 · 24–27s -->
+    <section class="scene" id="s6">
+      <div class="dolly" style="display:flex;flex-direction:column;align-items:center">
+        <div class="offer-card rv" id="offerCard">
+          <div class="offer-img"><img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&q=80&auto=format&fit=crop" alt="iPhone 16 Pro"></div>
+          <div class="offer-body">
+            <b>iPhone 16 Pro · 256GB</b>
+            <div class="oshop">
+              <img class="brand" data-fb="Flipkart" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Flipkart_logo.svg" alt="Flipkart">
+              <span>Free delivery · Verified seller</span>
+            </div>
           </div>
-          <div class="wlrow">
-            <div class="wlthumb"><img id="wlimg" alt="" onerror="this.remove()"></div>
-            <div><b>iPhone 16 Pro · 256GB</b><span>Added just now</span></div>
-            <div class="wlprice">₹1,04,400</div>
-          </div>
+          <div class="offer-price"><small>₹1,17,490</small><b>₹1,12,999</b></div>
         </div>
-        <div class="minicard m2">
-          <div class="mhead">
-            <svg class="bell" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-            Price Alerts
-          </div>
-          <div class="wlrow">
-            <div><b>Alert active below ₹1,05,000</b><span>Watching 5 marketplaces · live</span></div>
-          </div>
+        <div class="cta-wrap rv" id="ctaWrap">
+          <span class="cta-ring" id="ctaRing"></span>
+          <button class="cta-btn" id="ctaBtn">View Offer →</button>
         </div>
+        <div class="saved-line" id="savedLine">✓ You saved ₹4,491</div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SCENE 6 · RETZO AI -->
-  <section class="scene" id="s6">
-    <canvas id="aicanvas"></canvas>
-    <div class="thinkstage">
-      <div class="core" id="core">
-        <div class="beam"></div>
-        <div class="corering2"></div>
-        <div class="corering"></div>
-        <div class="corein">R</div>
-        <div class="orbit" id="orbit">
-          <div class="ochip" style="--a:0deg;--rad:200px;--d:.2s"><span>Prices · 5 stores</span></div>
-          <div class="ochip" style="--a:45deg;--rad:222px;--d:.35s"><span>Coupons</span></div>
-          <div class="ochip" style="--a:90deg;--rad:195px;--d:.5s"><span>12,480 reviews</span></div>
-          <div class="ochip" style="--a:135deg;--rad:225px;--d:.65s"><span>Seller trust</span></div>
-          <div class="ochip" style="--a:180deg;--rad:200px;--d:.8s"><span>6-month history</span></div>
-          <div class="ochip" style="--a:225deg;--rad:222px;--d:.95s"><span>Warranty</span></div>
-          <div class="ochip" style="--a:270deg;--rad:195px;--d:1.1s"><span>Delivery speed</span></div>
-          <div class="ochip" style="--a:315deg;--rad:225px;--d:1.25s"><span>Offers</span></div>
+    <!-- SCENE 7 · 27–30s -->
+    <section class="scene" id="s7">
+      <div class="outro-line" id="o1">
+        <div class="logo">
+          <div class="logo-mark"><img class="kb-logo" src="https://krazybuy.online/logo.png" alt="KrazyBuy"></div>
+          <div class="logo-name">Krazy<em>Buy</em></div>
         </div>
       </div>
-      <div class="thinklabel">Retzo AI is analyzing
-        <span class="tdots"><i style="--td:0s"></i><i style="--td:.15s"></i><i style="--td:.3s"></i></span>
-        <b id="scanNum">0%</b>
+      <div class="outro-line" id="o2">
+        <div class="o-head">Shop Smarter.<br><em>Save More.</em></div>
+        <div class="o-sub">AI Price Intelligence</div>
+        <div class="o-web">krazybuy.online</div>
+        <div class="o-ig">@krazybuy.ai</div>
       </div>
-    </div>
-    <div class="vcard">
-      <div class="vk">Retzo AI Verdict</div>
-      <div class="vstars">★★★★★</div>
-      <div class="vtitle" id="vtitle"></div>
-      <div class="vsave">Lowest price · ₹1,500 coupon · Price likely to rise in 3 days</div>
-      <div class="vstats">
-        <div class="vstat"><span>Best time to buy</span><b>Today</b></div>
-        <div class="ringwrap">
-          <svg width="74" height="74" viewBox="0 0 74 74">
-            <circle class="ringbg" cx="37" cy="37" r="26"/>
-            <circle class="ringfg" cx="37" cy="37" r="26"/>
-          </svg>
-          <div class="ringnum" id="confnum">0%</div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SCENE 7 · FINALE -->
-  <section class="scene" id="s7">
-    <div class="flogo">
-      <span class="fk">K</span>
-      <img class="fklogo" src="https://krazybuy.online/logo.png" alt="KrazyBuy"
-        onload="this.parentNode.classList.add('haslogo')" onerror="this.remove()">
-    </div>
-    <div class="ftag">
-      <div>Compare Smarter.</div>
-      <div class="dim">Save More.</div>
-    </div>
-    <div class="fai">Powered by Retzo AI</div>
-    <div class="fstores">
-      <span class="fstore" style="--d:2.8s">Amazon</span>
-      <span class="fstore" style="--d:3s">Flipkart</span>
-      <span class="fstore" style="--d:3.2s">Croma</span>
-      <span class="fstore" style="--d:3.4s">Reliance Digital</span>
-      <span class="fstore" style="--d:3.6s">Vijay Sales</span>
-    </div>
-    <div class="fbottom">
-      <div class="qrbox" id="qrbox">
-        <img id="qrimg" alt="Scan to open krazybuy.online"
-          src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Fkrazybuy.online">
-        <div class="qrmask" id="qrmask"></div>
-      </div>
-      <div class="furl"><span id="urlTyped"></span><small>Scan to start saving</small></div>
-    </div>
-  </section>
+    </div><!-- /cam -->
 
-  <div class="vignette"></div>
-  <button id="replay">↺ Replay</button>
-  <div id="prog"><i id="progbar"></i></div>
+    <button id="replay">↻ Replay</button>
+
+    <!-- PLAY GATE -->
+    <div id="playgate">
+      <div class="pg-logo" id="pgLogo">K</div>
+      <button id="playbtn">▶ &nbsp;Play Film</button>
+      <span>With sound · 30 sec</span>
+    </div>
+  </div>
 </div>
 
 <script>
 (() => {
 'use strict';
 const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
-const easeIO = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-const easeOut = t => 1 - Math.pow(1 - t, 3);
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const TOTAL = 62000;
-const timers = [];
-const later = (fn, t) => timers.push(setTimeout(fn, t));
+const $$ = s => document.querySelectorAll(s);
 
-/* Real assets */
-const IPHONE = 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-16-pro-finish-select-202409-6-3inch-naturaltitanium?wid=200&hei=200&fmt=png-alpha';
-const IPHONE_ALT = 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-16-pro-natural-titanium?wid=200&hei=200&fmt=png-alpha';
-const LOGOS = {
-  amazon:   'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg',
-  flipkart: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Flipkart_logo.png',
-  croma:    'https://www.croma.com/assets/images/Croma_Logo.svg',
-  reliance: 'https://www.reliancedigital.in/build/client/images/loaders/rd-logo.svg',
-  vijay:    'https://www.vijaysales.com/assets/images/logo.svg'
-};
+/* ═══════════════════════════════════════════════════════════
+   SOUND ENGINE V3 — full cinematic score + convolver hall
+   master → soft compressor → destination
+   revSend → generated impulse-response hall → master
+   musicBus → 30s scheduled ambient score (70 BPM · Am→C)
+═══════════════════════════════════════════════════════════ */
+const FX = (() => {
+  let ctx = null, master = null, revSend = null, musicBus = null;
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);   // midi → Hz
 
-/* ================= AMBIENT PARTICLES + PARALLAX ================= */
-const amb = $('#ambient'), actx = amb.getContext('2d');
-let mx = 0, my = 0, tmx = 0, tmy = 0;
-addEventListener('pointermove', e => {
-  tmx = (e.clientX / innerWidth - .5); tmy = (e.clientY / innerHeight - .5);
-});
-function sizeCanvas(c) { c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio;
-  c.style.width = innerWidth + 'px'; c.style.height = innerHeight + 'px';
-  c.getContext('2d').setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
-sizeCanvas(amb);
-addEventListener('resize', () => sizeCanvas(amb));
-const dust = Array.from({length: 26}, () => ({
-  x: Math.random() * innerWidth, y: Math.random() * innerHeight,
-  r: .8 + Math.random() * 2.2, a: .03 + Math.random() * .08,
-  vx: (Math.random() - .5) * .12, vy: -.06 - Math.random() * .14,
-  depth: .3 + Math.random() * .7
-}));
-if (!reduced) (function ambLoop() {
-  mx += (tmx - mx) * .04; my += (tmy - my) * .04;
-  actx.clearRect(0, 0, innerWidth, innerHeight);
-  for (const p of dust) {
-    p.x += p.vx; p.y += p.vy;
-    if (p.y < -10) { p.y = innerHeight + 10; p.x = Math.random() * innerWidth; }
-    if (p.x < -10) p.x = innerWidth + 10; if (p.x > innerWidth + 10) p.x = -10;
-    actx.globalAlpha = p.a;
-    actx.fillStyle = '#141311';
-    actx.beginPath();
-    actx.arc(p.x + mx * 30 * p.depth, p.y + my * 30 * p.depth, p.r, 0, 7);
-    actx.fill();
+  function init(){
+    if(ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -20; comp.knee.value = 26;
+    comp.ratio.value = 4; comp.attack.value = .004; comp.release.value = .24;
+    comp.connect(ctx.destination);
+
+    master = ctx.createGain(); master.gain.value = .62; master.connect(comp);
+
+    /* ── Convolver hall — warm generated impulse, 3.2s tail ── */
+    const irLen = ctx.sampleRate * 3.2;
+    const ir = ctx.createBuffer(2, irLen, ctx.sampleRate);
+    for(let ch = 0; ch < 2; ch++){
+      const d = ir.getChannelData(ch);
+      for(let i = 0; i < irLen; i++)
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 3.1);
+    }
+    const conv = ctx.createConvolver(); conv.buffer = ir;
+    const revLP = ctx.createBiquadFilter(); revLP.type = 'lowpass'; revLP.frequency.value = 3800;
+    const revOut = ctx.createGain(); revOut.gain.value = .5;
+    revSend = ctx.createGain(); revSend.gain.value = 1;
+    revSend.connect(conv); conv.connect(revLP); revLP.connect(revOut); revOut.connect(master);
+
+    scheduleScore();
   }
-  requestAnimationFrame(ambLoop);
+
+  /* generic ADSR-ish gain */
+  function env(t, a, d, peak, dest){
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(peak, .0002), t + a);
+    g.gain.exponentialRampToValueAtTime(.0001, t + a + d);
+    g.connect(dest || master);
+    return g;
+  }
+  function panNode(p){
+    if(!ctx.createStereoPanner) return null;
+    const pn = ctx.createStereoPanner(); pn.pan.value = p; pn.connect(master);
+    return pn;
+  }
+
+  function tone(freq, dur=.2, type='sine', peak=.07, delay=0, space=0, glideTo=0, pan=0){
+    if(!ctx) return;
+    const t = ctx.currentTime + delay;
+    const o = ctx.createOscillator();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if(glideTo) o.frequency.exponentialRampToValueAtTime(glideTo, t + dur);
+    const dest = pan ? panNode(pan) : master;
+    const g = env(t, .008, dur, peak, dest);
+    o.connect(g);
+    if(space){ const s = ctx.createGain(); s.gain.value = space; o.connect(s); s.connect(revSend); }
+    o.start(t); o.stop(t + dur + .4);
+  }
+
+  function noise(dur=.3, peak=.05, f0=800, f1=3000, q=.8, delay=0, hp=0, panFrom=0, panTo=0){
+    if(!ctx) return;
+    const t = ctx.currentTime + delay;
+    const len = Math.max(1, ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for(let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+    bp.frequency.setValueAtTime(f0, t);
+    bp.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    let node = bp;
+    if(hp){ const h = ctx.createBiquadFilter(); h.type = 'highpass'; h.frequency.value = hp;
+      bp.connect(h); node = h; }
+    src.connect(bp);
+    let dest = master;
+    if(panFrom || panTo){
+      const pn = panNode(panFrom);
+      if(pn){ pn.pan.setValueAtTime(panFrom, t); pn.pan.linearRampToValueAtTime(panTo, t + dur); dest = pn; }
+    }
+    node.connect(env(t, dur * .28, dur * .72, peak, dest));
+    src.start(t);
+  }
+
+  /* Crystal glass bell — inharmonic partials, long hall tail */
+  function bell(freq=1046.5, peak=.05, delay=0, dur=2.2){
+    [[1,1],[2.71,.42],[5.15,.18],[1.005,.7]].forEach(([r, a], i) => {
+      const t = ctx.currentTime + delay + i * .004;
+      const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = freq * r;
+      const g = env(t, .006, dur * (1 - i * .14), peak * a);
+      o.connect(g);
+      const s = ctx.createGain(); s.gain.value = .9; o.connect(s); s.connect(revSend);
+      o.start(t); o.stop(t + dur + .5);
+    });
+  }
+
+  /* ═══ 30-SECOND SCORE · 70 BPM · Am–F–C–G, bloom into C ═══ */
+  function scheduleScore(){
+    musicBus = ctx.createGain(); musicBus.gain.value = 1; musicBus.connect(master);
+    const mSend = ctx.createGain(); mSend.gain.value = .35; musicBus.connect(mSend); mSend.connect(revSend);
+    const padLP = ctx.createBiquadFilter(); padLP.type = 'lowpass'; padLP.frequency.value = 760;
+    padLP.connect(musicBus);
+    /* slow evolving drone motion on the pad filter */
+    const lfo = ctx.createOscillator(); lfo.frequency.value = .06;
+    const lg = ctx.createGain(); lg.gain.value = 190;
+    lfo.connect(lg); lg.connect(padLP.frequency); lfo.start();
+
+    const t0 = ctx.currentTime + .15;
+    const BAR = 60 / 70 * 4;                     // 4 beats @ 70 BPM ≈ 3.43s
+    /* chord roots (midi) + tones */
+    const PROG = [
+      {root:45, tones:[57,60,64]},   // Am
+      {root:41, tones:[53,57,60]},   // F
+      {root:48, tones:[60,64,67]},   // C
+      {root:43, tones:[55,59,62]},   // G
+      {root:45, tones:[57,60,64]},   // Am
+      {root:41, tones:[53,57,60]},   // F
+      {root:48, tones:[60,64,67]},   // C
+      {root:43, tones:[55,59,62,65]} // G(add) → lifts into bloom
+    ];
+
+    PROG.forEach((ch, i) => {
+      const t = t0 + i * BAR;
+      /* warm analog pad — detuned triangles, slow swell */
+      ch.tones.forEach(m => {
+        [0, 4].forEach(det => {
+          const o = ctx.createOscillator(); o.type = 'triangle';
+          o.frequency.value = hz(m); o.detune.value = det ? det : -3;
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(.0001, t);
+          g.gain.exponentialRampToValueAtTime(.011, t + 1.3);
+          g.gain.exponentialRampToValueAtTime(.0001, t + BAR + 1.4);
+          o.connect(g); g.connect(padLP);
+          o.start(t); o.stop(t + BAR + 1.6);
+        });
+      });
+      /* deep cinematic bass — root, one octave down */
+      const b = ctx.createOscillator(); b.type = 'sine'; b.frequency.value = hz(ch.root - 12);
+      const bg = ctx.createGain();
+      bg.gain.setValueAtTime(.0001, t);
+      bg.gain.exponentialRampToValueAtTime(.05, t + .5);
+      bg.gain.exponentialRampToValueAtTime(.0001, t + BAR + .9);
+      b.connect(bg); bg.connect(musicBus);
+      b.start(t); b.stop(t + BAR + 1);
+      /* soft piano harmonics — two sparse plucks per bar */
+      [[.65, 24], [2.15, 12]].forEach(([off, up], k) => {
+        const m = ch.tones[(i + k) % ch.tones.length] + up;
+        const f = hz(m), tp = t + off;
+        [[1, .016], [2, .005]].forEach(([r, a]) => {
+          const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f * r;
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(.0001, tp);
+          g.gain.exponentialRampToValueAtTime(a, tp + .012);
+          g.gain.exponentialRampToValueAtTime(.0001, tp + 1.9);
+          o.connect(g); g.connect(musicBus);
+          const s = ctx.createGain(); s.gain.value = .8; o.connect(s); s.connect(revSend);
+          o.start(tp); o.stop(tp + 2.1);
+        });
+      });
+    });
+
+    /* ── FINAL BLOOM · last 5 seconds · Cmaj add9 ── */
+    const tb = t0 + 25.2;
+    [48, 55, 60, 64, 67, 74].forEach((m, i) => {
+      const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = hz(m);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(.0001, tb);
+      g.gain.exponentialRampToValueAtTime(.016 - i * .0015, tb + 1.8);
+      g.gain.exponentialRampToValueAtTime(.0001, tb + 6.5);
+      o.connect(g); g.connect(padLP);
+      const s = ctx.createGain(); s.gain.value = .6; o.connect(s); s.connect(revSend);
+      o.start(tb); o.stop(tb + 6.8);
+    });
+    /* bloom sub */
+    const bb = ctx.createOscillator(); bb.type = 'sine'; bb.frequency.value = hz(36); // C2
+    const bbg = ctx.createGain();
+    bbg.gain.setValueAtTime(.0001, tb);
+    bbg.gain.exponentialRampToValueAtTime(.055, tb + 1.2);
+    bbg.gain.exponentialRampToValueAtTime(.0001, tb + 6);
+    bb.connect(bbg); bbg.connect(musicBus); bb.start(tb); bb.stop(tb + 6.2);
+  }
+
+  /* momentary music duck — the "tiny silence" before big hits */
+  function duck(depth=.1, hold=.16, back=.9){
+    if(!musicBus) return;
+    const t = ctx.currentTime;
+    musicBus.gain.cancelScheduledValues(t);
+    musicBus.gain.setValueAtTime(musicBus.gain.value, t);
+    musicBus.gain.linearRampToValueAtTime(depth, t + .06);
+    musicBus.gain.setValueAtTime(depth, t + .06 + hold);
+    musicBus.gain.linearRampToValueAtTime(1, t + .06 + hold + back);
+  }
+
+  return {
+    init, duck,
+    /* ── UI micro sounds ── */
+    key(){ noise(.045, .026 + Math.random() * .012,
+             1900 + Math.random() * 700, 3000 + Math.random() * 500, 1.3, 0, 0,
+             (Math.random() - .5) * .4, (Math.random() - .5) * .4); },
+    click(){ noise(.05, .05, 1100, 1700, 1.6); tone(190, .09, 'sine', .05, 0, 0, 120); },
+    pop(){ tone(440, .12, 'sine', .045, 0, .35, 560); },
+    tick(){ noise(.03, .024, 1800, 2400, 1.5, 0, 0,
+             (Math.random() - .5) * .8, (Math.random() - .5) * .8); },
+    glass(){ noise(.14, .02, 3200, 6200, 2, 0, 2400); bell(2093, .012, 0, .9); },
+    process(){ tone(620, .13, 'sine', .024, 0, .5, 700); },
+    /* ── transitions ── */
+    whoosh(){ noise(.7, .045, 220, 1500, .55, 0, 0, -.8, .8);
+              noise(.5, .02, 900, 4200, .5, .05, 600, -.6, .7); },
+    riser(){ noise(1.1, .034, 160, 2800, .5, 0, 0, -.5, .5);
+             tone(220, 1.05, 'sine', .015, 0, .5, 660); },
+    reverseSwell(){ noise(1.4, .03, 120, 900, .6); },
+    /* ── impacts & confirmations ── */
+    deep(){ tone(70, 1.1, 'sine', .1, 0, 0, 34);
+            tone(140, .9, 'sine', .035, 0, .4, 70);
+            noise(.9, .02, 90, 360, .4); },
+    heartbeat(){ tone(58, .16, 'sine', .05, 0, 0, 42);
+                 tone(52, .14, 'sine', .038, .28, 0, 40); },
+    bellHit(){ bell(1046.5, .05); bell(1568, .022, .05); },       // crystal C6 + G6
+    ding(){ tone(880, .7, 'sine', .05, 0, .9);
+            tone(1318.5, .7, 'sine', .028, .02, .9);
+            tone(1760, .6, 'sine', .015, .04, .9); },
+    notify(){ tone(987.77, .3, 'sine', .04, 0, .7);
+              tone(1318.5, .5, 'sine', .045, .12, .9); },
+    aiReveal(){ tone(523.25, .9, 'sine', .03, 0, .8);
+                bell(1046.5, .045, .12); bell(1318.5, .03, .26);
+                tone(65.4, 1.4, 'sine', .06, 0, 0, 40);           // deep bass swell under
+                [1046.5, 1318.5, 1568, 2093].forEach((f, i) =>
+                  tone(f, .22, 'sine', .012, .45 + i * .07, .8)); // tiny arpeggio
+              },
+    /* Apple-Wallet-grade success: silence handled by duck() outside */
+    success(){ [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+                 tone(f, .9, 'sine', .05, i * .085, .95);
+                 tone(f * 2, .7, 'sine', .013, i * .085 + .02, .95);
+               });
+               tone(98, 1.1, 'sine', .06, 0, 0, 60);              // warm bass hit
+               bell(2093, .02, .34); },
+    sparkle(){ [2093, 2637, 3136].forEach((f, i) =>
+                 bell(f, .014, i * .07, .8)); },
+    shimmer(){ noise(1.2, .014, 3000, 7000, 1.2, 0, 2600, -.7, .7);
+               bell(1568, .02, .1); },
+    /* soft choir texture — detuned sines with gentle vibrato */
+    choir(){ [60, 64, 67, 72].forEach((m, i) => {
+               const t = ctx.currentTime + i * .06;
+               const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = hz(m);
+               const v = ctx.createOscillator(); v.frequency.value = 4.6;
+               const vg = ctx.createGain(); vg.gain.value = hz(m) * .004;
+               v.connect(vg); vg.connect(o.frequency);
+               const g = ctx.createGain();
+               g.gain.setValueAtTime(.0001, t);
+               g.gain.exponentialRampToValueAtTime(.012, t + 1);
+               g.gain.exponentialRampToValueAtTime(.0001, t + 3.4);
+               o.connect(g); g.connect(master);
+               const s = ctx.createGain(); s.gain.value = .9; o.connect(s); s.connect(revSend);
+               o.start(t); v.start(t); o.stop(t + 3.6); v.stop(t + 3.6);
+             }); },
+    /* keynote ending — warm piano chord + crystal bell + huge tail */
+    outro(){ [261.63, 392, 523.25, 659.25].forEach((f, i) => {
+               tone(f, 2.8, 'sine', .032, i * .05, 1);
+               tone(f * 2, 2.2, 'sine', .009, i * .05 + .02, 1);
+             });
+             bell(1046.5, .04, .3, 3);
+             tone(65.4, 2.6, 'sine', .05, 0, 0, 48); }
+  };
 })();
 
-/* ================= HELPERS ================= */
-function countUp(el, to, dur, prefix = '₹') {
-  const t0 = performance.now();
-  (function step(now) {
-    const k = Math.min(1, (now - t0) / dur);
-    el.textContent = prefix + Math.round(to * easeIO(k)).toLocaleString('en-IN');
-    if (k < 1) requestAnimationFrame(step);
-  })(t0);
+/* ═══════════ STAGE SCALING ═══════════ */
+function fit(){
+  const s = Math.min(innerWidth / 1080, innerHeight / 1920);
+  $('#stage').style.transform = `scale(${s})`;
 }
-function typeText(el, text, speed, done) {
+addEventListener('resize', fit); fit();
+
+/* ═══════════ BRAND DATA ═══════════ */
+const LOGOS = {
+  amazon:   "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+  flipkart: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flipkart_logo.svg",
+  croma:    "https://tse3.mm.bing.net/th/id/OIP.TPR_igaCCQ0HMVE72wetgAHaHa?r=0&pid=Api&P=0&h=180",
+  reliance: "https://tse4.mm.bing.net/th/id/OIP.t1JuVAEKsKkp2JJK8VPJkQAAAA?r=0&pid=Api&P=0&h=180",
+  vijay:    "https://tse2.mm.bing.net/th/id/OIP.qwGS75zQZ7kSBwZjrNadEAHaEe?r=0&pid=Api&P=0&h=180"
+};
+const RETAILERS = [
+  {key:'amazon',   n:'Amazon',           d:'Delivery by tomorrow', steps:[119999,118800,117200,115900]},
+  {key:'flipkart', n:'Flipkart',         d:'Free delivery',        steps:[118499,116200,114500,112999], win:true},
+  {key:'croma',    n:'Croma',            d:'In-store pickup',      steps:[121000,119500,118200,117490]},
+  {key:'reliance', n:'Reliance Digital', d:'2-day delivery',       steps:[119900,118500,117600,116900]},
+  {key:'vijay',    n:'Vijay Sales',      d:'Free delivery',        steps:[118990,117500,115990,114990]}
+];
+const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+
+$('#scanlist').innerHTML = RETAILERS.map(r => `
+  <div class="scanline">
+    <img class="slogo brand" data-fb="${r.n}" src="${LOGOS[r.key]}" alt="${r.n}">
+    <div class="scan-status"><span class="sd"></span><span class="stxt">Searching…</span></div>
+    <div class="pline"><i></i></div>
+  </div>`).join('');
+
+$('#rlist').innerHTML = RETAILERS.map(r => `
+  <div class="rcard${r.win ? ' is-win' : ''}">
+    <div class="rlogo"><img class="brand" data-fb="${r.n}" src="${LOGOS[r.key]}" alt="${r.n}"></div>
+    <div class="rname"><b>${r.n}</b><span>${r.d}</span></div>
+    <div class="rprice" data-steps="${r.steps.join(',')}"><div class="odo-track"><span>${fmt(r.steps[0])}</span></div></div>
+  </div>`).join('');
+
+/* AI particle field */
+(() => {
+  const pf = $('#pfield');
+  let html = '';
+  for(let i = 0; i < 26; i++){
+    const g = Math.random() < .28 ? ' class="g"' : '';
+    html += `<i${g} style="left:${5 + Math.random() * 90}%;top:${8 + Math.random() * 84}%;
+      --x:${(Math.random() * 140 - 70).toFixed(0)}px;--y:${(Math.random() * 160 - 80).toFixed(0)}px;
+      --d:${(6 + Math.random() * 7).toFixed(1)}s;--dl:${(-Math.random() * 8).toFixed(1)}s;
+      transform:scale(${(.5 + Math.random()).toFixed(2)})"></i>`;
+  }
+  pf.innerHTML = html;
+})();
+
+/* Logo fallbacks */
+$$('.brand').forEach(img => img.addEventListener('error', () => {
+  const d = document.createElement('div');
+  d.className = 'slogo-fb';
+  d.textContent = (img.dataset.fb || '?')[0];
+  img.replaceWith(d);
+}));
+$$('.kb-logo').forEach(img => img.addEventListener('error', () => {
+  const mark = img.parentElement;
+  img.remove(); mark.classList.add('fb'); mark.textContent = 'K';
+}));
+(() => {
+  const img = document.createElement('img');
+  img.src = 'https://krazybuy.online/logo.png';
+  img.onload = () => { $('#pgLogo').textContent = ''; $('#pgLogo').appendChild(img); };
+})();
+
+/* ═══════════ HELPERS ═══════════ */
+function show(id){ const el = $(id); el.classList.remove('off'); void el.offsetWidth; el.classList.add('on'); }
+function hide(id){ const el = $(id); el.classList.add('off'); el.classList.remove('on'); FX.whoosh(); }
+function rv(id, d = 0){ setTimeout(() => $(id).classList.add('in'), d); }
+function flash(){ const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
+
+function typeText(el, text, speed, done){
   let i = 0;
-  (function tick() {
+  (function tick(){
     el.textContent = text.slice(0, ++i);
-    if (i < text.length) setTimeout(tick, speed + Math.random() * 50);
-    else if (done) done();
+    FX.key();
+    if(i < text.length){
+      const hesitate = Math.random() < .12 ? speed * 2.6 : 0;
+      setTimeout(tick, speed + Math.random() * speed * .7 + hesitate);
+    } else done && done();
   })();
 }
-function goto(id) { $$('.scene').forEach(s => s.classList.toggle('on', s.id === id)); }
-
-/* ================= SCENE 0 · INTRO ================= */
-later(() => typeText($('#iType'), 'Searching every marketplace…', 46), 600);
-later(() => $('#s0').classList.add('expand'), 2600);
-
-/* ================= SCENE 1 · BROWSER CHAOS ================= */
-const STORES = [
-  { n:'Amazon.in',        logo:LOGOS.amazon,   c:'#FF9900', url:'amazon.in/apple-iphone-16-pro',      p:105900, x:'-27vw', y:'-19vh', r:'-4deg', d:0    },
-  { n:'Flipkart',         logo:LOGOS.flipkart, c:'#2874F0', url:'flipkart.com/apple-iphone-16-pro',   p:104400, x:'24vw',  y:'-16vh', r:'3deg',  d:.55  },
-  { n:'Croma',            logo:LOGOS.croma,    c:'#141311', url:'croma.com/iphone-16-pro-256gb',      p:106490, x:'-22vw', y:'16vh',  r:'3deg',  d:1.1  },
-  { n:'Reliance Digital', logo:LOGOS.reliance, c:'#8A847A', url:'reliancedigital.in/iphone-16-pro',   p:107200, x:'26vw',  y:'18vh',  r:'-3deg', d:1.65 },
-  { n:'Vijay Sales',      logo:LOGOS.vijay,    c:'#B0403A', url:'vijaysales.com/apple-iphone-16-pro', p:105490, x:'1vw',   y:'-2vh',  r:'1deg',  d:2.2  },
-];
-const cam = $('#s1cam');
-STORES.forEach((s, idx) => {
-  const w = document.createElement('div');
-  w.className = 'bwin';
-  w.style.cssText = `--x:${s.x};--y:${s.y};--r:${s.r};--d:${s.d}s;--dd:${4.5 + idx * .6}s`;
-  w.innerHTML = `
-    <div class="bchrome"><span class="tl"></span><span class="tl"></span><span class="tl"></span>
-      <div class="btab"><span class="fav spin" style="background:${s.c}"></span>
-        <img class="tlogo" src="${s.logo}" alt="${s.n}"
-          onload="if(this.nextElementSibling)this.nextElementSibling.style.display='none'"
-          onerror="this.remove()">
-        <span class="tname">${s.n}</span></div></div>
-    <div class="burl"><svg class="lock" viewBox="0 0 24 24" width="8" height="8" fill="currentColor"><path d="M6 10V8a6 6 0 1 1 12 0v2h1v12H5V10h1zm2 0h8V8a4 4 0 1 0-8 0v2z"/></svg>${s.url}</div>
-    <div class="bload"><i></i></div>
-    <div class="bbody"><div class="bimg shimmer">
-        <img src="${IPHONE}" alt="iPhone 16 Pro"
-          onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${IPHONE_ALT}'}else{this.remove()}"></div>
-      <div class="blines"><i class="shimmer"></i><i class="shimmer"></i></div>
-      <div class="bprice" data-base="${s.p}">${fmt(s.p)}</div></div>`;
-  cam.appendChild(w);
-  // async load sequence per window
-  later(() => {
-    const bar = w.querySelector('.bload i');
-    bar.style.transition = 'transform 1.3s cubic-bezier(.65,0,.35,1)';
-    bar.style.transform = 'translateX(280%)';
-    later(() => {
-      const fav = w.querySelector('.fav'); if (fav) fav.classList.remove('spin');
-      w.querySelectorAll('.shimmer').forEach(el => el.classList.remove('shimmer'));
-      w.querySelector('.blines').innerHTML =
-        '<b>Apple iPhone 16 Pro</b><span>256GB · Natural Titanium · Coupon inside</span>';
-      w.querySelector('.bprice').classList.add('live');
-    }, 1200);
-  }, 3700 + s.d * 1000);
-});
-// price flicker
-let flicker = setInterval(() => {
-  $$('#s1 .bprice.live').forEach(el => {
-    if (Math.random() < .4) return;
-    const base = +el.dataset.base;
-    el.textContent = fmt(base + (Math.random() > .5 ? 1 : -1) * Math.floor(Math.random() * 900));
-    el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
-  });
-}, 520);
-// notification toasts
-const TOASTS = [
-  { t:'Price dropped −₹800',    c:'#0E9F5B', x:'-27vw', y:'-31vh' },
-  { t:'Coupon available',       c:'#2874F0', x:'25vw',  y:'-4vh'  },
-  { t:'Limited stock · 3 left', c:'#B0403A', x:'-21vw', y:'4vh'   },
-  { t:'Bank offer applied',     c:'#8A847A', x:'26vw',  y:'30vh'  },
-];
-TOASTS.forEach((t, i) => {
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.style.cssText = `--tx:${t.x};--ty:${t.y}`;
-  el.innerHTML = `<span class="tdot" style="background:${t.c}"></span>${t.t}`;
-  $('#s1').appendChild(el);
-  later(() => el.classList.add('show'), 6200 + i * 700);
-  later(() => el.classList.remove('show'), 6200 + i * 700 + 2600);
-});
-// fake cursor tour
-const CUR = [['-20vw','-14vh'],['22vw','-11vh'],['-16vw','13vh'],['20vw','15vh'],['2vw','1vh']];
-later(() => {
-  const c = $('#fcursor'); c.classList.add('show');
-  CUR.forEach((p, i) => later(() =>
-    c.style.transform = `translate(${p[0]}, ${p[1]})`, i * 1300));
-}, 4600);
-
-/* ================= SCENE 2 · PARTICLES → LOGO ================= */
-function runParticles() {
-  if (reduced) return;
-  const cv = $('#pcanvas'); sizeCanvas(cv);
-  const ctx = cv.getContext('2d');
-  const cx = innerWidth / 2, cy = innerHeight / 2;
-  const N = Math.min(700, innerWidth < 700 ? 350 : 700);
-  const parts = Array.from({length: N}, () => {
-    const ang = Math.random() * Math.PI * 2;
-    const rad = 30 + Math.random() * Math.min(innerWidth, innerHeight) * .34;
-    const t = Math.random() * Math.PI * 2, R = 46;
-    return {
-      ang, rad, spin: .9 + Math.random() * 1.6,
-      tx: cx + Math.cos(t) * R * (0.72 + Math.random() * .28),
-      ty: cy + Math.sin(t) * R * (0.72 + Math.random() * .28),
-      sz: .8 + Math.random() * 2.4, a: .25 + Math.random() * .55
-    };
-  });
-  const t0 = performance.now(), dur = 2100;
-  (function loop(now) {
-    const k = Math.min(1, (now - t0) / dur);
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    const e = easeIO(k);
-    for (const p of parts) {
-      const a = p.ang + p.spin * e * 3.2;
-      const r = p.rad * (1 - e);
-      const sx = cx + Math.cos(a) * r, sy = cy + Math.sin(a) * r;
-      const x = sx + (p.tx - sx) * e, y = sy + (p.ty - sy) * e;
-      ctx.globalAlpha = p.a * (k > .82 ? (1 - k) / .18 : 1);
-      ctx.fillStyle = '#141311';
-      ctx.beginPath(); ctx.arc(x, y, p.sz, 0, 7); ctx.fill();
-    }
-    if (k < 1) requestAnimationFrame(loop);
-    else ctx.clearRect(0, 0, innerWidth, innerHeight);
-  })(t0);
+function typeHTML(el, html, speed){
+  const tokens = html.split(/(<[^>]+>)/g).filter(Boolean);
+  let out = '', ti = 0, ci = 0;
+  (function tick(){
+    if(ti >= tokens.length) return;
+    const tok = tokens[ti];
+    if(tok.startsWith('<')){ out += tok; ti++; ci = 0; el.innerHTML = out; tick(); return; }
+    ci++;
+    el.innerHTML = out + tok.slice(0, ci);
+    if(ci % 3 === 0) FX.key();
+    if(ci >= tok.length){ out += tok; ti++; ci = 0; }
+    setTimeout(tick, speed);
+  })();
 }
 
-/* ================= SCENE 5 · CHART ================= */
-function runChart() {
-  const line = $('#linepath'), area = $('#areapath'), pred = $('#predpath');
-  const box = $('#chartbox'), dot = $('#cdot'), tip = $('#ctip');
-  const len = line.getTotalLength();
-  line.style.strokeDasharray = len;
-  line.style.strokeDashoffset = len;
-  line.getBoundingClientRect();
-  line.style.transition = 'stroke-dashoffset 2.6s cubic-bezier(.65,0,.35,1) .5s';
-  line.style.strokeDashoffset = 0;
-  area.style.transition = 'opacity 1.4s ease 1.6s'; area.style.opacity = 1;
-  pred.style.transition = 'opacity .9s ease 3.3s'; pred.style.opacity = 1;
-  const zone = $('#predzone');
-  zone.style.transition = 'opacity 1s ease 3.3s'; zone.style.opacity = 1;
-
-  const priceAt = y => 98999 + (150 - y) * (11000 / 90);
-  const map = pt => ({ x: pt.x * box.clientWidth / 600, y: pt.y * box.clientHeight / 200 });
-  const lowPt = map({ x: 300, y: 150 });
-  $('#lowmark').style.cssText += `left:${lowPt.x}px;top:${lowPt.y}px`;
-  $('#lowlabel').style.cssText += `left:${lowPt.x}px;top:${lowPt.y}px`;
-  const predPt = map({ x: 590, y: 58 });
-  $('#predlabel').style.cssText += `left:${predPt.x - 44}px;top:${predPt.y - 36}px;animation-delay:3.6s`;
-
-  dot.style.opacity = 1;
-  const t0 = performance.now() + 500, dur = 2600;
-  (function move(now) {
-    const k = Math.min(1, Math.max(0, (now - t0) / dur));
-    const pt = line.getPointAtLength(len * easeIO(k));
-    const m = map(pt);
-    dot.style.left = m.x + 'px'; dot.style.top = m.y + 'px';
-    tip.textContent = fmt(priceAt(pt.y)) + (k === 1 ? ' · Today' : '');
-    if (k < 1) requestAnimationFrame(move);
-  })(performance.now());
-
-  const wlimg = $('#wlimg'); if (wlimg && !wlimg.src) wlimg.src = IPHONE;
-  countUp($('#wlnum'), 12, 1800, '');
-  later(() => { $('#wlnum').textContent = '12 saved'; }, 1900);
-
-  // heart particle burst
-  later(() => {
-    const h = $('#heartIcon').getBoundingClientRect();
-    for (let i = 0; i < 7; i++) {
-      const s = document.createElement('span');
-      s.className = 'hp'; s.textContent = '❤';
-      s.style.cssText = `position:fixed;left:${h.left + 4}px;top:${h.top}px;color:#D6453D;z-index:30;opacity:1;
-        transition:transform 1.2s cubic-bezier(.22,1,.36,1) ${i*70}ms, opacity 1.2s ease ${i*70}ms;font-size:${8+Math.random()*6}px`;
-      document.body.appendChild(s);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        s.style.transform = `translate(${(Math.random()-.5)*70}px, ${-50 - Math.random()*50}px) rotate(${(Math.random()-.5)*50}deg)`;
-        s.style.opacity = 0;
-      }));
-      later(() => s.remove(), 2400);
-    }
-  }, 2100);
-
-  // iOS notification
-  later(() => $('#iosnotif').classList.add('show'), 3400);
-  later(() => $('#iosnotif').classList.remove('show'), 6600);
+/* Odometer — luxury-watch mechanical roll */
+function odometer(priceEl, stepMs){
+  const steps = priceEl.dataset.steps.split(',').map(Number);
+  const track = priceEl.querySelector('.odo-track');
+  track.innerHTML = steps.map(v => `<span>${fmt(v)}</span>`).join('');
+  let i = 0;
+  const iv = setInterval(() => {
+    i++;
+    track.style.transform = `translate3d(0,${-i * 58}px,0)`;
+    FX.tick();
+    if(i >= steps.length - 1) clearInterval(iv);
+  }, stepMs);
 }
 
-/* ================= SCENE 6 · AI NETWORK ================= */
-let aiRunning = false;
-function runAI() {
-  const cv = $('#aicanvas'); sizeCanvas(cv);
-  const ctx = cv.getContext('2d');
-  const chips = $$('#s6 .ochip > span');
-  const travelers = chips.map((_, i) => ({ k: Math.random(), sp: .004 + Math.random() * .005, chip: i }));
-  aiRunning = true;
-  const start = performance.now();
-  (function loop(now) {
-    if (!aiRunning) { ctx.clearRect(0, 0, innerWidth, innerHeight); return; }
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    const core = $('#core').getBoundingClientRect();
-    const cx = core.left + core.width / 2, cy = core.top + core.height / 2;
-    const fade = Math.min(1, (now - start - 1400) / 1000);
-    if (fade > 0 && !reduced) {
-      chips.forEach((ch, i) => {
-        const r = ch.getBoundingClientRect();
-        const x = r.left + r.width / 2, y = r.top + r.height / 2;
-        ctx.globalAlpha = .1 * fade;
-        ctx.strokeStyle = '#141311'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
-        const tr = travelers[i];
-        tr.k += tr.sp; if (tr.k > 1) tr.k = 0;
-        ctx.globalAlpha = .55 * fade;
-        ctx.fillStyle = '#0E9F5B';
-        ctx.beginPath();
-        ctx.arc(cx + (x - cx) * tr.k, cy + (y - cy) * tr.k, 2.4, 0, 7);
-        ctx.fill();
-      });
-    }
-    requestAnimationFrame(loop);
-  })(start);
-  // scanning percentage
+/* Deal-score count-up with micro ticks */
+function countUp(el, target, dur){
   const t0 = performance.now();
-  (function scan(now) {
-    const k = Math.min(1, (now - t0) / 3600);
-    $('#scanNum').textContent = Math.round(easeOut(k) * 100) + '%';
-    if (k < 1) requestAnimationFrame(scan);
+  let lastTick = 0;
+  (function frame(now){
+    const p = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(eased * target);
+    if(now - lastTick > 85 && p < 1){ FX.tick(); lastTick = now; }
+    if(p < 1) requestAnimationFrame(frame);
+    else FX.ding();
   })(t0);
 }
 
-/* ================= SCENE 7 · QR (real, block-by-block) ================= */
-(() => {
-  // Reveal mask: 8×8 tiles uncover the real QR in shuffled order
-  const mask = $('#qrmask');
-  const idx = [...Array(64).keys()];
-  for (let i = idx.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [idx[i], idx[j]] = [idx[j], idx[i]];
-  }
-  for (let i = 0; i < 64; i++) {
-    const t = document.createElement('i');
-    t.style.setProperty('--qd', (idx[i] * 26) + 'ms');
-    mask.appendChild(t);
-  }
-  // Offline fallback: decorative pattern (still animates block-by-block)
-  $('#qrimg').addEventListener('error', function () {
-    this.remove(); mask.remove();
-    const fk = document.createElement('div'); fk.className = 'qrfk';
-    let seed = 7;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const inZone = (r, c, i, j) => i >= r && i < r + 7 && j >= c && j < c + 7;
-    const finder = (r, c, i, j) => inZone(r, c, i, j) &&
-      (i === r || i === r + 6 || j === c || j === c + 6 || (i >= r+2 && i <= r+4 && j >= c+2 && j <= c+4));
-    let count = 0;
-    for (let i = 0; i < 15; i++) for (let j = 0; j < 15; j++) {
-      const cell = document.createElement('i');
-      let on = false, zone = false;
-      [[0,0],[0,8],[8,0]].forEach(([r,c]) => { if (inZone(r,c,i,j)) { zone = true; if (finder(r,c,i,j)) on = true; } });
-      if (!zone) on = rnd() > .52;
-      if (on) { cell.classList.add('f'); cell.style.setProperty('--qd', (count++ * 14) + 'ms'); }
-      fk.appendChild(cell);
-    }
-    $('#qrbox').appendChild(fk);
-  });
-})();
+/* Scan lifecycle: Searching → Comparing → Verified ✓ */
+function runScan(row, dur){
+  const stxt = row.querySelector('.stxt');
+  setTimeout(() => { stxt.textContent = 'Comparing…'; FX.process(); }, dur / 2);
+  requestAnimationFrame(() => row.querySelector('.pline i').style.width = '100%');
+  setTimeout(() => {
+    row.querySelector('.scan-status').classList.add('done');
+    row.querySelector('.sd').style.animation = 'none';
+    stxt.textContent = 'Verified ✓';
+    FX.notify();                       // Apple-Wallet style confirmation
+  }, dur);
+}
 
-/* ================= TIMELINE ================= */
-const timeline = [
-  [0,     () => goto('s0')],
+/* ═══════════ 30-SECOND TIMELINE ═══════════ */
+const cues = [];
+const at = (t, fn) => cues.push([t, fn]);
 
-  [3600,  () => goto('s1')],
+/* SCENE 1 · 0–3.5s · Dark emotional hook */
+at(50,   () => { show('#s1'); $('#stage').classList.add('film'); $('#progress').classList.add('run');
+                 FX.deep(); FX.reverseSwell(); });
+at(600,  () => FX.heartbeat());
+at(1300, () => FX.heartbeat());
+at(250,  () => $('#h1').classList.add('in'));
+at(1600, () => { $('#h1').classList.add('out'); $('#h2').classList.add('in');
+                 FX.duck(.25, .1, .7); FX.deep(); FX.bellHit(); });   // impact → crystal bell
+at(2500, () => { $('#h2').classList.add('out'); $('#h3').classList.add('in'); FX.ding(); });
+at(3400, () => hide('#s1'));
 
-  [12000, () => {
-    clearInterval(flicker);
-    goto('s2');
-    later(runParticles, 900);
-  }],
-
-  [19000, () => {
-    goto('s3');
-    later(() => {
-      $('#sbar').classList.add('focus');
-      // type with a mistake, correct it, then finish
-      typeText($('#typed'), 'iphone 16 pr0', 85, () => {
-        later(() => { $('#typed').textContent = 'iphone 16 pr'; }, 380);   // backspace
-        later(() => {
-          $('#typed').textContent = 'iphone 16 pr';
-          $('#ghost').textContent = 'o';
-          $('#sugs').classList.add('show');
-          $$('.sug').forEach((el, i) => later(() => el.classList.add('show'), 200 + i * 150));
-          later(() => $$('.sug')[1].classList.add('hl'), 950);
-          $$('.chip3').forEach((el, i) => later(() => el.classList.add('show'), 700 + i * 110));
-        }, 560);
-        later(() => { $('#typed').textContent = 'iphone 16 pro'; $('#ghost').textContent = ''; }, 1500);
-        later(() => $('#s3').classList.add('zoomin'), 4400);               // "Enter" → zoom
-      });
-    }, 700);
-  }],
-
-  [25500, () => {
-    goto('s4');
-    // Searching checklist — one marketplace at a time
-    const lines = $$('#s4pre .chkline');
-    lines.forEach((el, i) => {
-      later(() => el.classList.add('show'), 200 + i * 240);
-      later(() => el.classList.add('done'), 780 + i * 240);
-    });
-    // Then: comparing prices, coupons, ratings, warranty, delivery, reviews
-    $$('#s4pre .chkchips span').forEach((el, i) =>
-      later(() => el.classList.add('show'), 2150 + i * 170));
-    later(() => $('#s4pre').classList.add('bye'), 3950);
-    // Cards land
-    later(() => {
-      $('#s4').classList.add('cards');
-      later(() => {
-        $$('#s4 .cprice').forEach(el => countUp(el, +el.dataset.to, 1500));
-        later(() => countUp($('#saveAmt'), 1500, 1400), 900);
-      }, 900);
-      later(() => $('#s4').classList.add('won'), 4700);                    // Flipkart wins → others dim
-    }, 4300);
-  }],
-
-  [38500, () => { goto('s5'); later(runChart, 300); }],
-
-  [46000, () => {
-    goto('s6');
-    later(runAI, 200);
-    later(() => {
-      aiRunning = false;
-      $('#s6').classList.add('verdict');
-      later(() => typeText($('#vtitle'), 'BUY FROM FLIPKART', 60), 700);
-      const t0 = performance.now();
-      (function conf(now) {
-        const k = Math.min(1, (now - t0 - 1000) / 1800);
-        if (k > 0) $('#confnum').textContent = Math.round(98 * easeIO(k)) + '%';
-        if (k < 1) requestAnimationFrame(conf);
-      })(t0);
-    }, 4200);
-  }],
-
-  [54500, () => {
-    goto('s7');
-    later(() => $('#s7').classList.add('qrgo'), 4600);                     // QR reveals block by block
-    later(() => typeText($('#urlTyped'), 'krazybuy.online', 60), 4800);
-    later(() => $('#replay').classList.add('show'), 6400);
-  }],
-];
-timeline.forEach(([t, fn]) => later(fn, t));
-
-/* progress bar */
-const bar = $('#progbar');
-requestAnimationFrame(() => {
-  bar.style.transition = `width ${TOTAL}ms linear`;
-  bar.style.width = '100%';
+/* SCENE 2 · 3.6–7s · Search + Analyze */
+at(3650, () => { show('#s2'); rv('#sbar', 90); rv('#shint', 380); });
+at(4250, () => {
+  $('#sbar').classList.add('focus');
+  $('#sph').style.display = 'none';
+  $('#scaret').style.display = 'inline-block';
+  FX.glass();                                            // search-bar focus shimmer
+  typeText($('#styped'), 'iPhone 16 Pro', 64, () => { $('#sbtn').classList.add('glow'); FX.pop(); });
 });
+at(6100, () => { $('#sbtn').classList.add('pressed'); FX.click(); });
+at(6400, () => FX.riser());
+at(6750, () => hide('#s2'));
 
+/* SCENE 3 · 7–13s · AI engine scan → Retzo merge */
+at(7050, () => {
+  show('#s3'); rv('#scanwrap', 70);
+  $('#corelight').classList.add('on');
+  setTimeout(() => { $('#beam').classList.add('run'); FX.shimmer(); }, 500);
+});
+RETAILERS.forEach((r, i) => {
+  at(7350 + i * 370, () => {
+    const row = $$('.scanline')[i];
+    row.classList.add('in');
+    FX.pop();
+    setTimeout(() => runScan(row, 1700), 180);
+  });
+});
+/* granular data ticks while scanning */
+for(let i = 0; i < 14; i++) at(7800 + i * 300, () => FX.tick());
+at(11000, () => FX.riser());
+at(11250, () => { $('#scanwrap').classList.add('merge'); FX.reverseSwell(); FX.process(); });
+at(11700, () => {
+  $('#mchip').classList.add('in');
+  $('#mring').classList.add('go');
+  FX.aiReveal();                                         // big AI reveal + bell + arpeggio
+});
+at(12850, () => hide('#s3'));
+
+/* SCENE 4 · 13–18s · Wallet cards + Best Deal */
+at(13150, () => {
+  show('#s4'); rv('#s4k');
+  $$('.rcard').forEach((c, i) => {
+    setTimeout(() => {
+      c.classList.add('in');
+      FX.pop();
+      setTimeout(() => odometer(c.querySelector('.rprice'), 260), 260);
+    }, 170 + i * 155);
+  });
+});
+at(15750, () => FX.duck(.06, .22, .8));                  // ← the tiny silence
+at(15980, () => {
+  $$('.rcard').forEach(c => c.classList.add(c.classList.contains('is-win') ? 'win' : 'dim'));
+  flash(); FX.success();                                 // wallet + orchestra + bell + bass
+});
+at(16450, () => { $('#bestBadge').classList.add('in'); FX.sparkle(); });
+at(17750, () => hide('#s4'));
+
+/* SCENE 5 · 18–24s · Retzo chat */
+at(18050, () => { show('#s5'); rv('#chatCard', 70); });
+at(18550, () => { $('#bubU1').classList.add('in'); FX.pop(); });
+at(19150, () => { $('#bubA1').classList.add('in'); FX.process(); });
+at(19850, () => {
+  $('#td1').style.display = 'none';
+  typeHTML($('#ai1'),
+    "<b>Yes.</b> This is the <span class='hl'>lowest price in the last 14 days</span>. " +
+    "You save <span class='hl'>₹4,491</span>.", 18);
+});
+at(20900, () => FX.bellHit());                           // reward bell on "lowest price"
+at(21400, () => FX.sparkle());                           // sparkle on "₹4,491"
+at(21650, () => { $('#bubA2').classList.add('in'); FX.process(); });
+at(21950, () => typeHTML($('#ai2'),
+  "I'll notify you if the price drops further.", 16));
+at(23050, () => {
+  $('#scoreRow').classList.add('in');
+  FX.notify();
+  countUp($('#dealScore'), 92, 900);
+});
+at(23850, () => hide('#s5'));
+
+/* SCENE 6 · 24–27s · Offer + CTA morph */
+at(24150, () => { show('#s6'); rv('#offerCard', 70); rv('#ctaWrap', 400); });
+at(24250, () => FX.glass());                             // luxury card pop
+at(25450, () => {
+  const b = $('#ctaBtn');
+  b.classList.add('done');
+  b.textContent = '✓ Redirecting…';
+  $('#ctaRing').classList.add('go');
+  $('#savedLine').classList.add('in');
+  flash(); FX.duck(.15, .1, .7); FX.click(); FX.success();
+});
+at(25950, () => FX.sparkle());                           // soft cash sparkle — no register
+at(26850, () => hide('#s6'));
+
+/* SCENE 7 · 27–30s · Keynote outro → fade to white */
+at(27150, () => { show('#s7'); $('#o1').classList.add('in'); FX.bellHit(); FX.choir(); });
+at(28250, () => { $('#o1').classList.add('out'); $('#o2').classList.add('in'); FX.outro(); });
+at(28900, () => FX.sparkle());                           // krazybuy.online sparkle
+at(29200, () => FX.pop());                               // instagram soft ping
+at(29700, () => $('#whiteout').classList.add('go'));
+at(30700, () => { $('#replay').classList.add('show'); $('#stage').classList.remove('film'); });
+
+/* ═══════════ START ═══════════ */
+$('#playbtn').addEventListener('click', () => {
+  FX.init();
+  FX.click();
+  $('#playgate').classList.add('gone');
+  cues.forEach(([t, fn]) => setTimeout(fn, t + 450));
+});
 $('#replay').addEventListener('click', () => location.reload());
 })();
 </script>
