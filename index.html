@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#08060D">
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
-<meta name="description" content="KrazyBuy — AI-powered price comparison and deal analysis, powered by Retzo AI.">
+<meta name="description" content="KrazyBuy — AI-powered price comparison and deal analysis, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <!-- ── KrazyBuy Logo / Favicon ── -->
-<link rel="icon" type="image/png" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
-<link rel="shortcut icon" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
-<link rel="apple-touch-icon" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
-<link rel="icon" sizes="192x192" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
-
+<link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
+<link rel="shortcut icon" href="https://www.krazybuy.online/images/logo.png">
+<link rel="apple-touch-icon" href="https://www.krazybuy.online/images/logo.png">
+<link rel="icon" sizes="192x192" href="https://www.krazybuy.online/images/logo.png">
 </head>
 <body>
 
@@ -37,12 +36,41 @@
     <div class="thread" id="thread">
       <!-- HERO -->
       <div class="hero" id="hero">
+
+        <!-- ── FLOATING MARKETPLACE LOGOS ── -->
+        <div class="float-logos" aria-hidden="true">
+          <div class="flogo" style="top:14%;left:8%;--d:.05s;--f:6.5s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/amazon-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="top:20%;right:9%;--d:.15s;--f:7.5s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/flipkart-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="top:52%;left:5%;--d:.25s;--f:8s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/blinkit-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="bottom:16%;right:7%;--d:.35s;--f:6.8s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/myntra-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="bottom:12%;left:16%;--d:.45s;--f:7.2s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/ajio-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="top:38%;right:4%;--d:.55s;--f:7.8s">
+            <img src="https://assets.myhubble.money/brand-assets/tile-images-wp/nykaa-fashion-tile.webp" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="top:9%;left:32%;--d:.65s;--f:6.6s">
+            <img src="https://assets.myhubble.money/brand-assets/icon-images/Icon%20-%20Zepto.png" alt="" loading="lazy">
+          </div>
+          <div class="flogo" style="bottom:28%;left:38%;--d:.75s;--f:8.4s">
+            <img src="https://assets.myhubble.money/brand-assets/icon-images/Icon_Decathlon_1405.png" alt="" loading="lazy">
+          </div>
+        </div>
+
         <div class="hero-badge">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
-          Retzo AI · Per-Product Verdicts
+          Retzo AI · Search by name or product link
         </div>
         <h1>Every product, analyzed.<br><span class="grad-text">Its own verdict.</span></h1>
-        <p>Search any product. Retzo AI compares verified retailers for each result independently, scores every deal, and tells you where to buy.</p>
+        <p>Search any product — or just paste a product URL from Amazon, Flipkart and more. Retzo AI compares verified retailers for each result independently, scores every deal, and tells you where to buy.</p>
         <div class="chips" id="chips">
           <button class="chip" data-q="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
           <button class="chip" data-q="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
@@ -116,7 +144,7 @@
     <div class="composer">
       <form class="sform" id="sform" role="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <input class="sinput" id="sinput" type="text" placeholder="Search any product…" autocomplete="off" spellcheck="false">
+        <input class="sinput" id="sinput" type="text" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
         <button class="mic" id="micBtn" type="button" aria-label="Voice search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
         </button>
@@ -163,24 +191,12 @@ const ICONS = {
 };
 
 function lowest(p){
-
-    if (p.retzo?.verified_price)
-        return Number(p.retzo.verified_price);
-
-    if (p.retzo?.best_offer?.price)
-        return Number(p.retzo.best_offer.price);
-
-    if (p.bestOffer?.price)
-        return Number(p.bestOffer.price);
-
-    if (p.lowestPrice)
-        return Number(p.lowestPrice);
-
-    const prices = (p.offers || [])
-        .map(o => Number(o.price))
-        .filter(x => x > 100);
-
-    return prices.length ? Math.min(...prices) : 0;
+  if (p.retzo?.verified_price)   return Number(p.retzo.verified_price);
+  if (p.retzo?.best_offer?.price) return Number(p.retzo.best_offer.price);
+  if (p.bestOffer?.price)        return Number(p.bestOffer.price);
+  if (p.lowestPrice)             return Number(p.lowestPrice);
+  const prices = (p.offers || []).map(o => Number(o.price)).filter(x => x > 100);
+  return prices.length ? Math.min(...prices) : 0;
 }
 function pidOf(p){ return String(p.normalized_product_id || p.url || p.title || p.name || ''); }
 
@@ -506,7 +522,7 @@ function buildCard(p, i){
     </div>
     <div class="offers"><div class="offers-in">${offersHtml}</div></div>`;
 
-  /* ✅ FIXED: use real measured height instead of a hard-coded max-height */
+  /* Real measured height instead of hard-coded max-height */
   const tog=card.querySelector('.ptoggle');
   const acc=card.querySelector('.offers');
   function toggleOffers(){
@@ -520,7 +536,7 @@ function buildCard(p, i){
         acc.removeEventListener('transitionend',te);
       });
     } else {
-      acc.style.maxHeight=acc.scrollHeight+'px'; // lock current height
+      acc.style.maxHeight=acc.scrollHeight+'px';
       requestAnimationFrame(()=>{ acc.style.maxHeight='0px'; });
     }
   }
@@ -539,8 +555,7 @@ function buildCard(p, i){
   return card;
 }
 
-/* ✅ FIXED: append-only rendering — never destroys existing cards (keeps
-   open offer accordions and running gauge animations intact). */
+/* Append-only rendering — never destroys existing cards */
 function renderProducts(products){
   const list=$('#plist');
   $('#productCount').textContent=products.length;
@@ -550,7 +565,6 @@ function renderProducts(products){
       list.appendChild(buildCard(p,i));
     }
   });
-  // best-deal highlight (recomputed, without re-rendering)
   let bestId=null,bestP=Infinity;
   products.forEach(p=>{ const pr=lowest(p); if(pr>0&&pr<bestP){bestP=pr;bestId=pidOf(p);} });
   [...list.children].forEach(c=>{
@@ -598,7 +612,7 @@ async function poll(){
       state.products=products;
       $('#resultsArea').style.display='';
       renderStats(products, data.stats||{});
-      renderProducts(products);   // append-only, safe to call every tick
+      renderProducts(products);
       syncRetzo(products, false);
     }
 
@@ -626,7 +640,7 @@ async function poll(){
                   :`${finalProducts.length} products compared.`);
       } else {
         $('#emptyArea').style.display='';
-        $('#emptyMsg').textContent=`No products found for "${state.query}". Try a different search.`;
+        $('#emptyMsg').textContent=`No products found for "${state.query}". Try a different search or paste a product URL.`;
       }
       return;
     }
@@ -651,32 +665,43 @@ async function poll(){
   }
 }
 
-function normalizeAmazonUrl(url) {
-    try {
-        const u = new URL(url);
+/* ── URL search: normalize Amazon, Flipkart & generic product links ── */
+function normalizeProductUrl(url){
+  try{
+    const u = new URL(url);
+    const host = u.hostname;
 
-        if (!u.hostname.includes("amazon.")) return url;
-
-        const m = u.pathname.match(/\/dp\/([A-Z0-9]{10})/i);
-
-        if (m) {
-            return `${u.protocol}//${u.hostname}/dp/${m[1]}`;
-        }
-
-        return url;
-    } catch {
-        return url;
+    // Amazon: keep clean /dp/ASIN
+    if (host.includes('amazon.')) {
+      const m = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+      if (m) return `${u.protocol}//${host}/dp/${m[1]}`;
+      return url;
     }
+
+    // Flipkart: keep path + pid, drop tracking params
+    if (host.includes('flipkart.')) {
+      const pid = u.searchParams.get('pid');
+      return `${u.protocol}//${host}${u.pathname}${pid?`?pid=${pid}`:''}`;
+    }
+
+    // Other stores (Croma, Reliance Digital, Myntra, etc.): strip tracking params
+    ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','fbclid','gclid','ref','ref_','tag']
+      .forEach(k=>u.searchParams.delete(k));
+    return u.toString();
+  }catch{
+    return url;
+  }
 }
 
 async function search(query){
- 
   query=(query||'').trim();
 
-if(query.startsWith("http")){
-    query = normalizeAmazonUrl(query);
-}
-  if(!query){ toast('warning','Enter a search term','Type or speak a product name.'); $('#sinput').focus(); return; }
+  // Product-URL search: paste any Amazon / Flipkart / store link
+  if(query.startsWith('http')){
+    query = normalizeProductUrl(query);
+  }
+
+  if(!query){ toast('warning','Enter a search term','Type a product name or paste a product URL.'); $('#sinput').focus(); return; }
   stopPolling();
   state.query=query; state.products=[]; state.jobId=null; state.retries=0; state.done=false;
   addHist({ q:query, products:0, low:0 });
@@ -751,6 +776,15 @@ $('#chips').addEventListener('click',e=>{
   const c=e.target.closest('.chip'); if(!c) return;
   $('#sinput').value=c.dataset.q; search(c.dataset.q);
 });
+
+/* Paste a product link anywhere in the input → instant hint */
+$('#sinput').addEventListener('paste',e=>{
+  const text=(e.clipboardData||window.clipboardData).getData('text')||'';
+  if(text.trim().startsWith('http')){
+    toast('info','Product link detected','Hit Analyze — Retzo AI will identify the product and compare prices.');
+  }
+});
+
 const goHome=()=>{ stopPolling(); setBusy(false); setStatus('online','Ready'); showHero();
   state.query=''; $('#topQ').textContent='KrazyBuy'; KB.closeSidebar(); $('#sinput').value=''; $('#sinput').focus(); };
 $('#errNewBtn').addEventListener('click',goHome);
