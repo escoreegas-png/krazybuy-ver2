@@ -6,7 +6,7 @@
 window.KB = (() => {
 'use strict';
 
-const API_BASE = window.__KB_API__ || atob('aHR0cHM6Ly9hcGkudmlzY29jb21wYXJlLm9ubGluZQ==');
+const API_BASE = window.__KB_API__ || atob('aHR0cHM6Ly9nYXRld2F5LnZpc2NvY29tcGFyZS5vbmxpbmU=');
 
 /* ── Theme ── */
 const getTheme = () => localStorage.getItem('kb_theme') || 'light';
