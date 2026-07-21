@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08060D">
+<title>KrazyBuy — Offers · Retzo AI Curated Deals</title>
+<meta name="description" content="AI-curated coupons and deals from top brands, scored by Retzo AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
+<link rel="apple-touch-icon" href="https://www.krazybuy.online/images/logo.png">
+
+<style>
+.of-wrap{max-width:1120px;margin:0 auto;padding:26px 20px 120px;width:100%}
+.of-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.of-head h1{font-size:clamp(22px,3.4vw,32px);font-weight:800;letter-spacing:-.02em}
+.of-head p{font-size:13px;color:var(--muted);margin-top:4px;max-width:520px}
+.of-cache{display:none;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--warning-bg);color:var(--warning)}
+.of-cache.show{display:inline-flex;animation:ofFade .3s var(--ease) both}
+.of-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.of-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow-sm);animation:ofUp .4s var(--ease) both}
+.of-stat b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.of-stat span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2)}
+.of-stat.hot b{color:var(--warning)}
+.of-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.of-search{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;padding:0 14px;min-height:42px;background:var(--card);border:1px solid var(--border);border-radius:999px;box-shadow:var(--shadow-sm);transition:border-color var(--t)}
+.of-search:focus-within{border-color:var(--text)}
+.of-search input{flex:1;border:0;outline:0;background:none;font-size:13.5px;color:var(--text);min-width:0}
+.of-search input::placeholder{color:var(--muted2)}
+.of-search svg{color:var(--muted2);flex-shrink:0}
+.of-chip{min-height:38px;padding:0 15px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-size:12.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:all var(--t);white-space:nowrap}
+.of-chip:hover{border-color:var(--border2);color:var(--text);transform:translateY(-1px)}
+.of-chip.on{background:var(--btn-bg);color:var(--btn-fg);border-color:transparent}
+.of-chip .cnt{font-size:10px;font-weight:800;opacity:.65}
+.of-chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:16px;scrollbar-width:thin}
+.of-sec{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;letter-spacing:-.01em;margin:8px 0 14px}
+.of-sec .dot{width:8px;height:8px;border-radius:50%;background:var(--success)}
+.of-sec .cnt{font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--card2);color:var(--muted)}
+.of-feat{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 16px;margin-bottom:22px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.of-feat .ocard{min-width:290px;max-width:290px;scroll-snap-align:start}
+.of-feat .ocard::before{content:"★ Featured";position:absolute;top:-1px;right:14px;font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:4px 10px;border-radius:0 0 9px 9px;background:linear-gradient(120deg,#8B5CF6,#EC4899);color:#fff}
+.of-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.ocard{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg,18px);padding:16px;display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease);animation:ofUp .45s var(--ease) both;outline:none}
+.ocard:hover,.ocard:focus-visible{transform:translateY(-4px);box-shadow:0 18px 44px -14px rgba(0,0,0,.22);border-color:var(--border2)}
+.ocard:focus-visible{border-color:var(--text)}
+[data-theme="dark"] .ocard{box-shadow:0 6px 24px -10px rgba(0,0,0,.5)}
+[data-theme="dark"] .ocard:hover{box-shadow:0 22px 54px -16px rgba(0,0,0,.75)}
+.oc-top{display:flex;align-items:center;gap:10px}
+.oc-logo{width:42px;height:42px;border-radius:12px;overflow:hidden;flex-shrink:0;background:var(--card2);border:1px solid var(--border);display:grid;place-items:center;font-size:15px;font-weight:800;color:var(--text)}
+.oc-logo img{width:100%;height:100%;object-fit:contain;background:#fff}
+.oc-merch{flex:1;min-width:0}
+.oc-mname{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.oc-verified{display:inline-flex;color:#3B82F6}
+.oc-net{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2)}
+.oc-acts{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--muted2);display:grid;place-items:center;cursor:pointer;transition:all var(--t)}
+.icon-btn:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px)}
+.icon-btn.heart.on{color:#EF4444;border-color:#EF4444;background:rgba(239,68,68,.08)}
+.icon-btn.heart.on svg{fill:#EF4444}
+.oc-title{font-size:14.5px;font-weight:800;letter-spacing:-.01em;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.oc-desc{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.oc-badges{display:flex;gap:6px;flex-wrap:wrap}
+.obadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--card2);border:1px solid var(--border);color:var(--muted)}
+.obadge.type{background:rgba(139,92,246,.1);border-color:transparent;color:#8B5CF6}
+.obadge.coupon{background:var(--success-bg);border-color:transparent;color:var(--success-deep)}
+.obadge.exp{background:var(--warning-bg);border-color:transparent;color:var(--warning);display:inline-flex;gap:4px;align-items:center}
+.obadge.exp.urgent{background:rgba(239,68,68,.1);color:#EF4444}
+.obadge.expired{background:rgba(239,68,68,.1);border-color:transparent;color:#EF4444}
+.oc-ai{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:14px;background:linear-gradient(120deg,rgba(139,92,246,.09),rgba(236,72,153,.07));border:1px solid rgba(139,92,246,.18)}
+.oc-ai .robo{font-size:15px}
+.oc-ai .lbl{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:linear-gradient(120deg,#8B5CF6,#EC4899);-webkit-background-clip:text;background-clip:text;color:transparent}
+.oc-ai .score{font-size:15px;font-weight:900;letter-spacing:-.02em;margin-left:auto}
+.oc-ai .verdict{font-size:10.5px;font-weight:700;color:var(--muted)}
+.oc-ai .bar{flex:1;height:5px;border-radius:99px;background:var(--border);overflow:hidden;min-width:40px}
+.oc-ai .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8B5CF6,#EC4899);transform-origin:left;transition:width 1s var(--ease)}
+.oc-cta{display:flex;gap:8px;align-items:stretch;margin-top:auto}
+.oc-code{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:0 12px;min-height:40px;border:1.5px dashed var(--border2);border-radius:12px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--text);background:var(--card2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oc-copy{min-height:40px;padding:0 16px;border-radius:12px;background:var(--btn-bg);color:var(--btn-fg);font-size:12px;font-weight:800;letter-spacing:.04em;cursor:pointer;border:0;transition:all var(--t);flex-shrink:0}
+.oc-copy:hover{transform:translateY(-1px)}
+.oc-copy.copied{background:var(--success-deep,#059669);color:#fff}
+.oc-claim{flex:1;min-height:40px;border-radius:12px;background:var(--btn-bg);color:var(--btn-fg);font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;transition:all var(--t)}
+.oc-claim:hover{transform:translateY(-1px)}
+.of-skel{border-radius:var(--r-lg,18px);border:1px solid var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;position:relative}
+.of-skel::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);animation:ofShimmer 1.4s infinite;transform:translateX(-100%)}
+[data-theme="dark"] .of-skel::after{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.06) 50%,transparent 70%)}
+.of-skel .b{background:var(--border);border-radius:8px}
+@keyframes ofShimmer{to{transform:translateX(100%)}}
+.of-load{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--muted);padding:10px 14px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.of-load .bar{flex:1;height:6px;border-radius:99px;background:var(--border);overflow:hidden}
+.of-load .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8B5CF6,#EC4899);transition:width .4s var(--ease)}
+.of-load.hide{display:none}
+.of-modal{position:fixed;inset:0;z-index:600;display:none;align-items:flex-end;justify-content:center;padding:0}
+.of-modal.open{display:flex}
+.of-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);animation:ofFade .25s var(--ease) both}
+.of-modal-card{position:relative;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 22px calc(24px + var(--sab,0px));animation:ofSlideUp .32s var(--ease) both;box-shadow:var(--shadow-lift)}
+@media(min-width:640px){
+  .of-modal{align-items:center;padding:24px}
+  .of-modal-card{border-radius:24px;animation:ofScale .28s var(--ease) both}
+}
+.of-modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card2);color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:all var(--t)}
+.of-modal-close:hover{color:var(--text)}
+.of-share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.of-share-btn{flex:1;min-width:110px;min-height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all var(--t)}
+.of-share-btn:hover{border-color:var(--border2);transform:translateY(-1px)}
+.of-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.of-empty h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
+@keyframes ofUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ofFade{from{opacity:0}to{opacity:1}}
+@keyframes ofSlideUp{from{opacity:0;transform:translateY(48px)}to{opacity:1;transform:none}}
+@keyframes ofScale{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@media(max-width:600px){
+  .of-wrap{padding:18px 14px 120px}
+  .of-grid{grid-template-columns:1fr}
+  .of-feat .ocard{min-width:82vw;max-width:82vw}
+}
+@media(prefers-reduced-motion:reduce){
+  .ocard,.of-stat,.of-modal-card,.of-modal-bg{animation:none!important;transition:none!important}
+  .of-skel::after{animation:none}
+  .oc-ai .bar i{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div id="toastArea" aria-live="polite"></div>
+<div class="overlay" id="overlay"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main">
+    <header class="top">
+      <div class="top-q">
+        <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <span>Offers</span>
+      </div>
+      <div class="status"><span class="sdot online" id="sdot"></span><span id="slabel">Live</span></div>
+    </header>
+
+    <div class="thread">
+      <div class="of-wrap">
+
+        <div class="of-head">
+          <div>
+            <h1>AI-Curated <span class="grad-text">Offers</span></h1>
+            <p>Live coupons &amp; deals from verified brands — every offer scored by Retzo AI.</p>
+          </div>
+          <span class="of-cache" id="cacheBadge" role="status">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M9 9a9 9 0 0 1 11.5 1M5 12.5a13 13 0 0 1 4-2.7M12 20h.01"/></svg>
+            Offline Data
+          </span>
+        </div>
+
+        <div class="of-stats" id="offerStats" aria-label="Offer statistics"></div>
+
+        <div class="of-load" id="loadBar">
+          <span id="loadText">Fetching all offers…</span>
+          <div class="bar"><i id="loadFill" style="width:0%"></i></div>
+          <span id="loadCount">0</span>
+        </div>
+
+        <div class="of-toolbar">
+          <label class="of-search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="offerSearch" type="search" placeholder="Search offers, brands, coupons…" autocomplete="off" aria-label="Search offers">
+          </label>
+          <button class="of-chip" id="savedToggle" aria-pressed="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>
+            Saved
+          </button>
+        </div>
+
+        <div class="of-chiprow" id="merchChips" role="tablist" aria-label="Filter by merchant"></div>
+
+        <section id="featuredWrap" style="display:none">
+          <div class="of-sec"><span class="dot" style="background:#8B5CF6"></span>Featured Offers</div>
+          <div class="of-feat" id="featuredRow"></div>
+        </section>
+
+        <div class="of-sec"><span class="dot"></span>All Offers <span class="cnt" id="gridCount">0</span></div>
+        <div class="of-grid" id="offerGrid"></div>
+
+        <div class="of-empty" id="offerEmpty" style="display:none">
+          <h3>No offers found</h3>
+          <p>Try a different search or clear your filters.</p>
+        </div>
+
+        <div class="of-empty" id="offerError" style="display:none">
+          <h3>Couldn't load offers</h3>
+          <p style="margin-bottom:16px">Check your connection and try again.</p>
+          <button class="of-chip on" id="retryBtn" style="margin:0 auto">Retry</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="of-modal" id="offerModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="of-modal-bg" data-close></div>
+  <div class="of-modal-card" id="modalCard"></div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+(() => {
+'use strict';
+
+const { $, $$, esc, cssEsc, debounce, toast, mountSidebar, lazyImages } = KB;
+
+const OFFERS_API = 'https://api.viscocompare.online/api/offers';
+const CACHE_KEY  = 'kb_offers_cache_v3';        // bumped — logo strategy changed
+const SAVED_KEY  = 'savedOffers';
+const DAY = 864e5;
+const PER_PAGE = 20;
+const CONCURRENCY = 6;
+
+/* ── Network names to hide from display only (offers themselves still show) ── */
+const HIDDEN_NETWORK_NAMES = ['cuelinks', 'cue links', 'cue-links'];
+
+const state = { offers: [], merchant: 'all', query: '', savedOnly: false };
+
+/* ============================================================
+   REAL STORE LOGOS — known merchants get their actual brand
+   logo instead of a favicon guess. Add more as needed; key is
+   lowercased merchant name (partial match), value is a direct
+   logo image URL. Checked first, before any external lookup.
+============================================================ */
+const STORE_LOGOS = {
+  amazon: 'https://assets.myhubble.money/brand-assets/tile-images-wp/amazon-tile.webp',
+  flipkart: 'https://assets.myhubble.money/brand-assets/tile-images-wp/flipkart-tile.webp',
+  myntra: 'https://assets.myhubble.money/brand-assets/tile-images-wp/myntra-tile.webp',
+  ajio: 'https://assets.myhubble.money/brand-assets/tile-images-wp/ajio-tile.webp',
+  nykaa: 'https://assets.myhubble.money/brand-assets/tile-images-wp/nykaa-fashion-tile.webp',
+  blinkit: 'https://assets.myhubble.money/brand-assets/tile-images-wp/blinkit-tile.webp',
+  zepto: 'https://assets.myhubble.money/brand-assets/icon-images/Icon%20-%20Zepto.png',
+  decathlon: 'https://assets.myhubble.money/brand-assets/icon-images/Icon_Decathlon_1405.png',
+};
+function knownLogo(name){
+  const n = (name||'').toLowerCase();
+  const key = Object.keys(STORE_LOGOS).find(k => n.includes(k));
+  return key ? STORE_LOGOS[key] : '';
+}
+
+function merchantName(o){
+  const m = o.merchants || o.merchant;
+  return (m && (m.name || m.title || m.merchant_name)) ||
+    o.merchant_name || o.store || o.store_name ||
+    o.advertiser_name || o.brand || o.campaign_name || '';
+}
+function merchantSlug(o){
+  const m = o.merchants || o.merchant || {};
+  return m.slug || o.merchant_slug || '';
+}
+function merchantLogo(o){
+  const m = o.merchants || o.merchant || {};
+  return m.logo || m.logo_url || m.image || m.icon ||
+    o.merchant_logo || o.logo || o.image || '';
+}
+function networkOf(o){
+  return o.affiliate_network || o.network || '';
+}
+/* Display-only: returns '' for networks we don't want to name on screen
+   (e.g. cuelinks), so the badge/label just doesn't render. The offer
+   itself is never filtered out — only this label is suppressed. */
+function displayNetwork(o){
+  const n = networkOf(o);
+  const nl = (n || '').toLowerCase();
+  if(HIDDEN_NETWORK_NAMES.some(x => nl.includes(x))) return '';
+  return n;
+}
+
+/* Real destination domain, unwrapped from redirect trackers like
+   linksredirect.com/?url=<encoded real url>. This is the domain we
+   use for real-logo lookups (Clearbit / favicons), since the API's
+   merchant.logo field is unreliable (frequently null). */
+function merchantDomain(o){
+  const t = o.tracking_url;
+  if(t){
+    try{
+      const u = new URL(t);
+      const inner = u.searchParams.get('url');
+      const real = inner ? new URL(inner) : u;
+      const host = real.hostname.replace(/^www\./,'');
+      if(host) return host;
+    }catch{}
+  }
+  const slug = merchantSlug(o);
+  if(slug) return `${slug}.com`;
+  return '';
+}
+
+/* Ordered list of candidate logo image URLs for an offer, best-first:
+   1. Manually curated real brand asset (STORE_LOGOS)
+   2. Whatever the API itself supplies (rare — usually null)
+   3. Clearbit Logo API — real company logo pulled from their domain
+   4. Google favicon — last resort, always resolves to *something* */
+function logoSources(o){
+  const name = merchantName(o) || 'Store';
+  const out = [];
+  const known = knownLogo(name);
+  if(known) out.push(known);
+  const apiLogo = merchantLogo(o);
+  if(apiLogo) out.push(apiLogo);
+  const domain = merchantDomain(o);
+  if(domain){
+    out.push(`https://logo.clearbit.com/${domain}?size=128`);
+    out.push(`https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`);
+  }
+  return out;
+}
+
+/* Global fallback handler wired to <img onerror>. Walks the candidate
+   list stored on the element until one loads; if all fail, swaps the
+   image out for the merchant's initials. */
+window.__kbLogoErr = function(img){
+  try{
+    const srcs = JSON.parse(img.getAttribute('data-srcs') || '[]');
+    let idx = parseInt(img.getAttribute('data-idx') || '0', 10) + 1;
+    if(idx < srcs.length){
+      img.setAttribute('data-idx', String(idx));
+      img.src = srcs[idx];
+      return;
+    }
+  }catch{}
+  const wrap = img.parentNode;
+  if(wrap) wrap.textContent = wrap.getAttribute('data-init') || '';
+};
+
+/* ── Saved offers (localStorage) ── */
+const getSaved = () => { try{ return JSON.parse(localStorage.getItem(SAVED_KEY)||'[]'); }catch{ return []; } };
+const setSaved = a => localStorage.setItem(SAVED_KEY, JSON.stringify(a));
+const isSaved  = id => getSaved().includes(String(id));
+function toggleSaved(id){
+  id = String(id);
+  const a = getSaved(), i = a.indexOf(id);
+  if(i > -1) a.splice(i,1); else a.unshift(id);
+  setSaved(a);
+  return i === -1;
+}
+
+/* ── Cache ── */
+function readCache(){
+  try{
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if(c && Array.isArray(c.offers)) return c;
+  }catch{}
+  return null;
+}
+function writeCache(offers){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), offers })); }catch{}
+}
+
+/* ── AI Deal Score (deterministic per offer) ── */
+function seededJitter(id){
+  let h = 0; const s = String(id);
+  for(let i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+  return (h % 20) / 100;
+}
+function aiScore(o){
+  let s = 8.5;
+  if(o.coupon_code) s += 0.4;
+  const ageDays = o.created_at ? (Date.now() - new Date(o.created_at)) / DAY : 60;
+  if(ageDays <= 3) s += 0.5; else if(ageDays <= 7) s += 0.35; else if(ageDays <= 30) s += 0.15;
+  const leftDays = o.expiry_date ? (new Date(o.expiry_date) - Date.now()) / DAY : 30;
+  if(leftDays > 14) s += 0.4; else if(leftDays > 7) s += 0.25; else if(leftDays > 0) s += 0.1;
+  s += seededJitter(o.id);
+  return Math.min(10, Math.round(s * 10) / 10);
+}
+const aiVerdict = s => s >= 9.5 ? 'Excellent Deal' : s >= 9 ? 'Great Deal' : 'Good Deal';
+
+/* ── Countdown ── */
+function countdownText(exp){
+  const ms = new Date(exp) - Date.now();
+  if(isNaN(ms)) return '';
+  if(ms <= 0) return 'Expired';
+  const d = Math.floor(ms / DAY);
+  const h = Math.floor((ms % DAY) / 36e5);
+  const m = Math.floor((ms % 36e5) / 6e4);
+  return d > 0 ? `${d}d ${h}h ${m}m` : h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+function tickCountdowns(){
+  $$('.cd[data-exp]').forEach(el => {
+    const txt = countdownText(el.dataset.exp);
+    if(el.dataset.txt !== txt){ el.dataset.txt = txt; el.textContent = txt; }
+  });
+}
+setInterval(tickCountdowns, 60000);
+
+/* ── Merchant logo (real-logo cascade) ── */
+function logoHTML(o){
+  const name = merchantName(o) || 'Store';
+  const init = name.replace(/[^a-zA-Z0-9 ]/g,'').trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || 'S';
+  const sources = logoSources(o);
+  if(!sources.length) return `<div class="oc-logo" aria-hidden="true" data-init="${esc(init)}">${esc(init)}</div>`;
+  const srcsJson = esc(JSON.stringify(sources));
+  return `<div class="oc-logo" aria-hidden="true" data-init="${esc(init)}"><img data-src="${esc(sources[0])}"
+    data-srcs='${srcsJson}' data-idx="0" alt="" loading="lazy"
+    referrerpolicy="no-referrer" onerror="__kbLogoErr(this)"></div>`;
+}
+
+/* ── Badges / card ── */
+const V_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5 15 4l3.9-.3.6 3.9 3.3 2.1-1.8 3.5 1.8 3.5-3.3 2.1-.6 3.9L15 22.4 12 24.9 9 22.4l-3.9.3-.6-3.9-3.3-2.1L3 13.2 1.2 9.7l3.3-2.1.6-3.9L9 4z" opacity=".95"/><path d="M10.6 15.5 7.4 12.3l1.4-1.4 1.8 1.8 4.6-4.6 1.4 1.4z" fill="var(--card,#fff)"/></svg>';
+const HEART = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>';
+const SHARE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5"/></svg>';
+
+function expiryBadge(o){
+  if(!o.expiry_date) return '';
+  const left = new Date(o.expiry_date) - Date.now();
+  if(isNaN(left)) return '';
+  if(left <= 0) return `<span class="obadge expired">Expired</span>`;
+  const urgent = left < 2 * DAY;
+  return `<span class="obadge exp ${urgent?'urgent':''}">⏳ <span class="cd" data-exp="${esc(o.expiry_date)}">${countdownText(o.expiry_date)}</span></span>`;
+}
+
+function cardHTML(o, i){
+  const name = merchantName(o) || 'Store';
+  const net = displayNetwork(o);
+  const score = aiScore(o);
+  const pct = Math.round(((score - 8) / 2) * 100);
+  return `
+  <article class="ocard" data-id="${esc(o.id)}" tabindex="0" role="button"
+    aria-label="${esc(name + ': ' + (o.title||''))}" style="animation-delay:${Math.min(i,10)*50}ms">
+    <div class="oc-top">
+      ${logoHTML(o)}
+      <div class="oc-merch">
+        <div class="oc-mname">${esc(name)} <span class="oc-verified" title="Verified merchant">${V_ICON}</span></div>
+        ${net?`<div class="oc-net">${esc(net)}</div>`:''}
+      </div>
+      <div class="oc-acts">
+        <button class="icon-btn heart ${isSaved(o.id)?'on':''}" data-act="save" aria-label="Save offer" aria-pressed="${isSaved(o.id)}">${HEART}</button>
+        <button class="icon-btn" data-act="share" aria-label="Share offer">${SHARE}</button>
+      </div>
+    </div>
+
+    <h3 class="oc-title">${esc(o.title||'')}</h3>
+    ${o.description?`<p class="oc-desc">${esc(o.description)}</p>`:''}
+
+    <div class="oc-badges">
+      ${o.offer_type?`<span class="obadge type">${esc(o.offer_type)}</span>`:''}
+      ${o.coupon_code?`<span class="obadge coupon">Coupon</span>`:''}
+      ${expiryBadge(o)}
+    </div>
+
+    <div class="oc-ai" aria-label="Retzo AI deal score ${score} out of 10">
+      <span class="robo" aria-hidden="true">🤖</span>
+      <div style="min-width:0">
+        <div class="lbl">Retzo AI</div>
+        <div class="verdict">${aiVerdict(score)}</div>
+      </div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="score">${score.toFixed(1)}<span style="font-size:10px;font-weight:700;color:var(--muted2)"> / 10</span></div>
+    </div>
+
+    <div class="oc-cta">
+      ${o.coupon_code ? `
+        <span class="oc-code" title="${esc(o.coupon_code)}">${esc(o.coupon_code)}</span>
+        <button class="oc-copy" data-act="copy" data-code="${esc(o.coupon_code)}" aria-label="Copy coupon code">COPY</button>
+      ` : `
+        <a class="oc-claim" href="${esc(o.tracking_url||'#')}" target="_blank" rel="noopener noreferrer nofollow" data-act="claim">
+          Claim Deal
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+      `}
+    </div>
+  </article>`;
+}
+
+/* ── Filtering / sorting ── */
+function isLive(o){
+  if((o.status||'').toLowerCase() === 'inactive') return false;
+  if(o.expiry_date && new Date(o.expiry_date) < Date.now()) return false;
+  return true;
+}
+function filtered(){
+  const q = state.query.toLowerCase();
+  const saved = state.savedOnly ? new Set(getSaved()) : null;
+  return state.offers.filter(o => {
+    if(!isLive(o)) return false;
+    if(saved && !saved.has(String(o.id))) return false;
+    if(state.merchant !== 'all' && merchantName(o) !== state.merchant) return false;
+    if(q){
+      const hay = [merchantName(o), o.title, o.description, o.coupon_code].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+function featuredOffers(){
+  return state.offers
+    .filter(o => isLive(o) && o.expiry_date)
+    .sort((a,b) =>
+      (new Date(a.expiry_date) - new Date(b.expiry_date)) ||
+      (new Date(b.created_at||0) - new Date(a.created_at||0)))
+    .slice(0,5);
+}
+function featuredVisible(){
+  return !state.query && state.merchant === 'all' && !state.savedOnly;
+}
+
+/* ── Renderers ── */
+function renderStats(){
+  const live = state.offers.filter(isLive);
+  const now = Date.now();
+  const endToday = new Date(); endToday.setHours(23,59,59,999);
+  const brandCount = new Set(live.map(merchantName).filter(Boolean)).size;
+  const items = [
+    { v: live.length, l: 'Total Offers' },
+    { v: live.filter(o=>o.coupon_code).length, l: 'Coupons' },
+    { v: live.filter(o=>!o.coupon_code).length, l: 'Deals' },
+    { v: brandCount, l: 'Brands' },
+    { v: live.filter(o=>o.expiry_date && new Date(o.expiry_date) <= endToday).length, l: 'Expiring Today', hot:1 },
+    { v: live.filter(o=>o.expiry_date && new Date(o.expiry_date) - now <= 7*DAY).length, l: 'Expiring This Week', hot:1 },
+  ];
+  $('#offerStats').innerHTML = items.map((it,i)=>
+    `<div class="of-stat ${it.hot?'hot':''}" style="animation-delay:${i*50}ms"><b>${it.v}</b><span>${it.l}</span></div>`).join('');
+}
+
+function renderChips(){
+  const counts = {};
+  state.offers.filter(isLive).forEach(o => {
+    const n = merchantName(o);
+    if(n) counts[n] = (counts[n]||0) + 1;
+  });
+  const names = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  $('#merchChips').innerHTML =
+    `<button class="of-chip ${state.merchant==='all'?'on':''}" data-m="all" role="tab" aria-selected="${state.merchant==='all'}">All <span class="cnt">${state.offers.filter(isLive).length}</span></button>` +
+    names.map(n=>`
+      <button class="of-chip ${state.merchant===n?'on':''}" data-m="${esc(n)}" role="tab" aria-selected="${state.merchant===n}">
+        ${esc(n)} <span class="cnt">${counts[n]}</span>
+      </button>`).join('');
+}
+
+function renderFeatured(){
+  const wrap = $('#featuredWrap');
+  if(!featuredVisible()){ wrap.style.display = 'none'; return; }
+  const feats = featuredOffers();
+  if(!feats.length){ wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  $('#featuredRow').innerHTML = feats.map((o,i)=>cardHTML(o,i)).join('');
+  lazyImages($('#featuredRow'));
+}
+
+function renderGrid(){
+  let list = filtered();
+  if(featuredVisible()){
+    const featIds = new Set(featuredOffers().map(o=>String(o.id)));
+    list = list.filter(o => !featIds.has(String(o.id)));
+  }
+  $('#gridCount').textContent = list.length;
+  $('#offerEmpty').style.display = list.length ? 'none' : '';
+  $('#offerGrid').innerHTML = list.map((o,i)=>cardHTML(o,i)).join('');
+  lazyImages($('#offerGrid'));
+  tickCountdowns();
+}
+
+function renderSkeletons(){
+  $('#offerStats').innerHTML = Array.from({length:6},()=>'<div class="of-skel" style="height:66px"></div>').join('');
+  $('#offerGrid').innerHTML = Array.from({length:6},()=>`
+    <div class="of-skel">
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="b" style="width:42px;height:42px;border-radius:12px"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div class="b" style="height:10px;width:45%"></div>
+          <div class="b" style="height:8px;width:28%"></div>
+        </div>
+      </div>
+      <div class="b" style="height:12px;width:88%"></div>
+      <div class="b" style="height:10px;width:70%"></div>
+      <div class="b" style="height:40px;border-radius:14px"></div>
+      <div class="b" style="height:40px;border-radius:12px"></div>
+    </div>`).join('');
+}
+
+function renderAll(){
+  renderStats();
+  renderChips();
+  renderFeatured();
+  renderGrid();
+}
+
+/* ── Copy / share helpers ── */
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch{
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try{ ok = document.execCommand('copy'); }catch{}
+    ta.remove(); return ok;
+  }
+}
+function flashCopied(btn){
+  if(btn._t) return;
+  const orig = btn.textContent;
+  btn.textContent = '✓ COPIED';
+  btn.classList.add('copied');
+  btn._t = setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); btn._t = null; }, 2000);
+}
+function offerLink(o){ return o.tracking_url || (location.origin + location.pathname + '#offer-' + o.id); }
+function shareText(o){
+  const code = o.coupon_code ? ` — Code: ${o.coupon_code}` : '';
+  return `${merchantName(o)}: ${o.title||''}${code}`;
+}
+
+async function shareOffer(o){
+  const url = offerLink(o), text = shareText(o);
+  if(navigator.share){
+    try{ await navigator.share({ title:'KrazyBuy Offer', text, url }); return; }
+    catch(e){ if(e.name === 'AbortError') return; }
+  }
+  openModal(o, true);
+}
+
+/* ── Modal ── */
+let lastFocus = null;
+function findOffer(id){ return state.offers.find(o=>String(o.id)===String(id)); }
+
+function openModal(o, focusShare=false){
+  const name = merchantName(o) || 'Store';
+  const net = displayNetwork(o);
+  const score = aiScore(o);
+  const url = offerLink(o), text = shareText(o);
+  lastFocus = document.activeElement;
+  $('#modalCard').innerHTML = `
+    <button class="of-modal-close" data-close aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="oc-top" style="margin-bottom:12px">
+      ${logoHTML(o)}
+      <div class="oc-merch">
+        <div class="oc-mname">${esc(name)} <span class="oc-verified">${V_ICON}</span></div>
+        ${net?`<div class="oc-net">${esc(net)}</div>`:''}
+      </div>
+    </div>
+    <h2 id="modalTitle" style="font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.35;margin-bottom:8px">${esc(o.title||'')}</h2>
+    ${o.description?`<p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">${esc(o.description)}</p>`:''}
+    <div class="oc-badges" style="margin-bottom:12px">
+      ${o.offer_type?`<span class="obadge type">${esc(o.offer_type)}</span>`:''}
+      ${o.coupon_code?`<span class="obadge coupon">Coupon</span>`:''}
+      ${expiryBadge(o)}
+    </div>
+    <div class="oc-ai" style="margin-bottom:14px">
+      <span class="robo">🤖</span>
+      <div><div class="lbl">Retzo AI</div><div class="verdict">${aiVerdict(score)}</div></div>
+      <div class="bar"><i style="width:${Math.round(((score-8)/2)*100)}%"></i></div>
+      <div class="score">${score.toFixed(1)}<span style="font-size:10px;font-weight:700;color:var(--muted2)"> / 10</span></div>
+    </div>
+    ${o.coupon_code?`
+    <div class="oc-cta" style="margin-bottom:10px">
+      <span class="oc-code">${esc(o.coupon_code)}</span>
+      <button class="oc-copy" data-act="copy" data-code="${esc(o.coupon_code)}" aria-label="Copy coupon code">COPY</button>
+    </div>`:''}
+    ${o.tracking_url?`
+    <a class="oc-claim" href="${esc(o.tracking_url)}" target="_blank" rel="noopener noreferrer nofollow" style="min-height:46px">
+      Claim Offer
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+    </a>`:''}
+    <div class="of-share-row" id="modalShare">
+      <button class="of-share-btn" data-share="copy">🔗 Copy Link</button>
+      <a class="of-share-btn" href="https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      <a class="of-share-btn" href="https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}" target="_blank" rel="noopener noreferrer">Telegram</a>
+      ${navigator.share?'<button class="of-share-btn" data-share="native">Share…</button>':''}
+    </div>`;
+  $('#offerModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  tickCountdowns();
+  lazyImages($('#modalCard'));
+  const target = focusShare ? $('#modalShare .of-share-btn') : $('.of-modal-close');
+  target?.focus();
+
+  $('#modalCard').onclick = async e => {
+    const copyBtn = e.target.closest('[data-act="copy"]');
+    if(copyBtn){
+      if(await copyText(copyBtn.dataset.code)){ flashCopied(copyBtn); toast('success','Coupon copied', copyBtn.dataset.code); }
+      return;
+    }
+    const sh = e.target.closest('[data-share]');
+    if(!sh) return;
+    if(sh.dataset.share === 'copy'){ if(await copyText(url)) toast('success','Link copied'); }
+    else if(sh.dataset.share === 'native'){ try{ await navigator.share({ title:'KrazyBuy Offer', text, url }); }catch{} }
+  };
+}
+function closeModal(){
+  $('#offerModal').classList.remove('open');
+  document.body.style.overflow = '';
+  lastFocus?.focus?.();
+}
+$('#offerModal').addEventListener('click', e => { if(e.target.closest('[data-close]')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('#offerModal').classList.contains('open')) closeModal(); });
+
+/* ── Event delegation (cards: featured + grid share the handler) ── */
+async function onCardEvent(e){
+  const card = e.target.closest('.ocard');
+  if(!card) return;
+  const o = findOffer(card.dataset.id);
+  if(!o) return;
+
+  const act = e.target.closest('[data-act]')?.dataset.act;
+  if(act === 'copy'){
+    e.stopPropagation();
+    const btn = e.target.closest('[data-act="copy"]');
+    if(await copyText(btn.dataset.code)){ flashCopied(btn); toast('success','Coupon copied', btn.dataset.code); }
+    return;
+  }
+  if(act === 'save'){
+    e.stopPropagation();
+    const added = toggleSaved(o.id);
+    $$(`.ocard[data-id="${cssEsc(String(o.id))}"] .icon-btn.heart`).forEach(b=>{
+      b.classList.toggle('on', added); b.setAttribute('aria-pressed', String(added));
+    });
+    toast(added?'success':'info', added?'Offer saved':'Offer removed', o.title||'');
+    if(state.savedOnly) renderGrid();
+    return;
+  }
+  if(act === 'share'){ e.stopPropagation(); shareOffer(o); return; }
+  if(act === 'claim'){ e.stopPropagation(); return; }
+
+  openModal(o);
+}
+['#offerGrid','#featuredRow'].forEach(sel => {
+  $(sel).addEventListener('click', onCardEvent);
+  $(sel).addEventListener('keydown', e => {
+    if((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('ocard')){
+      e.preventDefault();
+      const o = findOffer(e.target.dataset.id);
+      if(o) openModal(o);
+    }
+  });
+});
+
+/* ── Search / filter events ── */
+$('#offerSearch').addEventListener('input', debounce(e => {
+  state.query = e.target.value.trim();
+  renderFeatured(); renderGrid();
+}, 180));
+
+$('#merchChips').addEventListener('click', e => {
+  const chip = e.target.closest('.of-chip'); if(!chip) return;
+  state.merchant = chip.dataset.m;
+  renderChips(); renderFeatured(); renderGrid();
+});
+
+$('#savedToggle').addEventListener('click', () => {
+  state.savedOnly = !state.savedOnly;
+  $('#savedToggle').classList.toggle('on', state.savedOnly);
+  $('#savedToggle').setAttribute('aria-pressed', String(state.savedOnly));
+  renderFeatured(); renderGrid();
+});
+
+$('#retryBtn').addEventListener('click', () => {
+  $('#offerError').style.display = 'none';
+  renderSkeletons();
+  fetchAllOffers();
+});
+
+/* ============================================================
+   MULTI-PAGE LOADER
+   Fetches page 1 first to learn total count, then fetches all
+   remaining pages in throttled parallel batches. Aggregates
+   everything into state.offers so search covers every offer.
+============================================================ */
+async function fetchPage(page){
+  const res = await fetch(`${OFFERS_API}?page=${page}`, { headers:{ Accept:'application/json' }, cache:'no-store' });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if(!json || !json.success || !Array.isArray(json?.data?.offers)) throw new Error('Bad response shape');
+  return { offers: json.data.offers, total: json.data.total || json.data.offers.length };
+}
+
+function setLoad(pct, count){
+  $('#loadFill').style.width = pct + '%';
+  $('#loadCount').textContent = count;
+}
+
+async function fetchAllOffers(){
+  const loadBar = $('#loadBar');
+  loadBar.classList.remove('hide');
+  setLoad(0, 0);
+
+  try{
+    /* Page 1 — gives us total + first batch */
+    const first = await fetchPage(1);
+    const all = [...first.offers];
+    const totalPages = Math.max(1, Math.ceil(first.total / PER_PAGE));
+    setLoad(Math.round(100 / totalPages), all.length);
+
+    /* Fetch remaining pages in small parallel batches */
+    for(let start = 2; start <= totalPages; start += CONCURRENCY){
+      const batch = [];
+      for(let p = start; p < Math.min(start + CONCURRENCY, totalPages + 1); p++){
+        batch.push(fetchPage(p).then(r => r.offers).catch(() => []));
+      }
+      const results = await Promise.all(batch);
+      results.forEach(arr => all.push(...arr));
+      setLoad(Math.round((all.length / first.total) * 100), all.length);
+    }
+
+    /* De-duplicate by id (defensive — pages shouldn't overlap) */
+    const seen = new Set();
+    const deduped = [];
+    for(const o of all){ if(!seen.has(o.id)){ seen.add(o.id); deduped.push(o); } }
+
+    state.offers = deduped;
+    writeCache(deduped);
+    $('#cacheBadge').classList.remove('show');
+    $('#offerError').style.display = 'none';
+    $('#slabel').textContent = 'Live';
+    $('#sdot').className = 'sdot online';
+    loadBar.classList.add('hide');
+    renderAll();
+
+    /* Deep link: offers.html#offer-<id> */
+    const dl = location.hash.match(/^#offer-(.+)$/);
+    if(dl){ const o = findOffer(decodeURIComponent(dl[1])); if(o) openModal(o); }
+  }catch(err){
+    loadBar.classList.add('hide');
+    if(state.offers.length){
+      $('#cacheBadge').classList.add('show');
+      $('#slabel').textContent = 'Offline';
+      $('#sdot').className = 'sdot err';
+      toast('warning','Showing cached offers','Live refresh failed — check your connection.');
+    } else {
+      $('#offerStats').innerHTML = '';
+      $('#offerGrid').innerHTML = '';
+      $('#offerError').style.display = '';
+      $('#slabel').textContent = 'Error';
+      $('#sdot').className = 'sdot err';
+    }
+  }
+}
+
+function init(){
+  mountSidebar('offers');
+  const cached = readCache();
+  if(cached && cached.offers.length){
+    state.offers = cached.offers;
+    renderAll();
+  } else {
+    renderSkeletons();
+  }
+  fetchAllOffers();
+}
+init();
+})();
+</script>
+</body>
+</html>
