@@ -1,12 +1,13 @@
 /* ============================================================
-   KRAZYBUY — SHARED UTILITIES v3
+   KRAZYBUY — SHARED UTILITIES v3.1
    auth · wishlist · history · toast · nav · theme · network
    + smart Amazon URL normalization (AI-first pipeline)
 ============================================================ */
 window.KB = (() => {
 'use strict';
 
-const API_BASE = window.__KB_API__ || atob('aHR0cHM6Ly9nYXRld2F5LnZpc2NvY29tcGFyZS5vbmxpbmU=');
+/* Product-comparison gateway (index.html / jobs / auth / favorites) */
+const API_BASE = window.__KB_API__ || 'https://gateway.viscocompare.online';
 
 /* ── Theme ── */
 const getTheme = () => localStorage.getItem('kb_theme') || 'light';
@@ -26,42 +27,17 @@ const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).repla
 const fmtPrice = n => { const x=Number(n); return (!x||isNaN(x)||x<=0) ? '—' : '₹'+x.toLocaleString('en-IN',{maximumFractionDigits:0}); };
 const debounce = (fn,ms=250)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
 
-/* ── Smart Amazon URL normalization ──
-   Extracts the ASIN from ANY Amazon URL format and returns a
-   clean canonical DP URL. Strips ref / tag / qid / dib / sr /
-   keywords / affiliate / tracking — everything.
-   Supported paths: /dp/ · /gp/product/ · /gp/aw/d/ · /product/
-   Non-Amazon input is returned unchanged. */
+/* ── Smart Amazon URL normalization ── */
 function normalizeAmazonUrl(input){
   if (!input) return input;
-
   input = String(input).trim();
-
   let url;
-  try{
-    url = new URL(input);
-  }catch{
-    return input;
-  }
-
-  const host = url.hostname
-    .toLowerCase()
-    .replace(/^www\./,'')
-    .replace(/^m\./,'');
-
-  if(!/^amazon\.[a-z.]+$/.test(host))
-    return input;
-
-  const m = url.pathname.match(
-    /(?:\/dp\/|\/gp\/product\/|\/gp\/aw\/d\/|\/product\/)([A-Z0-9]{10})/i
-  );
-
-  if(!m)
-    return input;
-
-  const asin = m[1].toUpperCase();
-
-  return `https://www.${host}/dp/${asin}`;
+  try{ url = new URL(input); }catch{ return input; }
+  const host = url.hostname.toLowerCase().replace(/^www\./,'').replace(/^m\./,'');
+  if(!/^amazon\.[a-z.]+$/.test(host)) return input;
+  const m = url.pathname.match(/(?:\/dp\/|\/gp\/product\/|\/gp\/aw\/d\/|\/product\/)([A-Z0-9]{10})/i);
+  if(!m) return input;
+  return `https://www.${host}/dp/${m[1].toUpperCase()}`;
 }
 
 function timeAgo(ts){
@@ -73,7 +49,6 @@ function timeAgo(ts){
   return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
 }
 
-/* Remove element with micro-animation, then run callback */
 function animateOut(el, cb){
   if (matchMedia('(prefers-reduced-motion:reduce)').matches){ cb(); return; }
   el.classList.add('removing');
@@ -131,7 +106,7 @@ async function authFetch(path, opts={}){
   return res;
 }
 
-/* ── Wishlist (with price-drop tracking) ── */
+/* ── Wishlist ── */
 const getWL = () => { try{ return JSON.parse(localStorage.getItem('kb_wishlist')||'[]'); }catch{ return []; } };
 const saveWL = w => localStorage.setItem('kb_wishlist', JSON.stringify(w));
 const inWL = id => getWL().some(x=>x.id===id);
@@ -143,7 +118,6 @@ function toggleWL(id,item){
     if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
     return false;
   }
-  /* ★ CHANGED: always store the clean canonical URL, never a tracking URL */
   if(item && item.url) item = { ...item, url: normalizeAmazonUrl(item.url) };
   if(item && item.query) item = { ...item, query: normalizeAmazonUrl(item.query) };
   w.unshift({ id, ...item, added:Date.now() });
@@ -155,7 +129,6 @@ function removeWL(id){
   saveWL(getWL().filter(x=>x.id!==id));
   if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
 }
-/* Call this whenever Retzo AI returns a fresh verified price for a saved product */
 function updateWLPrice(id, newPrice){
   const w=getWL(); const i=w.findIndex(x=>x.id===id);
   if(i<0 || !Number(newPrice)) return;
@@ -174,8 +147,8 @@ async function syncWL(){
       if(!ids.has(f.product_id)) local.push({
         id:f.product_id, title:f.title, image:f.image, price:f.price,
         store:f.store,
-        url:normalizeAmazonUrl(f.url),          /* ★ CHANGED: clean server data too */
-        query:normalizeAmazonUrl(f.query),      /* ★ CHANGED */
+        url:normalizeAmazonUrl(f.url),
+        query:normalizeAmazonUrl(f.query),
         added:new Date(f.created_at).getTime(),
       });
     });
@@ -183,12 +156,12 @@ async function syncWL(){
   }catch{}
 }
 
-/* ── History (always stores the NORMALIZED clean URL) ── */
+/* ── History ── */
 const getHist = () => { try{ return JSON.parse(localStorage.getItem('kb_hist')||'[]'); }catch{ return []; } };
 const saveHist = h => localStorage.setItem('kb_hist', JSON.stringify(h));
 
 function addHist(entry){
-  entry = { ...entry, q: normalizeAmazonUrl(entry.q) };   // never save 1000-char tracking URLs
+  entry = { ...entry, q: normalizeAmazonUrl(entry.q) };
   let h=getHist();
   const prev=h.find(x=>x.q.toLowerCase()===entry.q.toLowerCase());
   h=h.filter(x=>x.q.toLowerCase()!==entry.q.toLowerCase());
@@ -209,7 +182,6 @@ function toggleHistFav(q){
   if(i<0) return false;
   h[i].fav=!h[i].fav; saveHist(h); return h[i].fav;
 }
-/* Groups: Today · Yesterday · Last Week · Older */
 function groupHist(list){
   const now=new Date();
   const dayStart=d=>new Date(now.getFullYear(),now.getMonth(),now.getDate()-d).getTime();
@@ -232,24 +204,13 @@ function lazyImages(root=document){
 }
 
 /* ── Network monitor ── */
-function initNet(){
-  if(!$('#netBanner')){
-    const b=document.createElement('div');
-    b.id='netBanner'; b.className='net-banner'; b.setAttribute('role','status');
-    b.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M9 9a9 9 0 0 1 11.5 1M5 12.5a13 13 0 0 1 4-2.7M12 20h.01"/></svg> You’re offline — showing saved data';
-    document.body.appendChild(b);
-  }
-  const upd=()=>document.body.classList.toggle('offline', !navigator.onLine);
-  addEventListener('online', ()=>{ upd(); toast('success','Back online'); });
-  addEventListener('offline',()=>{ upd(); toast('warning','You’re offline','Cached wishlist & history still work.'); });
-  upd();
-}
-document.readyState==='loading' ? document.addEventListener('DOMContentLoaded',initNet) : initNet();
+
 
 /* ── Shared sidebar ── */
 const NAV_ICONS = {
   home:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
   chat:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-8 8H4l1.5-3.2A8 8 0 1 1 21 12z"/></svg>',
+  offers:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/><circle cx="8.5" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg>',
   wishlist:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>',
   history:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
   sun:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
@@ -278,6 +239,7 @@ function mountSidebar(active){
     <nav class="sb-nav">
       <a class="nav-item ${active==='home'?'active':''}" href="index.html">${NAV_ICONS.home} Home</a>
       <a class="nav-item ${active==='chat'?'active':''}" href="chat.html">${NAV_ICONS.chat} Retzo Chat</a>
+      <a class="nav-item ${active==='offers'?'active':''}" href="offers.html">${NAV_ICONS.offers} Offers</a>
       <a class="nav-item ${active==='wishlist'?'active':''}" href="wishlist.html">${NAV_ICONS.wishlist} Wishlist ${wlCount?`<span class="nav-badge">${wlCount}</span>`:''}</a>
       <a class="nav-item ${active==='history'?'active':''}" href="history.html">${NAV_ICONS.history} History</a>
     </nav>
@@ -314,7 +276,6 @@ function mountSidebar(active){
 
   if(user && getToken() && !window.__kbSynced){ window.__kbSynced=true; syncWL().then(()=>{}); }
 }
-
 
 function closeSidebar(){ $('#sidebar')?.classList.remove('open'); $('#overlay')?.classList.remove('active'); }
 
