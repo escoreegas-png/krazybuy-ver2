@@ -1,664 +1,1028 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>KrazyBuy — The Internet Doesn't Wait</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>KrazyBuy — Compare. Save. Done.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   KRAZYBUY × RETZO AI — 30s CINEMATIC FILM  ·  MOBILE CUT
-   Fixed 1080×1920 stage · scaled to fit any screen
-============================================================ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0A0A0A; --ink:#111111; --paper:#FAF7F2; --card:#FFFFFF;
-  --border:#E7E5E4; --muted:#9CA3AF; --muted2:#6B7280;
-  --success:#16A34A; --success-deep:#15803D;
+  --bg:#FAF7F2;
+  --card:#FFFFFF;
+  --card2:#F5F2EC;
+  --card3:#EFEBE2;
+  --border:#E7E5E4;
+  --border2:#D6D3D1;
+  --border-strong:#111111;
+  --text:#111111;
+  --text-soft:#292524;
+  --muted:#6B7280;
+  --muted2:#9CA3AF;
+  --btn-bg:#111111;
+  --btn-fg:#FFFFFF;
+  --success:#16A34A;
+  --success-deep:#15803D;
+  --success-bg:rgba(22,163,74,.09);
+  --r-xl:22px;--r-lg:16px;--r-md:12px;--r-sm:8px;
   --ease:cubic-bezier(.22,1,.36,1);
+  --ease-spring:cubic-bezier(.32,1.2,.5,1);
+  --shadow-sm:0 1px 2px rgba(17,17,17,.05),0 3px 10px rgba(17,17,17,.04);
+  --shadow:0 2px 8px rgba(17,17,17,.06),0 16px 36px rgba(17,17,17,.08);
+  --shadow-lift:0 6px 16px rgba(17,17,17,.08),0 26px 60px rgba(17,17,17,.12);
 }
-html,body{height:100%;overflow:hidden;background:#000}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%}
 body{
-  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#F5F5F4;-webkit-font-smoothing:antialiased;
+  font-family:'Inter',system-ui,sans-serif;color:var(--text);
+  background:#EDEAE2;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
 }
 
-/* ── Viewport + fixed stage ── */
-#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
-#stage{position:relative;width:1080px;height:1920px;flex:none;overflow:hidden;
-  background:#000;transform-origin:center center}
-
-.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;opacity:0;pointer-events:none;transition:opacity .8s var(--ease)}
-.scene.on{opacity:1}
-
-/* ── Letterbox ── */
-.bar{position:absolute;left:0;right:0;height:130px;background:#000;z-index:900;pointer-events:none}
-.bar.top{top:0}.bar.bot{bottom:0}
-
-/* ── Vignette + grain ── */
-#stage::after{content:"";position:absolute;inset:0;z-index:850;pointer-events:none;
-  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
-.grain{position:absolute;inset:-100%;z-index:860;pointer-events:none;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
-  animation:grain .4s steps(4) infinite}
-@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,3%)}
-  50%{transform:translate(3%,-2%)}75%{transform:translate(-3%,-3%)}100%{transform:translate(2%,2%)}}
-
-/* ── Shared type ── */
-.line{font-size:58px;font-weight:600;letter-spacing:-.02em;
-  opacity:0;transform:translateY(20px);transition:all 1s var(--ease);text-align:center;padding:0 60px}
-.line.show{opacity:1;transform:translateY(0)}
-.vo{position:absolute;bottom:240px;left:0;right:0;text-align:center;z-index:700;
-  font-size:28px;font-weight:500;color:#D6D3D1;letter-spacing:.01em;padding:0 60px;
-  opacity:0;transform:translateY(14px);transition:all .9s var(--ease);font-style:italic}
-.vo.show{opacity:.92;transform:translateY(0)}
-
-/* ============================================================
-   SCENE 1 & 2 — THE PROBLEM / CHAOS
-============================================================ */
-#s1lines{position:absolute;inset:0;display:flex;flex-direction:column;gap:30px;
-  align-items:center;justify-content:center;z-index:20;transition:opacity .7s var(--ease)}
-#gridWrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  opacity:0;transform:scale(3.2);transition:transform 4.5s var(--ease),opacity 1.4s ease;z-index:5}
-#gridWrap.zoomout{opacity:1;transform:scale(1)}
-#grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;width:1500px;padding:30px;
-  transform:rotate(-4deg)}
-.pcard{background:#141414;border:1px solid rgba(255,255,255,.09);border-radius:18px;
-  padding:16px 20px;min-height:120px;display:flex;flex-direction:column;justify-content:center;gap:7px}
-.pbrand{font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#78716C}
-.pname2{font-size:16px;font-weight:600;color:#A8A29E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pprice2{font-size:23px;font-weight:800;letter-spacing:-.02em;color:#F5F5F4;
-  font-variant-numeric:tabular-nums}
-.pprice2.drop{color:#4ADE80}.pprice2.rise{color:#F87171}
-#grid.frenzy .pcard{animation:cardPulse .5s ease-in-out infinite alternate}
-@keyframes cardPulse{from{border-color:rgba(255,255,255,.09)}to{border-color:rgba(255,255,255,.28)}}
-
-#chaosWords{position:absolute;inset:0;z-index:30;pointer-events:none}
-.cword{position:absolute;font-weight:800;letter-spacing:-.02em;color:#fff;opacity:0;
-  text-transform:uppercase;text-shadow:0 0 60px rgba(255,255,255,.25)}
-.cword.pop{animation:wordPop .55s var(--ease) both}
-@keyframes wordPop{0%{opacity:0;transform:scale(.7)}30%{opacity:1;transform:scale(1.05)}
-  70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.15)}}
-
-#tooMuch{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  z-index:40;opacity:0;font-size:88px;font-weight:800;letter-spacing:-.04em;
-  text-align:center;padding:0 60px}
-#tooMuch.show{opacity:1}
-.glitching{animation:glitch .12s steps(2) infinite}
-@keyframes glitch{
-  0%{transform:translate(0);filter:none}
-  25%{transform:translate(-8px,3px);filter:invert(.08)}
-  50%{transform:translate(7px,-4px)}
-  75%{transform:translate(-4px,-3px);filter:contrast(1.6)}
-  100%{transform:translate(5px,4px)}}
-.frozen{animation:none!important;transition:none!important}
-
-/* ============================================================
-   SCENE 3 — THE BRAIN
-============================================================ */
-#netCanvas{position:absolute;inset:0;z-index:5;width:1080px;height:1920px}
-#particle{position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;
-  background:#fff;transform:translate(-50%,-50%) scale(0);z-index:10;
-  box-shadow:0 0 50px 10px rgba(255,255,255,.5);transition:transform 1.6s var(--ease)}
-#particle.grow{transform:translate(-50%,-50%) scale(1)}
-#particle.bloom{transition:transform 2.2s var(--ease),opacity 2.2s ease;
-  transform:translate(-50%,-50%) scale(60);opacity:0}
-#retzoTitle{position:absolute;left:0;right:0;top:400px;text-align:center;z-index:20;
-  font-size:82px;font-weight:800;letter-spacing:.32em;text-indent:.32em;
-  opacity:0;transform:translateY(16px) scale(.96);transition:all 1.4s var(--ease)}
-#retzoTitle.show{opacity:1;transform:translateY(0) scale(1)}
-#flowChain{position:absolute;left:0;right:0;bottom:400px;display:flex;gap:14px;
-  align-items:center;justify-content:center;flex-wrap:wrap;z-index:20;padding:0 60px}
-.flow-item{display:flex;align-items:center;opacity:0;transform:translateY(10px);
-  transition:all .6s var(--ease)}
-.flow-item.show{opacity:1;transform:translateY(0)}
-.flow-pill{font-size:20px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;padding:12px 26px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.2);color:#E7E5E4;background:rgba(255,255,255,.04);
-  white-space:nowrap}
-.flow-pill.ai{background:#F5F5F4;color:#111;border-color:transparent;
-  box-shadow:0 0 40px rgba(255,255,255,.3)}
-.flow-arrow{color:#57534E;margin:0 6px;font-size:20px}
-
-/* ============================================================
-   SCENE 4 — INTELLIGENCE
-============================================================ */
-#intelWrap{display:flex;flex-direction:column;gap:34px;align-items:center;justify-content:center;
-  padding:0 60px;z-index:20}
-.intel-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.12);
-  border-radius:28px;padding:34px 44px;width:640px;opacity:0;transform:translateY(30px) scale(.96);
-  transition:all .9s var(--ease);backdrop-filter:blur(8px)}
-.intel-card.show{opacity:1;transform:translateY(0) scale(1)}
-.ic-label{font-size:17px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:#78716C;margin-bottom:20px}
-#forecastSvg{display:block;margin:0 auto}
-#forecastPath{fill:none;stroke:#F5F5F4;stroke-width:2;stroke-linecap:round;
-  stroke-dasharray:600;stroke-dashoffset:600;transition:stroke-dashoffset 2.4s var(--ease)}
-#forecastPath.draw{stroke-dashoffset:0}
-#forecastPred{fill:none;stroke:#4ADE80;stroke-width:2;stroke-linecap:round;stroke-dasharray:4 6;
-  opacity:0;transition:opacity 1s ease 1.6s}
-#forecastPred.draw{opacity:1}
-.gaugebox{position:relative;width:170px;height:170px;margin:0 auto}
-.gaugebox svg{transform:rotate(-90deg)}
-.g-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:12}
-.g-fill{fill:none;stroke:#4ADE80;stroke-width:12;stroke-linecap:round;
-  stroke-dasharray:471;stroke-dashoffset:471;transition:stroke-dashoffset 2s var(--ease)}
-.g-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:44px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.coupon-list{display:flex;flex-direction:column;gap:14px}
-.coupon{display:flex;align-items:center;gap:14px;font-size:24px;font-weight:600;color:#D6D3D1;
-  padding:16px 24px;border:1px dashed rgba(255,255,255,.22);border-radius:16px;
-  opacity:0;transform:translateX(-14px);transition:all .5s var(--ease)}
-.coupon.show{opacity:1;transform:translateX(0)}
-.coupon b{color:#4ADE80;font-variant-numeric:tabular-nums;margin-left:auto}
-#intelText{position:absolute;bottom:230px;left:0;right:0;text-align:center;z-index:30;
-  font-size:46px;font-weight:700;letter-spacing:-.02em;padding:0 60px;
-  opacity:0;transform:translateY(14px);transition:all 1s var(--ease)}
-#intelText.show{opacity:1;transform:translateY(0)}
-#intelText em{font-style:normal;color:#78716C}
-
-/* ============================================================
-   SCENE 5 — KRAZYBUY (phone)
-============================================================ */
-#phoneScale{transform:scale(1.75);will-change:transform}
-#phone{width:340px;background:var(--paper);border-radius:36px;
-  border:1px solid rgba(255,255,255,.15);padding:14px 14px 20px;color:var(--ink);
-  box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 0 8px #1a1a1a,0 0 0 9px rgba(255,255,255,.08);
-  transform:perspective(1400px) rotateY(-38deg) rotateX(8deg) translateY(60px);opacity:0;
-  transition:transform 1.8s var(--ease),opacity 1.2s ease}
-#phone.in{transform:perspective(1400px) rotateY(0) rotateX(0) translateY(0);opacity:1}
-.notch{width:88px;height:22px;background:#111;border-radius:999px;margin:0 auto 14px}
-.searchbar{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #111;
-  border-radius:999px;padding:11px 16px;font-size:13.5px;font-weight:600;
-  box-shadow:0 2px 10px rgba(17,17,17,.08)}
-.searchbar .mag{flex-shrink:0;color:#6B7280}
-#typed{white-space:nowrap;overflow:hidden}
-.caret{display:inline-block;width:2px;height:15px;background:#111;vertical-align:-2px;
-  animation:blink .8s steps(1) infinite;margin-left:1px}
-@keyframes blink{50%{opacity:0}}
-.result{background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px 13px;
-  margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  opacity:0;transform:translateY(12px);transition:all .55s var(--ease);
-  box-shadow:0 1px 2px rgba(17,17,17,.04),0 4px 12px rgba(17,17,17,.04)}
-.result.show{opacity:1;transform:translateY(0)}
-.result.best{border:1.5px solid var(--success);
-  box-shadow:0 0 0 3px rgba(22,163,74,.1),0 4px 12px rgba(17,17,17,.06)}
-.r-label{font-size:8.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9CA3AF}
-.r-main{font-size:13px;font-weight:700;letter-spacing:-.01em}
-.r-side{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.r-side.green{color:var(--success-deep)}
-.r-badge{font-size:9px;font-weight:800;padding:3px 9px;border-radius:999px;
-  background:var(--success-deep);color:#fff;letter-spacing:.06em;text-transform:uppercase}
-.spark{display:block}
-.r-sub{font-size:10px;color:#6B7280;font-weight:500;margin-top:1px}
-#s5cap{margin-top:300px;font-size:48px;font-weight:800;letter-spacing:-.03em;
-  text-align:center;opacity:0;transform:translateY(14px);transition:all .9s var(--ease)}
-#s5cap.show{opacity:1;transform:translateY(0)}
-#s5cap span{color:#78716C}
-
-/* ============================================================
-   SCENE 6 — ENDING (white)
-============================================================ */
-#whiteout{position:absolute;inset:0;background:var(--paper);z-index:800;opacity:0;
-  pointer-events:none;transition:opacity 1.6s ease}
-#whiteout.on{opacity:1}
-#s6{z-index:820;color:var(--ink)}
-.logo-lock{display:flex;flex-direction:column;align-items:center;gap:22px;
-  opacity:0;transform:scale(.94);transition:all 1.6s var(--ease)}
-.logo-lock.show{opacity:1;transform:scale(1)}
-.logo-mark6{width:120px;height:120px;border-radius:32px;background:var(--ink);color:#fff;
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:54px;
-  letter-spacing:-.03em;box-shadow:0 30px 80px rgba(17,17,17,.18)}
-.logo-name6{font-size:82px;font-weight:800;letter-spacing:-.04em}
-.powered{font-size:22px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#9CA3AF}
-#tagline{margin-top:60px;font-size:50px;font-weight:700;letter-spacing:-.02em;
-  text-align:center;line-height:1.35;opacity:0;transform:translateY(14px);transition:all 1.1s var(--ease)}
-#tagline.show{opacity:1;transform:translateY(0)}
-#tagline .save{color:var(--success-deep)}
-#handles{margin-top:50px;display:flex;gap:22px;flex-wrap:wrap;justify-content:center;
-  opacity:0;transition:opacity 1.2s ease}
-#handles.show{opacity:1}
-.handle{font-size:24px;font-weight:600;color:var(--muted2);padding:14px 34px;
-  border:1px solid var(--border);border-radius:999px;background:#fff}
-#replay{margin-top:64px;padding:22px 56px;border-radius:999px;background:var(--ink);color:#fff;
-  font:inherit;font-size:26px;font-weight:700;border:0;cursor:pointer;opacity:0;
-  transition:opacity 1s ease,transform .2s var(--ease)}
-#replay.show{opacity:1}
-#replay:hover{transform:translateY(-2px)}
-.bloomfx{position:absolute;inset:0;z-index:810;pointer-events:none;opacity:0;
-  background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.95),transparent 62%);
-  transition:opacity 2.5s ease}
-.bloomfx.on{opacity:1}
-
-/* ── Start overlay ── */
-#startOverlay{position:absolute;inset:0;z-index:1000;background:#000;display:flex;
-  flex-direction:column;align-items:center;justify-content:center;gap:40px;
-  transition:opacity .7s ease}
-#startOverlay.hide{opacity:0;pointer-events:none}
-#playBtn{width:150px;height:150px;border-radius:50%;border:2px solid rgba(255,255,255,.3);
-  background:rgba(255,255,255,.05);color:#fff;cursor:pointer;display:flex;
-  align-items:center;justify-content:center;transition:all .25s var(--ease)}
-#playBtn:hover{background:#fff;color:#111;transform:scale(1.06)}
-.start-title{font-size:22px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
-  color:#78716C;text-indent:.3em}
-.start-name{font-size:54px;font-weight:800;letter-spacing:-.03em;text-align:center;
-  line-height:1.3;padding:0 60px}
-.start-sub{font-size:22px;color:#57534E;font-weight:500}
-
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.15s!important}
+/* ===== STAGE 9:16 ===== */
+.stage{
+  position:relative;
+  width:min(100vw,calc(100vh*9/16));
+  height:min(100vh,calc(100vw*16/9));
+  background:var(--bg);overflow:hidden;
+  border-radius:0;
+  box-shadow:0 0 0 1px var(--border),0 40px 120px rgba(17,17,17,.25);
 }
+
+/* ===== AMBIENT BG — quiet paper texture, mesh gradients, noise, no neon ===== */
+.ambient{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(var(--border) 1px,transparent 1px);
+  background-size:26px 26px;opacity:.5;
+}
+.ambient::after{
+  content:"";position:absolute;inset:-20%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity:.05;mix-blend-mode:multiply;
+}
+.wash{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:washFloat ease-in-out infinite;}
+.wash1{width:60%;height:40%;left:-10%;top:-10%;background:radial-gradient(circle,rgba(22,163,74,.06),transparent 65%);animation-duration:24s;}
+.wash2{width:55%;height:45%;right:-15%;bottom:-8%;background:radial-gradient(circle,rgba(17,17,17,.05),transparent 65%);animation-duration:30s;animation-delay:-8s;}
+.wash3{width:45%;height:35%;left:20%;bottom:15%;background:radial-gradient(circle,rgba(22,163,74,.04),transparent 65%);animation-duration:26s;animation-delay:-14s;}
+.wash4{width:40%;height:30%;right:10%;top:20%;background:radial-gradient(circle,rgba(17,17,17,.035),transparent 65%);animation-duration:34s;animation-delay:-4s;}
+@keyframes washFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,22px)}}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 50% 30%,transparent 55%,rgba(17,17,17,.05) 100%);}
+
+/* ===== SCENES ===== */
+.scene{
+  position:absolute;inset:0;z-index:5;
+  opacity:0;pointer-events:none;
+  transition:opacity .55s var(--ease),transform .8s var(--ease),filter .5s ease;
+  transform:scale(.97) translateY(16px);filter:blur(6px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:6vh 6vw;
+}
+.scene.active{opacity:1;pointer-events:auto;transform:scale(1) translateY(0);filter:blur(0);}
+.scene.exiting{opacity:0;transform:scale(1.02) translateY(-14px);filter:blur(7px);pointer-events:none;}
+
+/* subtle cinematic camera drift wrapper */
+.cam-layer{animation:camDrift 13s ease-in-out infinite alternate;will-change:transform;}
+@keyframes camDrift{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.018) translate(-3px,-4px)}}
+
+/* ===== HUD TOP BAR ===== */
+.hud{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:3.4vh 6vw 0;z-index:20;
+  opacity:0;transform:translateY(-6px);
+  transition:opacity .5s ease .15s,transform .5s var(--ease-spring) .15s;
+}
+.scene.active .hud{opacity:1;transform:translateY(0);}
+.hud-brand{font-family:'Fraunces',serif;font-size:.86rem;font-weight:600;letter-spacing:-.01em;color:var(--text);display:flex;align-items:center;gap:7px;}
+.hud-dot{width:6px;height:6px;border-radius:50%;background:var(--text);animation:blinkDot 2s ease-in-out infinite;}
+@keyframes blinkDot{0%,100%{opacity:1}50%{opacity:.3}}
+.hud-right{font-size:.62rem;color:var(--muted);font-weight:600;letter-spacing:.05em;display:flex;align-items:center;gap:10px;}
+.hud-stat span{color:var(--text);font-weight:700;}
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:0 6vw 3.2vh;z-index:20;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  opacity:0;transition:opacity .5s ease .3s;
+}
+.scene.active .bottom-bar{opacity:1;}
+.site-url{font-size:.62rem;color:var(--muted);font-weight:600;letter-spacing:.02em;}
+.site-url strong{color:var(--text);}
+
+.progress-rail{position:absolute;bottom:2.1vh;left:6vw;right:6vw;height:2px;background:var(--border);border-radius:99px;overflow:hidden;z-index:21;}
+.progress-fill{height:100%;width:0;background:var(--text);border-radius:99px;}
+
+/* ===== REALISTIC CHROME BROWSER — SCENE 1 ===== */
+.phone-wrap{position:relative;width:min(78%,300px);}
+.phone-frame{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow-lift);
+  position:relative;
+}
+.chrome-tabbar{background:var(--card3);display:flex;align-items:flex-end;gap:3px;padding:6px 8px 0;}
+.chrome-tab{background:var(--card2);border:1px solid var(--border);border-bottom:none;border-radius:7px 7px 0 0;padding:5px 9px;display:flex;align-items:center;gap:5px;font-size:.44rem;color:var(--muted);font-weight:600;max-width:96px;overflow:hidden;white-space:nowrap;}
+.chrome-tab.active{background:var(--card);color:var(--text);}
+.chrome-tab .fav{width:7px;height:7px;border-radius:2px;background:var(--muted2);flex:none;}
+.chrome-tab.active .fav{background:var(--success);}
+.chrome-tab-plus{font-size:.6rem;color:var(--muted2);padding:0 6px 3px;}
+.chrome-toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:7px 9px;display:flex;align-items:center;gap:7px;}
+.chrome-nav{display:flex;gap:5px;color:var(--muted2);font-size:.5rem;flex:none;}
+.chrome-addr{flex:1;display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:99px;padding:5px 9px;min-width:0;}
+.chrome-addr .lock{color:var(--muted);font-size:.48rem;flex:none;}
+.chrome-addr .url{font-size:.53rem;color:var(--muted);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chrome-ext{width:16px;height:16px;border-radius:5px;background:var(--btn-bg);display:flex;align-items:center;justify-content:center;flex:none;position:relative;}
+.chrome-ext svg{width:9px;height:9px;}
+.chrome-ext .pulse-ring{position:absolute;inset:-4px;border-radius:9px;border:1.5px solid var(--success);opacity:0;}
+.chrome-ext.wake .pulse-ring{animation:extPulse 1s ease-out infinite;}
+@keyframes extPulse{0%{opacity:.7;transform:scale(.8)}100%{opacity:0;transform:scale(1.5)}}
+.chrome-avatar{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#DB2777,#7C3AED);flex:none;}
+.chrome-bookmarks{display:flex;gap:10px;padding:5px 10px;background:var(--card);border-bottom:1px solid var(--border);font-size:.44rem;color:var(--muted);font-weight:600;}
+.chrome-bookmarks span{display:flex;align-items:center;gap:3px;}
+.chrome-bookmarks span::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--card2);border:1px solid var(--border);display:inline-block;}
+
+.product-page{background:#fff;min-height:160px;padding:12px;position:relative;}
+.pp-store-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.pp-store-name{font-family:'Fraunces',serif;font-size:.7rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px;}
+.pp-prime{font-size:.38rem;font-weight:800;letter-spacing:.03em;background:var(--text);color:#fff;padding:1.5px 5px;border-radius:3px;text-transform:uppercase;}
+.pp-cart{width:20px;height:20px;background:var(--card2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;}
+.pp-body{display:flex;gap:9px;}
+.pp-img{width:74px;height:74px;border-radius:10px;flex:none;background:var(--card2);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);position:relative;overflow:hidden;}
+.pp-info{flex:1;min-width:0;}
+.pp-brand{font-size:.44rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+.pp-title{font-size:.6rem;font-weight:700;color:var(--text);line-height:1.32;margin-bottom:3px;}
+.pp-model{font-size:.42rem;color:var(--muted2);font-weight:600;margin-bottom:4px;}
+.pp-stars{color:#B98900;font-size:.56rem;margin-bottom:4px;}
+.pp-price-row{display:flex;align-items:baseline;gap:3px;}
+.pp-currency{font-size:.6rem;font-weight:700;color:var(--text);}
+.pp-price{font-size:1.15rem;font-weight:800;color:var(--text);transition:color .4s ease;}
+.pp-price.highlight{color:var(--success-deep);}
+.pp-mrp{font-size:.5rem;color:var(--muted2);text-decoration:line-through;}
+.pp-ship{font-size:.48rem;color:var(--muted);font-weight:600;margin-top:4px;}
+.pp-seller-row{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:.44rem;color:var(--muted);font-weight:600;}
+.pp-seller-row .dot{width:3px;height:3px;border-radius:50%;background:var(--muted2);}
+
+/* OCR overlays — ink, not neon */
+.ocr-wrap{position:absolute;inset:0;pointer-events:none;z-index:4;}
+.ocr-box{position:absolute;border:1.5px solid var(--text);border-radius:6px;opacity:0;transform:scale(.9);transition:opacity .3s ease,transform .35s var(--ease-spring);}
+.ocr-box.in{opacity:.55;transform:scale(1);}
+.ocr-tag{position:absolute;top:-14px;left:0;background:var(--text);color:#fff;font-size:.38rem;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;}
+.laser{position:absolute;left:0;right:0;height:1.5px;top:0;background:linear-gradient(90deg,transparent,var(--text),transparent);opacity:0;pointer-events:none;z-index:5;}
+.laser.run{animation:laserRun 1s ease forwards;}
+@keyframes laserRun{0%{top:0;opacity:0}10%{opacity:.5}90%{opacity:.5}100%{top:100%;opacity:0}}
+
+/* AI overlay card on phone */
+.ai-overlay{
+  position:absolute;bottom:-10px;left:-13%;width:110%;
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:12px 13px;box-shadow:var(--shadow-lift);
+  opacity:0;transform:translateY(16px) scale(.93);
+  transition:all .5s var(--ease-spring);z-index:10;
+}
+.ai-overlay.show{opacity:1;transform:translateY(0) scale(1);}
+.ai-overlay-header{display:flex;align-items:center;gap:8px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.ai-logo-mark{width:22px;height:22px;border-radius:7px;background:var(--btn-bg);color:var(--btn-fg);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:.62rem;font-weight:600;flex:none;}
+.ai-title-txt{font-size:.62rem;font-weight:700;color:var(--text);}
+.ai-title-sub{font-size:.46rem;color:var(--muted);font-weight:600;}
+.ai-scanning-rows{display:flex;flex-direction:column;gap:3.5px;}
+.ai-row{display:flex;align-items:center;gap:7px;font-size:.53rem;opacity:.35;transition:opacity .3s ease;}
+.ai-row.active,.ai-row.done{opacity:1;}
+.ai-row-icon{width:13px;height:13px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:.44rem;}
+.ai-row-icon.spin-ring{border:1.5px solid var(--border2);border-top-color:var(--text);animation:spinIt .5s linear infinite;}
+@keyframes spinIt{to{transform:rotate(360deg)}}
+.ai-row-icon.done-icon{background:var(--success-bg);color:var(--success-deep);}
+.ai-row-icon.wait-icon{background:var(--card2);color:var(--muted2);}
+.ai-row-txt{flex:1;color:var(--text-soft);}
+.ai-row-time{font-size:.4rem;color:var(--muted2);font-weight:700;}
+
+.best-deal-bar{
+  margin-top:9px;padding-top:9px;border-top:1px solid var(--border);
+  opacity:0;transform:translateY(10px) rotate(-1.5deg);transition:all .55s var(--ease-spring);
+}
+.best-deal-bar.show{opacity:1;transform:translateY(0) rotate(0);}
+.bd-top{display:flex;align-items:center;justify-content:space-between;}
+.bd-label{font-size:.42rem;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.bd-store{font-size:.62rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;margin-top:2px;}
+.bd-store-logo{width:15px;height:15px;border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center;font-size:.42rem;font-weight:800;color:#fff;}
+.bd-price{font-size:1.3rem;font-weight:800;color:var(--success-deep);letter-spacing:-.02em;line-height:1;text-align:right;}
+.bd-save{font-size:.42rem;color:var(--success-deep);font-weight:700;text-align:right;}
+.bd-tags{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap;}
+.bd-tag{font-size:.4rem;font-weight:700;padding:2.5px 6px;border-radius:5px;background:var(--card2);color:var(--muted);}
+.bd-tag.green{background:var(--success-bg);color:var(--success-deep);}
+.bd-tag.dark{background:var(--text);color:#fff;}
+
+/* STOP hero overlay */
+.stop-hero{
+  position:absolute;inset:0;background:rgba(250,247,242,.96);backdrop-filter:blur(2px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:16px;z-index:12;
+  opacity:0;pointer-events:none;transition:opacity .4s ease;
+}
+.stop-hero.show{opacity:1;}
+.stop-word{
+  font-family:'Fraunces',serif;font-size:clamp(2.6rem,9vw,3.6rem);font-weight:600;letter-spacing:-.03em;
+  color:var(--text);line-height:.95;
+  opacity:0;transform:scale(.5) translateY(10px);
+  transition:all .65s var(--ease-spring);
+}
+.stop-hero.show .stop-word{opacity:1;transform:scale(1) translateY(0);}
+.stop-sub{font-size:.85rem;font-weight:600;color:var(--text-soft);margin-top:12px;opacity:0;transform:translateY(8px);transition:all .55s ease .3s;text-align:center;line-height:1.4;}
+.stop-hero.show .stop-sub{opacity:1;transform:translateY(0);}
+.stop-price-green{color:var(--success-deep);font-weight:800;font-size:1.05rem;}
+
+.particles-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:8;}
+.p-dot{position:absolute;border-radius:50%;opacity:0;animation:pFloat linear infinite;}
+.p-glyph{position:absolute;opacity:0;animation:pFloat linear infinite;font-size:11px;}
+@keyframes pFloat{0%{opacity:0;transform:translateY(0) scale(0) rotate(0deg)}15%{opacity:.85}85%{opacity:.35}100%{opacity:0;transform:translateY(-90px) scale(.7) rotate(45deg)}}
+
+/* ===== SCENE 2: COMPARISON LIST ===== */
+.compare-scene{width:100%;max-width:420px;}
+.compare-header{text-align:center;margin-bottom:14px;}
+.compare-eyebrow{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px;}
+.compare-headline{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--text);}
+.compare-sub{font-size:.62rem;color:var(--muted);margin-top:4px;}
+.compare-grid{display:flex;flex-direction:column;gap:7px;}
+.compare-row{
+  display:flex;align-items:flex-start;gap:9px;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:9px 12px;
+  opacity:0;transform:translateX(-16px);
+  transition:opacity .5s ease,transform .6s var(--ease-spring),box-shadow .25s ease;
+  position:relative;box-shadow:var(--shadow-sm);
+}
+.compare-row.in{opacity:1;transform:translateX(0);}
+.compare-row:hover{box-shadow:var(--shadow-lift);transform:translateX(0) translateY(-2px);}
+.compare-row.winner{border-color:var(--success);background:var(--success-bg);}
+.compare-row.state-loading .cr-real{display:none;}
+.compare-row.state-loading .cr-loading{display:flex;}
+.cr-loading{display:none;align-items:center;gap:5px;font-size:.55rem;color:var(--muted);font-weight:600;flex:1;padding:6px 0;}
+.cr-loading .spin-ring{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--border2);border-top-color:var(--muted);animation:spinIt .55s linear infinite;flex:none;}
+.cr-real{display:flex;align-items:flex-start;gap:9px;flex:1;min-width:0;}
+.cr-rank{font-size:.58rem;font-weight:800;color:var(--muted2);width:12px;flex:none;margin-top:3px;}
+.compare-row.winner .cr-rank{color:var(--success-deep);}
+.cr-logo{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:#fff;margin-top:1px;}
+.cr-thumb{width:26px;height:26px;border-radius:8px;flex:none;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.5rem;margin-top:1px;}
+.cr-info{flex:1;min-width:0;}
+.cr-name-row{display:flex;align-items:center;gap:5px;}
+.cr-name{font-size:.64rem;font-weight:700;color:var(--text);}
+.cr-verified{color:var(--success-deep);font-size:.5rem;}
+.cr-meta{font-size:.42rem;color:var(--muted);font-weight:600;margin-top:1px;}
+.cr-tags{display:flex;gap:3.5px;margin-top:4px;flex-wrap:wrap;}
+.cr-tag{font-size:.4rem;padding:2px 5.5px;border-radius:4px;font-weight:700;background:var(--card2);color:var(--muted);}
+.cr-tag.green{background:var(--success-bg);color:var(--success-deep);}
+.cr-tag.dark{background:var(--text);color:#fff;}
+.cr-price{text-align:right;flex:none;}
+.cr-price-num{font-size:.9rem;font-weight:800;color:var(--text);letter-spacing:-.01em;}
+.compare-row.winner .cr-price-num{color:var(--success-deep);}
+.cr-price-mrp{font-size:.4rem;color:var(--muted2);text-decoration:line-through;}
+.cr-price-disc{font-size:.42rem;color:var(--success-deep);font-weight:700;text-align:right;}
+.cr-trust{font-size:.38rem;color:var(--muted2);font-weight:700;margin-top:3px;}
+.winner-badge{position:absolute;top:-8px;right:10px;background:var(--success-deep);color:#fff;font-size:.38rem;font-weight:800;padding:3px 8px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase;opacity:0;transform:scale(.5) translateY(4px);transition:all .5s var(--ease-spring) .35s;}
+.compare-row.winner.in .winner-badge{opacity:1;transform:scale(1) translateY(0);}
+
+.neural-svg{position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:0;transition:opacity .6s ease;}
+.neural-svg.show{opacity:1;}
+.neural-svg path{stroke:var(--border2);stroke-width:1;fill:none;stroke-dasharray:4 5;animation:neuralFlow 3s linear infinite;}
+
+@keyframes neuralFlow{to{stroke-dashoffset:-18}}
+
+.savings-summary{
+  margin-top:12px;background:var(--card);border:1px solid var(--success);border-radius:16px;padding:13px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  opacity:0;transform:translateY(8px);transition:all .5s var(--ease-spring);box-shadow:var(--shadow-sm);
+}
+.savings-summary.show{opacity:1;transform:translateY(0);}
+.ss-label{font-size:.48rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.ss-amount{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--success-deep);letter-spacing:-.02em;}
+.ss-right{text-align:right;}
+.ss-note{font-size:.5rem;color:var(--muted);}
+.ss-stores{font-size:.62rem;font-weight:700;color:var(--text);margin-top:2px;}
+
+/* ===== SCENE 3: LIVE PRICE TRACKER ===== */
+.tracker-wrap{width:100%;max-width:420px;}
+.tracker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.tracker-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:600;color:var(--text);}
+.live-badge{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:4px 9px;font-size:.46rem;font-weight:800;color:var(--muted);}
+.live-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--success);animation:blinkDot 1.4s ease-in-out infinite;}
+.chart-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);}
+.chart-box canvas{display:block;width:100%;height:80px;}
+.chart-watermark{position:absolute;bottom:10px;right:12px;font-size:.42rem;color:var(--border2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.mini-stores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;}
+.mini-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 7px;text-align:center;
+  opacity:0;transform:translateY(12px) scale(.9);transition:all .55s var(--ease-spring);box-shadow:var(--shadow-sm);
+}
+.mini-card.in{opacity:1;transform:translateY(0) scale(1);}
+.mini-card.best-mini{border-color:var(--success);background:var(--success-bg);}
+.mc-logo{width:28px;height:28px;border-radius:8px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:#fff;}
+.mc-pname{font-size:.48rem;font-weight:700;color:var(--muted);margin-bottom:3px;}
+.mc-pprice{font-size:.76rem;font-weight:800;color:var(--text);}
+.mini-card.best-mini .mc-pprice{color:var(--success-deep);}
+.mc-pdel{font-size:.42rem;color:var(--muted2);margin-top:2px;}
+.mc-trust{font-size:.38rem;color:var(--muted2);font-weight:700;margin-top:3px;}
+
+/* ===== SCENE 4: AI DASHBOARD ===== */
+.features-wrap{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;}
+.feat-header{text-align:center;margin-bottom:2px;}
+.feat-title{font-family:'Fraunces',serif;font-size:1.08rem;font-weight:600;color:var(--text);}
+.feat-sub{font-size:.62rem;color:var(--muted);margin-top:4px;}
+
+.ring-row{display:flex;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 10px;box-shadow:var(--shadow-sm);}
+.ring-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.ring-svg{position:relative;width:64px;height:64px;}
+.ring-svg svg{transform:rotate(-90deg);width:64px;height:64px;filter:drop-shadow(0 0 5px rgba(22,163,74,.18));}
+.ring-track{fill:none;stroke:var(--card2);stroke-width:6;}
+.ring-fill{fill:none;stroke:var(--success-deep);stroke-width:6;stroke-linecap:round;stroke-dasharray:175.9;stroke-dashoffset:175.9;transition:stroke-dashoffset 1.4s var(--ease);}
+.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--text);}
+.ring-label{font-size:.44rem;color:var(--muted);font-weight:700;text-align:center;line-height:1.3;}
+
+.feat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:15px;padding:11px 14px;
+  display:flex;align-items:center;gap:11px;
+  opacity:0;transform:translateX(-14px);
+  transition:opacity .5s ease,transform .65s var(--ease-spring),box-shadow .25s ease;box-shadow:var(--shadow-sm);
+}
+.feat-card.in{opacity:1;transform:translateX(0);}
+.feat-card:hover{box-shadow:var(--shadow-lift);transform:translateX(0) translateY(-2px);}
+.feat-icon{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:.95rem;background:var(--card2);border:1px solid var(--border);}
+.ft-label{font-size:.66rem;font-weight:700;color:var(--text);}
+.ft-desc{font-size:.5rem;color:var(--muted);margin-top:2px;line-height:1.4;}
+.feat-val{margin-left:auto;text-align:right;flex:none;}
+.fv-num{font-size:.88rem;font-weight:800;color:var(--success-deep);}
+.fv-label{font-size:.4rem;color:var(--muted2);font-weight:600;}
+
+/* ===== SCENE 5: ENDING ===== */
+.end-wrap{text-align:center;display:flex;flex-direction:column;align-items:center;}
+.end-logo-big{
+  font-family:'Fraunces',serif;font-size:clamp(2rem,8.5vw,3rem);font-weight:600;letter-spacing:-.03em;
+  color:var(--text);opacity:0;transform:scale(.75) translateY(16px);
+  transition:all 1s var(--ease-spring);position:relative;
+  background:linear-gradient(110deg,var(--text) 40%,#fff 50%,var(--text) 60%);
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;
+}
+.scene.active .end-logo-big{opacity:1;transform:scale(1) translateY(0);animation:logoSweep 2.6s ease .6s 1;}
+@keyframes logoSweep{0%{background-position:200% 0}100%{background-position:-40% 0}}
+.end-logo-big .logo-accent{color:var(--success-deep);-webkit-text-fill-color:var(--success-deep);}
+.end-tagline{font-size:.85rem;color:var(--muted);font-weight:500;margin-top:11px;opacity:0;transform:translateY(8px);transition:opacity .8s ease .5s,transform .8s ease .5s;line-height:1.5;}
+.scene.active .end-tagline{opacity:1;transform:translateY(0);}
+.end-tagline strong{color:var(--text);}
+.end-cta{
+  margin-top:20px;display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(100deg,var(--btn-bg) 40%,#3a3a3a 50%,var(--btn-bg) 60%);
+  background-size:260% 100%;
+  color:var(--btn-fg);padding:13px 28px;border-radius:99px;
+  font-size:.82rem;font-weight:700;letter-spacing:.01em;
+  opacity:0;transform:translateY(8px) scale(.94);
+  transition:opacity .7s var(--ease-spring) .85s,transform .7s var(--ease-spring) .85s;box-shadow:var(--shadow);
+  border:none;cursor:pointer;
+}
+.scene.active .end-cta{opacity:1;transform:translateY(0) scale(1);animation:ctaShimmer 2.8s linear 1.6s infinite;}
+@keyframes ctaShimmer{0%{background-position:200% 0}100%{background-position:-60% 0}}
+.end-platforms{display:flex;gap:8px;margin-top:16px;opacity:0;transition:opacity .8s ease 1s;flex-wrap:wrap;justify-content:center;}
+.scene.active .end-platforms{opacity:1;}
+.end-plat-chip{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:5px 11px;font-size:.5rem;font-weight:700;color:var(--text-soft);box-shadow:var(--shadow-sm);}
+.end-plat-chip span.ico{font-size:.6rem;}
+.end-social{margin-top:14px;font-size:.58rem;color:var(--muted);font-weight:600;opacity:0;transition:opacity .8s ease 1.15s;display:flex;align-items:center;gap:10px;}
+.scene.active .end-social{opacity:1;}
+.end-social .stars{color:#B98900;}
+.end-trust{margin-top:12px;font-size:.5rem;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
 </style>
 </head>
 <body>
+<div class="stage" id="stage">
+  <div class="ambient"><div class="wash wash1"></div><div class="wash wash2"></div><div class="wash wash3"></div><div class="wash wash4"></div></div>
+  <div class="vignette"></div>
 
-<div id="viewport">
-<div id="stage">
-
-  <div class="bar top"></div><div class="bar bot"></div>
-  <div class="grain"></div>
-
-  <!-- SCENE 1 + 2 -->
-  <section class="scene" id="s12">
-    <div id="gridWrap"><div id="grid"></div></div>
-    <div id="s1lines">
-      <div class="line" id="l1">Every second...</div>
-      <div class="line" id="l2">Thousands of prices change.</div>
+  <!-- ============ SCENE 1: BROWSER + AI SCAN ============ -->
+  <section class="scene" id="s1">
+    <div class="hud">
+      <div class="hud-brand"><span class="hud-dot"></span>KrazyBuy</div>
+      <div class="hud-right">
+        <div class="hud-stat">STORES <span>28</span></div>
+        <div class="hud-stat">TIME <span id="elapsed1">0.0s</span></div>
+      </div>
     </div>
-    <div id="chaosWords"></div>
-    <div id="tooMuch">Too much information.</div>
-    <div class="vo" id="vo1">"The internet never stops changing."</div>
+
+    <div class="phone-wrap cam-layer">
+      <div class="phone-frame">
+        <div class="chrome-tabbar">
+          <div class="chrome-tab active"><span class="fav"></span>Wireless Earbuds — Nova</div>
+          <div class="chrome-tab"><span class="fav"></span>Cart</div>
+          <div class="chrome-tab-plus">+</div>
+        </div>
+        <div class="chrome-toolbar">
+          <div class="chrome-nav">&#8592;&#8594;&#8635;</div>
+          <div class="chrome-addr">
+            <span class="lock">&#128274;</span>
+            <span class="url">shop.novaelectronics.com/wireless-earbuds-anc</span>
+          </div>
+          <div class="chrome-ext" id="chromeExt"><span class="pulse-ring"></span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 L14 9 L21 9 L15.5 13.5 L17.5 21 L12 16.5 L6.5 21 L8.5 13.5 L3 9 L10 9 Z" fill="#fff"/></svg>
+          </div>
+          <div class="chrome-avatar"></div>
+        </div>
+        <div class="chrome-bookmarks"><span>Amazon</span><span>Deals</span><span>Orders</span><span>Wishlist</span></div>
+        <div class="product-page" id="productPage">
+          <div class="pp-store-bar">
+            <div class="pp-store-name">Nova Electronics <span class="pp-prime">Prime</span></div>
+            <div class="pp-cart">&#128722;</div>
+          </div>
+          <div class="pp-body">
+            <div class="pp-img">
+              <svg width="56" height="56" viewBox="0 0 60 60" fill="none">
+                <circle cx="30" cy="30" r="27" fill="#F5F2EC"/>
+                <ellipse cx="20" cy="33" rx="8" ry="10" fill="#111"/>
+                <ellipse cx="40" cy="33" rx="8" ry="10" fill="#111"/>
+                <circle cx="20" cy="29" r="4.2" fill="#333"/>
+                <circle cx="40" cy="29" r="4.2" fill="#333"/>
+                <path d="M20 23 Q30 16 40 23" stroke="#888" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+                <path d="M14 35 Q12 44 16 47" stroke="#2a2a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                <path d="M46 35 Q48 44 44 47" stroke="#2a2a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="pp-info">
+              <div class="pp-brand">Nova Audio</div>
+              <div class="pp-title">Wireless Earbuds — ANC, 30h Battery</div>
+              <div class="pp-model">Model NA-E210 · Midnight Black</div>
+              <div class="pp-stars">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:#9CA3AF;font-size:.48rem">8,412 ratings</span></div>
+              <div class="pp-price-row">
+                <span class="pp-currency">₹</span>
+                <span class="pp-price" id="ppPrice">9,990</span>
+                <span class="pp-mrp">₹14,990</span>
+              </div>
+              <div class="pp-ship">Free delivery · Tomorrow</div>
+              <div class="pp-seller-row">Sold by Nova Retail <span class="dot"></span> 96% positive</div>
+            </div>
+          </div>
+          <div class="ocr-wrap" id="ocrWrap">
+            <div class="laser" id="laser1"></div>
+            <div class="ocr-box" id="ocr-img" style="left:12px;top:38px;width:70px;height:70px;">
+              <span class="ocr-tag">Product</span>
+            </div>
+            <div class="ocr-box" id="ocr-title" style="left:92px;top:52px;right:12px;height:14px;">
+              <span class="ocr-tag">Title</span>
+            </div>
+            <div class="ocr-box" id="ocr-model" style="left:92px;top:69px;width:96px;height:12px;">
+              <span class="ocr-tag">Model</span>
+            </div>
+            <div class="ocr-box" id="ocr-price" style="left:92px;top:98px;width:76px;height:19px;">
+              <span class="ocr-tag">Price</span>
+            </div>
+            <div class="ocr-box" id="ocr-seller" style="left:12px;top:150px;width:110px;height:12px;">
+              <span class="ocr-tag">Seller</span>
+            </div>
+            <div class="ocr-box" id="ocr-rating" style="left:92px;top:82px;width:66px;height:12px;">
+              <span class="ocr-tag">Rating</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-overlay" id="aiOverlay">
+          <div class="ai-overlay-header">
+            <div class="ai-logo-mark">K</div>
+            <div><div class="ai-title-txt">KrazyBuy</div><div class="ai-title-sub" id="scanSub">Scanning 28 stores…</div></div>
+          </div>
+          <div class="ai-scanning-rows" id="scanRows"></div>
+          <div class="best-deal-bar" id="bestDealBar">
+            <div class="bd-top">
+              <div>
+                <div class="bd-label">Best price found</div>
+                <div class="bd-store">
+                  <span class="bd-store-logo" style="background:#16A34A">Q</span>
+                  Quikkart · Verified seller
+                </div>
+              </div>
+              <div>
+                <div class="bd-price">₹7,559</div>
+                <div class="bd-save">Save ₹2,431 today</div>
+              </div>
+            </div>
+            <div class="bd-tags">
+              <span class="bd-tag dark">AI Recommended</span>
+              <span class="bd-tag green">₹200 coupon</span>
+              <span class="bd-tag green">5% cashback</span>
+              <span class="bd-tag">Trust 98%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop-hero" id="stopHero">
+      <div class="stop-word">Stop.</div>
+      <div class="stop-sub">Pay <span class="stop-price-green">₹7,559</span><br>not ₹9,990 elsewhere</div>
+    </div>
+
+    <div class="particles-wrap" id="pWrap1"></div>
+
+    <div class="bottom-bar">
+      <div class="site-url">&#127760; <strong>krazybuy.online</strong></div>
+      <div class="site-url">@krazybuy</div>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="pf1"></div></div>
   </section>
 
-  <!-- SCENE 3 -->
+  <!-- ============ SCENE 2: COMPARE LIST ============ -->
+  <section class="scene" id="s2">
+    <div class="hud">
+      <div class="hud-brand"><span class="hud-dot"></span>KrazyBuy</div>
+      <div class="hud-right"><div class="hud-stat">28 STORES <span>SCANNED</span></div></div>
+    </div>
+    <div class="compare-scene cam-layer">
+      <div class="compare-header">
+        <div class="compare-eyebrow">AI price comparison</div>
+        <div class="compare-headline">Wireless earbuds · ranked by price</div>
+        <div class="compare-sub">Refreshed every 10 minutes · every seller verified</div>
+      </div>
+      <div style="position:relative;">
+        <svg class="neural-svg" id="neuralSvg" viewBox="0 0 400 400" preserveAspectRatio="none"></svg>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+      <div class="savings-summary" id="savSummary">
+        <div>
+          <div class="ss-label">You save today</div>
+          <div class="ss-amount" id="ssAmount">₹2,431</div>
+        </div>
+        <div class="ss-right">
+          <div class="ss-note">vs highest listed price</div>
+          <div class="ss-stores">28 stores · 2.4s scan</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <div class="site-url">&#127760; <strong>krazybuy.online</strong></div>
+      <div class="site-url">@krazybuy</div>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="pf2"></div></div>
+  </section>
+
+  <!-- ============ SCENE 3: LIVE TRACKER ============ -->
   <section class="scene" id="s3">
-    <canvas id="netCanvas" width="1080" height="1920"></canvas>
-    <div id="particle"></div>
-    <div id="retzoTitle">RETZO&nbsp;AI</div>
-    <div id="flowChain"></div>
-    <div class="vo" id="vo3">"So we built an intelligence that watches everything."</div>
+    <div class="hud">
+      <div class="hud-brand"><span class="hud-dot"></span>KrazyBuy</div>
+      <div class="hud-right"><div class="live-badge">Live prices</div></div>
+    </div>
+    <div class="tracker-wrap cam-layer">
+      <div class="tracker-header">
+        <div class="tracker-title">Price across 28 stores</div>
+        <div class="live-badge">Live</div>
+      </div>
+      <div class="chart-box">
+        <canvas id="priceChart"></canvas>
+        <div class="chart-watermark">KRAZYBUY.ONLINE</div>
+      </div>
+      <div class="mini-stores" id="miniStores"></div>
+    </div>
+    <div class="bottom-bar">
+      <div class="site-url">&#127760; <strong>krazybuy.online</strong></div>
+      <div class="site-url">@krazybuy</div>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="pf3"></div></div>
   </section>
 
-  <!-- SCENE 4 -->
+  <!-- ============ SCENE 4: AI DASHBOARD ============ -->
   <section class="scene" id="s4">
-    <div id="intelWrap">
-      <div class="intel-card" id="ic1">
-        <div class="ic-label">Price Forecast</div>
-        <svg id="forecastSvg" width="484" height="198" viewBox="0 0 220 90">
-          <path id="forecastPath" d="M4,60 C30,55 40,70 62,64 C84,58 92,34 116,40 C134,45 144,28 160,26"/>
-          <path id="forecastPred" d="M160,26 C178,24 196,16 216,12"/>
-        </svg>
-      </div>
-      <div class="intel-card" id="ic2">
-        <div class="ic-label">Deal Score</div>
-        <div class="gaugebox">
-          <svg width="170" height="170"><circle class="g-bg" cx="85" cy="85" r="75"/>
-          <circle class="g-fill" id="gfill" cx="85" cy="85" r="75"/></svg>
-          <div class="g-num" id="gnum">0</div>
-        </div>
-      </div>
-      <div class="intel-card" id="ic3">
-        <div class="ic-label">Coupons Discovered</div>
-        <div class="coupon-list">
-          <div class="coupon">SAVEBIG10 <b>−10%</b></div>
-          <div class="coupon">BANKOFF500 <b>−₹500</b></div>
-          <div class="coupon">FREESHIP <b>₹0 ship</b></div>
-        </div>
-      </div>
+    <div class="hud">
+      <div class="hud-brand"><span class="hud-dot"></span>KrazyBuy</div>
+      <div class="hud-right"><div class="hud-stat">AI <span>POWERED</span></div></div>
     </div>
-    <div id="intelText">Intelligence... <em>before every purchase.</em></div>
+    <div class="features-wrap cam-layer">
+      <div class="feat-header">
+        <div class="feat-title">Why KrazyBuy wins every time</div>
+        <div class="feat-sub">Trained on millions of live price points</div>
+      </div>
+      <div class="ring-row" id="ringRow">
+        <div class="ring-item">
+          <div class="ring-svg"><svg viewBox="0 0 64 64"><circle class="ring-track" cx="32" cy="32" r="28"/><circle class="ring-fill" id="ring1" cx="32" cy="32" r="28"/></svg><div class="ring-pct" id="ringPct1">0%</div></div>
+          <div class="ring-label">Price<br>Accuracy</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-svg"><svg viewBox="0 0 64 64"><circle class="ring-track" cx="32" cy="32" r="28"/><circle class="ring-fill" id="ring2" cx="32" cy="32" r="28"/></svg><div class="ring-pct" id="ringPct2">0%</div></div>
+          <div class="ring-label">Verified<br>Sellers</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-svg"><svg viewBox="0 0 64 64"><circle class="ring-track" cx="32" cy="32" r="28"/><circle class="ring-fill" id="ring3" cx="32" cy="32" r="28"/></svg><div class="ring-pct" id="ringPct3">0%</div></div>
+          <div class="ring-label">Deal<br>Confidence</div>
+        </div>
+      </div>
+      <div id="featCards"></div>
+    </div>
+    <div class="bottom-bar">
+      <div class="site-url">&#127760; <strong>krazybuy.online</strong></div>
+      <div class="site-url">@krazybuy</div>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="pf4"></div></div>
   </section>
 
-  <!-- SCENE 5 -->
+  <!-- ============ SCENE 5: ENDING ============ -->
   <section class="scene" id="s5">
-    <div id="phoneScale">
-      <div id="phone">
-        <div class="notch"></div>
-        <div class="searchbar">
-          <svg class="mag" width="15" height="15" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <span id="typed"></span><span class="caret" id="caret"></span>
-        </div>
-        <div id="results">
-          <div class="result best" id="r1">
-            <div><div class="r-label">Best Price</div><div class="r-main">MacBook Air M4</div>
-            <div class="r-sub">Lowest across 7 retailers</div></div>
-            <div style="text-align:right"><div class="r-side green">₹94,990</div>
-            <div class="r-badge">Best Deal</div></div>
-          </div>
-          <div class="result" id="r2">
-            <div><div class="r-label">AI Summary</div>
-            <div class="r-sub" style="font-size:10.5px;line-height:1.5">Reviews love battery &amp; display.
-            Price dropped 8% this week — strong time to buy.</div></div>
-          </div>
-          <div class="result" id="r3">
-            <div><div class="r-label">Deal Score</div><div class="r-main">92 / 100</div></div>
-            <div class="r-side green">2 coupons</div>
-          </div>
-          <div class="result" id="r4">
-            <div><div class="r-label">Price History</div>
-            <svg class="spark" width="120" height="26" viewBox="0 0 120 26">
-              <path d="M2,8 L20,12 L38,10 L56,16 L74,14 L92,20 L118,22" fill="none"
-                stroke="#16A34A" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="r-side">↓ 8%</div>
-          </div>
-          <div class="result" id="r5">
-            <div><div class="r-label">Best Retailer</div><div class="r-main">KrazyBuy</div>
-            <div class="r-sub">Free shipping · in stock</div></div>
-            <div class="r-side green">Buy →</div>
-          </div>
-        </div>
+    <div class="end-wrap cam-layer">
+      <div class="end-logo-big">Krazy<span class="logo-accent">Buy</span></div>
+      <div class="end-tagline">Why pay more when AI already knows the cheapest price?<br><strong>28 stores, compared in 2.4 seconds.</strong></div>
+      <button class="end-cta">Compare Prices Free</button>
+      <div class="end-platforms">
+        <div class="end-plat-chip"><span class="ico">&#127760;</span>Chrome Extension</div>
+        <div class="end-plat-chip"><span class="ico">&#128241;</span>Android App</div>
+        <div class="end-plat-chip"><span class="ico">&#128241;</span>iOS App</div>
+        <div class="end-plat-chip"><span class="ico">&#128187;</span>Web App</div>
       </div>
+      <div class="end-social"><span>@krazybuy</span><span>·</span><span>100K+ Happy Users</span><span>·</span><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>4.9</span></div>
+      <div class="end-trust">© 2026 KrazyBuy · Trusted AI Shopping Assistant</div>
     </div>
-    <div id="s5cap">One search. <span>Every answer.</span></div>
+    <div class="progress-rail"><div class="progress-fill" id="pf5"></div></div>
   </section>
 
-  <!-- SCENE 6 -->
-  <div class="bloomfx" id="bloom"></div>
-  <div id="whiteout"></div>
-  <section class="scene" id="s6">
-    <div class="logo-lock" id="logoLock">
-      <div class="logo-mark6">K</div>
-      <div class="logo-name6">KrazyBuy</div>
-      <div class="powered">Powered by Retzo AI</div>
-    </div>
-    <div id="tagline">Shop Smarter.<br><span class="save">Save More.</span></div>
-    <div id="handles">
-      <span class="handle">krazybuy.online</span>
-      <span class="handle">@krazybuy.ai</span>
-    </div>
-    <button id="replay">↻ &nbsp;Watch Again</button>
-  </section>
-
-  <!-- START -->
-  <div id="startOverlay">
-    <div class="start-title">A KrazyBuy Film</div>
-    <div class="start-name">The Internet Doesn't Wait.<br>Neither Do We.</div>
-    <button id="playBtn" aria-label="Play film">
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l12-7z"/></svg>
-    </button>
-    <div class="start-sub">30 seconds · sound on 🔊</div>
-  </div>
-
-</div><!-- /stage -->
-</div><!-- /viewport -->
+</div>
 
 <script>
-"use strict";
-/* ================= STAGE SCALING (mobile compatibility) ================= */
-const STAGE_W=1080,STAGE_H=1920;
-function fit(){
-  const s=Math.min(innerWidth/STAGE_W,innerHeight/STAGE_H);
-  document.getElementById("stage").style.transform=`scale(${s})`;
-}
-addEventListener("resize",fit);
-addEventListener("orientationchange",()=>setTimeout(fit,120));
-fit();
+(() => {
+  const $ = id => document.getElementById(id);
+  const wait = ms => new Promise(r => setTimeout(r, ms));
 
-/* ================= TIMELINE ENGINE ================= */
-let timers=[],rafs=[],intervals=[];
-const at=(ms,fn)=>timers.push(setTimeout(fn,ms));
-const every=(ms,fn)=>{const i=setInterval(fn,ms);intervals.push(i);return i};
-const $=id=>document.getElementById(id);
-function clearAll(){timers.forEach(clearTimeout);intervals.forEach(clearInterval);
-  rafs.forEach(cancelAnimationFrame);timers=[];intervals=[];rafs=[]}
+  const STORES = [
+    { id:'Q', name:'Quikkart',   color:'#16A34A', price:7559, mrp:14990, disc:24, del:'Tomorrow', coupon:'₹200', cashback:'5%', warranty:'1yr', stock:'In stock', trust:98, rating:4.8, best:true },
+    { id:'U', name:'UrbanCart',  color:'#2563EB', price:8499, mrp:14990, disc:15, del:'2 days',    coupon:'₹100', cashback:'3%', warranty:'1yr', stock:'In stock', trust:95, rating:4.6 },
+    { id:'B', name:'Bazaar+',    color:'#7C3AED', price:8749, mrp:14990, disc:12, del:'2 days',    coupon:'₹80',  cashback:'2%', warranty:'6mo', stock:'In stock', trust:93, rating:4.5 },
+    { id:'S', name:'ShopNova',   color:'#DB2777', price:8999, mrp:14990, disc:10, del:'3 days',    coupon:'₹150', cashback:'2%', warranty:'1yr', stock:'Low stock', trust:91, rating:4.4 },
+    { id:'M', name:'MartHub',    color:'#EA580C', price:9299, mrp:14990, disc:7,  del:'4 days',    coupon:'₹50',  cashback:'1%', warranty:'6mo', stock:'In stock', trust:88, rating:4.2 },
+  ];
 
-/* ================= AUDIO (synthesized score) ================= */
-let AC=null,master=null;
-function audioInit(){
-  AC=new (window.AudioContext||window.webkitAudioContext)();
-  master=AC.createGain();master.gain.value=.8;master.connect(AC.destination);
-}
-function drone(freq,startT,dur,peak){
-  const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
-  o.type="sine";o.frequency.value=freq;f.type="lowpass";f.frequency.value=200;
-  g.gain.setValueAtTime(0,AC.currentTime+startT);
-  g.gain.linearRampToValueAtTime(peak,AC.currentTime+startT+dur*.3);
-  g.gain.linearRampToValueAtTime(0,AC.currentTime+startT+dur);
-  o.connect(f);f.connect(g);g.connect(master);
-  o.start(AC.currentTime+startT);o.stop(AC.currentTime+startT+dur+.1);
-}
-function pad(freq,startT,dur,peak){
-  [0,-7,+6].forEach(cents=>{
-    const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
-    o.type="triangle";o.frequency.value=freq;o.detune.value=cents;
-    f.type="lowpass";f.frequency.value=900;
-    g.gain.setValueAtTime(0,AC.currentTime+startT);
-    g.gain.linearRampToValueAtTime(peak/3,AC.currentTime+startT+dur*.4);
-    g.gain.linearRampToValueAtTime(0,AC.currentTime+startT+dur);
-    o.connect(f);f.connect(g);g.connect(master);
-    o.start(AC.currentTime+startT);o.stop(AC.currentTime+startT+dur+.1);
-  });
-}
-function pianoNote(freq,startT,peak=.12){
-  const o=AC.createOscillator(),g=AC.createGain();
-  o.type="sine";o.frequency.value=freq;
-  g.gain.setValueAtTime(0,AC.currentTime+startT);
-  g.gain.linearRampToValueAtTime(peak,AC.currentTime+startT+.02);
-  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+startT+2.4);
-  o.connect(g);g.connect(master);
-  o.start(AC.currentTime+startT);o.stop(AC.currentTime+startT+2.6);
-}
-function bell(startT){
-  [1760,2637,3520].forEach((f,i)=>{
-    const o=AC.createOscillator(),g=AC.createGain();
-    o.type="sine";o.frequency.value=f;
-    g.gain.setValueAtTime(0,AC.currentTime+startT);
-    g.gain.linearRampToValueAtTime(.10/(i+1),AC.currentTime+startT+.01);
-    g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+startT+4.5);
-    o.connect(g);g.connect(master);
-    o.start(AC.currentTime+startT);o.stop(AC.currentTime+startT+5);
-  });
-}
-function riser(startT,dur){
-  const b=AC.createBufferSource(),buf=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate);
-  const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.4;
-  b.buffer=buf;
-  const f=AC.createBiquadFilter();f.type="bandpass";f.Q.value=1.2;
-  f.frequency.setValueAtTime(120,AC.currentTime+startT);
-  f.frequency.exponentialRampToValueAtTime(4000,AC.currentTime+startT+dur);
-  const g=AC.createGain();
-  g.gain.setValueAtTime(0,AC.currentTime+startT);
-  g.gain.linearRampToValueAtTime(.16,AC.currentTime+startT+dur*.9);
-  g.gain.linearRampToValueAtTime(0,AC.currentTime+startT+dur);
-  b.connect(f);f.connect(g);g.connect(master);b.start(AC.currentTime+startT);
-}
-function score(){
-  drone(55,0,9,.30);
-  riser(5.5,2.5);
-  drone(41,8,7,.26); pad(220,9,6,.20);
-  pianoNote(440,10); pianoNote(659.25,12);
-  pad(261.63,14,7,.24); pianoNote(523.25,15); pianoNote(783.99,17.5);
-  drone(55,14,7,.18);
-  pad(329.63,20,7,.26); pianoNote(659.25,20.5); pianoNote(880,23);
-  drone(55,20,7,.2); riser(24,2);
-  pad(261.63,26,7,.34); drone(65.4,26,7,.3);
-  pianoNote(523.25,26.5,.16); pianoNote(659.25,27,.14); pianoNote(783.99,27.5,.14);
-  bell(28.4);
-}
+  const SCAN_MSGS = [
+    { txt:'Detecting product…',       ms:230 },
+    { txt:'Reading title…',           ms:220 },
+    { txt:'Matching SKU…',            ms:230 },
+    { txt:'Finding exact variant…',   ms:250 },
+    { txt:'Comparing 28 stores…',     ms:260 },
+    { txt:'Searching coupons…',       ms:230 },
+    { txt:'Checking cashback…',       ms:220 },
+    { txt:'Comparing delivery…',      ms:220 },
+    { txt:'Checking seller trust…',   ms:230 },
+    { txt:'Lowest price found.',      ms:0, final:true },
+  ];
 
-/* ================= SCENE 1–2: GRID ================= */
-const BRANDS=["Amazon","Flipkart","Reliance","Croma","Myntra","Apple","Blinkit","KrazyBuy"];
-const ITEMS=["MacBook Air M4","iPhone 16","Sony WH-1000XM6","AirPods Pro","Galaxy S25",
-"iPad Air","PS5 Slim","Dyson V12","GoPro 13","Kindle","Echo Dot","Nike Pegasus",
-"LG C4 OLED","Instant Pot","Fitbit Sense","JBL Flip 7","Canon R50","Mi Purifier"];
-function buildGrid(){
-  const g=$("grid");g.innerHTML="";
-  for(let i=0;i<78;i++){
-    const c=document.createElement("div");c.className="pcard";
-    const p=(Math.random()*90000+999)|0;
-    c.innerHTML=`<span class="pbrand">${BRANDS[i%BRANDS.length]}</span>
-      <span class="pname2">${ITEMS[i%ITEMS.length]}</span>
-      <span class="pprice2" data-p="${p}">₹${p.toLocaleString("en-IN")}</span>`;
-    g.appendChild(c);
-  }
-}
-function tickPrices(chance){
-  document.querySelectorAll("#grid .pprice2").forEach(el=>{
-    if(Math.random()>chance)return;
-    let p=+el.dataset.p;const delta=(Math.random()-.48)*p*.06;p=Math.max(499,(p+delta)|0);
-    el.dataset.p=p;el.textContent="₹"+p.toLocaleString("en-IN");
-    el.classList.remove("drop","rise");
-    el.classList.add(delta<0?"drop":"rise");
-  });
-}
+  const PRICE_STEPS = [9990,9735,9490,9240,8910,8540,8210,7999,7780,7559];
 
-/* ================= SCENE 3: NEURAL NET ================= */
-let netStop=false;
-function runNetwork(){
-  const cv=$("netCanvas"),ctx=cv.getContext("2d");
-  cv.width=STAGE_W;cv.height=STAGE_H;netStop=false;
-  const N=64,nodes=[],cx=cv.width/2,cy=cv.height/2;
-  for(let i=0;i<N;i++){
-    const a=Math.random()*Math.PI*2,r=60+Math.random()*Math.min(cv.width,cv.height)*.4;
-    nodes.push({x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r*.9,
-      vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,born:i*45});
-  }
-  const t0=performance.now();
-  (function frame(now){
-    if(netStop)return;
-    const t=now-t0;ctx.clearRect(0,0,cv.width,cv.height);
-    for(const n of nodes){n.x+=n.vx;n.y+=n.vy}
-    ctx.lineWidth=1.4;
-    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
-      if(t<nodes[j].born)continue;
-      const a=nodes[i],b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
-      if(d<220){ctx.strokeStyle=`rgba(245,245,244,${(1-d/220)*.22})`;
-        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
-    }
-    for(const n of nodes){if(t<n.born)continue;
-      ctx.fillStyle="rgba(245,245,244,.85)";
-      ctx.beginPath();ctx.arc(n.x,n.y,2.6,0,7);ctx.fill()}
-    const gl=ctx.createRadialGradient(cx,cy,0,cx,cy,280);
-    gl.addColorStop(0,"rgba(255,255,255,.10)");gl.addColorStop(1,"transparent");
-    ctx.fillStyle=gl;ctx.fillRect(0,0,cv.width,cv.height);
-    rafs.push(requestAnimationFrame(frame));
-  })(t0);
-}
+  const FEATS = [
+    { icon:'&#9889;', label:'2.4 second scan',     desc:'Checks 28 stores faster than a page reload', val:'2.4s', vlabel:'avg scan time' },
+    { icon:'&#127991;', label:'Coupon auto-apply',  desc:'Finds and stacks hidden coupons for you',     val:'₹200+', vlabel:'avg extra saved' },
+    { icon:'&#128230;', label:'Delivery match',      desc:'Weighs delivery speed, not just price',       val:'1 day', vlabel:'fastest found' },
+    { icon:'&#128274;', label:'Seller trust score',  desc:'Flags return rates and seller history',       val:'98%', vlabel:'trust verified' },
+  ];
 
-/* ================= HELPERS ================= */
-function sceneOn(id){$(id).classList.add("on")}
-function sceneOff(id){$(id).classList.remove("on")}
-function typeText(el,text,speed,done){
-  let i=0;const iv=every(speed,()=>{
-    el.textContent=text.slice(0,++i);
-    if(i>=text.length){clearInterval(iv);done&&done()}
-  });
-}
-function countUp(el,to,dur){
-  const t0=performance.now();
-  (function f(now){const p=Math.min(1,(now-t0)/dur);
-    el.textContent=Math.round(to*(1-Math.pow(1-p,3)));
-    if(p<1)rafs.push(requestAnimationFrame(f))})(t0);
-}
+  const scenes = [1,2,3,4,5].map(n => $('s'+n));
 
-/* ================= THE FILM ================= */
-function playFilm(){
-  clearAll();netStop=true;
-  document.querySelectorAll(".scene,.line,.vo,.flow-item,.intel-card,.coupon,.result,.logo-lock,#tagline,#handles,#replay,#retzoTitle,#intelText,#s5cap,#tooMuch")
-    .forEach(el=>el.classList.remove("on","show"));
-  $("whiteout").classList.remove("on");$("bloom").classList.remove("on");
-  $("gridWrap").classList.remove("zoomout");$("grid").classList.remove("frenzy","glitching","frozen");
-  $("phone").classList.remove("in");$("particle").className="";
-  $("forecastPath").classList.remove("draw");$("forecastPred").classList.remove("draw");
-  $("gfill").style.strokeDashoffset=471;$("gnum").textContent="0";
-  $("typed").textContent="";$("caret").style.display="inline-block";
-  $("chaosWords").innerHTML="";$("s1lines").style.opacity=1;
-  buildGrid();
-  score();
-
-  /* ---- SCENE 1 (0–4s) ---- */
-  sceneOn("s12");
-  at(300,()=>$("l1").classList.add("show"));
-  at(1500,()=>$("l2").classList.add("show"));
-  at(2500,()=>{
-    $("s1lines").style.opacity=0;
-    $("gridWrap").classList.add("zoomout");
-    every(300,()=>tickPrices(.22));
-    $("vo1").classList.add("show");
-  });
-
-  /* ---- SCENE 2 (4–8s) chaos ---- */
-  at(4200,()=>{
-    $("vo1").classList.remove("show");
-    $("grid").classList.add("frenzy");
-    every(120,()=>tickPrices(.5));
-    const words=["Prices","Coupons","Reviews","Ratings","Stock","Flash Sales","Lightning Deals"];
-    words.forEach((w,i)=>at(i*260,()=>{
-      const s=document.createElement("span");s.className="cword pop";s.textContent=w;
-      s.style.left=(60+Math.random()*640)+"px";
-      s.style.top=(280+Math.random()*1200)+"px";
-      s.style.fontSize=(30+Math.random()*54)+"px";
-      $("chaosWords").appendChild(s);
-    }));
-  });
-  at(6300,()=>{$("tooMuch").classList.add("show");
-    $("tooMuch").classList.add("glitching");$("grid").classList.add("glitching")});
-  at(7600,()=>{
-    document.querySelectorAll(".glitching").forEach(e=>e.classList.remove("glitching"));
-    $("grid").classList.add("frozen");intervals.forEach(clearInterval);intervals=[];
-  });
-
-  /* ---- SCENE 3 (8–14s) the brain ---- */
-  at(8200,()=>{sceneOff("s12");sceneOn("s3");
-    at(500,()=>$("particle").classList.add("grow"));
-    at(1400,()=>{$("particle").classList.add("bloom");runNetwork();
-      $("retzoTitle").classList.add("show")});
-    const chain=["Products","Retailers","Coupons","Reviews","Delivery","Price History","AI"];
-    const fc=$("flowChain");fc.innerHTML="";
-    chain.forEach((c,i)=>{
-      const item=document.createElement("div");item.className="flow-item";
-      item.innerHTML=(i?`<span class="flow-arrow">→</span>`:"")+
-        `<span class="flow-pill ${c==="AI"?"ai":""}">${c}</span>`;
-      fc.appendChild(item);
-      at(2200+i*380,()=>item.classList.add("show"));
+  function activate(idx){
+    scenes.forEach((s,i) => {
+      s.classList.remove('active','exiting');
+      if(i===idx) s.classList.add('active');
     });
-    at(2600,()=>$("vo3").classList.add("show"));
-  });
+  }
+  async function exitTo(idx){
+    const cur = document.querySelector('.scene.active');
+    if(cur){ cur.classList.remove('active'); cur.classList.add('exiting'); }
+    await wait(300);
+    activate(idx);
+  }
 
-  /* ---- SCENE 4 (14–20s) intelligence ---- */
-  at(14000,()=>{netStop=true;sceneOff("s3");sceneOn("s4");
-    at(300,()=>{$("ic1").classList.add("show");
-      $("forecastPath").classList.add("draw");$("forecastPred").classList.add("draw")});
-    at(700,()=>{$("ic2").classList.add("show");
-      $("gfill").style.strokeDashoffset=471-(471*.92);countUp($("gnum"),92,1800)});
-    at(1100,()=>{$("ic3").classList.add("show");
-      document.querySelectorAll(".coupon").forEach((c,i)=>at(300+i*350,()=>c.classList.add("show")))});
-    at(2600,()=>$("intelText").classList.add("show"));
-  });
+  function animProgress(el, dur){
+    if(!el) return;
+    const t0 = performance.now();
+    const raf = () => {
+      const p = Math.min((performance.now()-t0)/dur,1)*100;
+      el.style.width = p+'%';
+      if(p<100) requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+  }
 
-  /* ---- SCENE 5 (20–26s) krazybuy ---- */
-  at(20000,()=>{sceneOff("s4");sceneOn("s5");
-    at(200,()=>$("phone").classList.add("in"));
-    at(1300,()=>typeText($("typed"),"MacBook Air M4",55,()=>{
-      $("caret").style.display="none";
-      ["r1","r2","r3","r4","r5"].forEach((r,i)=>at(150+i*280,()=>$(r).classList.add("show")));
-      at(1900,()=>$("s5cap").classList.add("show"));
-    }));
-  });
+  function countNum(el, from, to, dur, fmt){
+    const t0=performance.now();
+    const f=()=>{
+      const p=Math.min((performance.now()-t0)/dur,1);
+      const e=p<.5?2*p*p:-1+(4-2*p)*p;
+      el.textContent = fmt(Math.round(from+(to-from)*e));
+      if(p<1) requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+  }
 
-  /* ---- SCENE 6 (26–30s) ending ---- */
-  at(26000,()=>{
-    $("bloom").classList.add("on");
-    at(400,()=>$("whiteout").classList.add("on"));
-    at(1200,()=>{sceneOff("s5");sceneOn("s6");$("logoLock").classList.add("show")});
-    at(2600,()=>$("tagline").classList.add("show"));
-    at(3400,()=>$("handles").classList.add("show"));
-    at(4600,()=>$("replay").classList.add("show"));
-  });
-}
+  function spawnParticles(container, n){
+    const colors=['#16A34A','#15803D','#D6D3D1'];
+    const glyphs=['₹','&#128176;','&#127873;','&#10024;'];
+    let html='';
+    for(let i=0;i<n;i++){
+      const l=Math.random()*100, dur=3+Math.random()*4, del=Math.random()*3;
+      if(i%3===0){
+        html+=`<span class="p-glyph" style="left:${l}%;bottom:${Math.random()*20}%;animation-duration:${dur}s;animation-delay:-${del}s;color:${colors[0]};">${glyphs[Math.floor(Math.random()*glyphs.length)]}</span>`;
+      } else {
+        const sz=2+Math.random()*3.5;
+        const c=colors[Math.floor(Math.random()*colors.length)];
+        html+=`<span class="p-dot" style="left:${l}%;bottom:${Math.random()*25}%;width:${sz}px;height:${sz}px;background:${c};animation-duration:${dur}s;animation-delay:-${del}s;"></span>`;
+      }
+    }
+    container.innerHTML = html;
+  }
 
-/* ================= START ================= */
-$("playBtn").addEventListener("click",()=>{
-  if(!AC)audioInit();
-  if(AC.state==="suspended")AC.resume();
-  $("startOverlay").classList.add("hide");
-  setTimeout(playFilm,400);
-});
-$("replay").addEventListener("click",()=>{
-  if(AC&&AC.state==="suspended")AC.resume();
-  playFilm();
-});
+  function drawChart(canvas){
+    const dpr = window.devicePixelRatio||1;
+    const W = canvas.offsetWidth || 300, H = 80;
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    const prices=[9990,9800,9600,9200,8900,8600,8200,7900,7700,7559];
+    const pad={l:4,r:4,t:10,b:4};
+    const sw=W-pad.l-pad.r, sh=H-pad.t-pad.b;
+    const mn=7000,mx=10200;
+    const toPt=(p,i)=>({x:pad.l+i/(prices.length-1)*sw, y:pad.t+(1-(p-mn)/(mx-mn))*sh});
+
+    let prog=0;
+    const anim=()=>{
+      ctx.clearRect(0,0,W,H);
+      const slice=Math.max(2,Math.floor(prog*(prices.length-1))+2);
+      const partial=prices.slice(0,slice).map((p,i)=>toPt(p,i));
+      const grad=ctx.createLinearGradient(0,pad.t,0,H);
+      grad.addColorStop(0,'rgba(22,163,74,.22)');
+      grad.addColorStop(1,'rgba(22,163,74,.02)');
+      ctx.beginPath();
+      ctx.moveTo(partial[0].x,partial[0].y);
+      partial.forEach((p,i)=>{ if(i>0) ctx.lineTo(p.x,p.y); });
+      ctx.lineTo(partial[partial.length-1].x,H);
+      ctx.lineTo(partial[0].x,H);
+      ctx.closePath();
+      ctx.fillStyle=grad; ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(partial[0].x,partial[0].y);
+      partial.forEach((p,i)=>{ if(i>0) ctx.lineTo(p.x,p.y); });
+      ctx.strokeStyle='#15803D'; ctx.lineWidth=2; ctx.stroke();
+
+      const last=partial[partial.length-1];
+      ctx.beginPath(); ctx.arc(last.x,last.y,3.5,0,Math.PI*2);
+      ctx.fillStyle='#15803D'; ctx.fill();
+
+      ctx.font='600 9px Inter';
+      ctx.fillStyle='#9CA3AF';
+      ctx.fillText('₹9,990',pad.l+2,pad.t+9);
+      if(prog>0.8){
+        ctx.fillStyle='#15803D';
+        ctx.fillText('₹7,559',Math.max(2,last.x-24),last.y-8);
+      }
+      if(prog<1){ prog+=.035; requestAnimationFrame(anim); }
+    };
+    requestAnimationFrame(anim);
+  }
+
+  function buildCompare(){
+    const grid=$('compareGrid');
+    grid.innerHTML = STORES.map((s,i)=>`
+      <div class="compare-row state-loading" data-i="${i}">
+        <div class="cr-loading"><span class="spin-ring"></span>Fetching from ${s.name}…</div>
+        <span class="cr-rank">${i+1}</span>
+        <div class="cr-real">
+          <div class="cr-logo" style="background:${s.color}">${s.id}</div>
+          <div class="cr-info">
+            <div class="cr-name-row"><span class="cr-name">${s.name}</span><span class="cr-verified" title="Verified seller">&#10003;</span></div>
+            <div class="cr-meta">${s.stock} · Warranty ${s.warranty} · &#9733; ${s.rating}</div>
+            <div class="cr-tags">
+              <span class="cr-tag green">${s.coupon} coupon</span>
+              <span class="cr-tag green">${s.cashback} cashback</span>
+              <span class="cr-tag">Delivery ${s.del}</span>
+              ${s.best?'<span class="cr-tag dark">AI Recommended</span>':''}
+            </div>
+          </div>
+          <div class="cr-price">
+            <div class="cr-price-num">₹${s.price.toLocaleString('en-IN')}</div>
+            <div class="cr-price-mrp">₹${s.mrp.toLocaleString('en-IN')}</div>
+            <div class="cr-price-disc">-${s.disc}%</div>
+            <div class="cr-trust">Trust ${s.trust}%</div>
+          </div>
+        </div>
+        ${s.best?'<div class="winner-badge">Best</div>':''}
+      </div>`).join('');
+    STORES.forEach((s,i)=>{ if(s.best) grid.children[i].classList.add('winner'); });
+  }
+
+  function drawNeural(){
+    const svg = $('neuralSvg');
+    const rows = [...document.querySelectorAll('.compare-row')];
+    if(!rows.length) return;
+    const wrap = rows[0].parentElement;
+    const wb = wrap.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${wb.width} ${wb.height}`);
+    let paths='';
+    for(let i=0;i<rows.length-1;i++){
+      const a=rows[i].getBoundingClientRect(), b=rows[i+1].getBoundingClientRect();
+      const x1=a.left-wb.left+18, y1=a.top-wb.top+a.height/2;
+      const x2=b.left-wb.left+18, y2=b.top-wb.top+b.height/2;
+      const midY=(y1+y2)/2;
+      paths += `<path d="M${x1},${y1} C${x1-14},${midY} ${x2-14},${midY} ${x2},${y2}"/>`;
+    }
+    svg.innerHTML = paths;
+  }
+
+  function buildMiniStores(){
+    const top3 = STORES.slice(0,3);
+    $('miniStores').innerHTML = top3.map(s=>`
+      <div class="mini-card${s.best?' best-mini':''}">
+        <div class="mc-logo" style="background:${s.color}">${s.id}</div>
+        <div class="mc-pname">${s.name}</div>
+        <div class="mc-pprice">₹${s.price.toLocaleString('en-IN')}</div>
+        <div class="mc-pdel">${s.del}</div>
+        <div class="mc-trust">Trust ${s.trust}%</div>
+      </div>`).join('');
+  }
+
+  function buildFeats(){
+    $('featCards').innerHTML = FEATS.map((f,i)=>`
+      <div class="feat-card" style="transition-delay:${i*80}ms">
+        <div class="feat-icon">${f.icon}</div>
+        <div>
+          <div class="ft-label">${f.label}</div>
+          <div class="ft-desc">${f.desc}</div>
+        </div>
+        <div class="feat-val">
+          <div class="fv-num">${f.val}</div>
+          <div class="fv-label">${f.vlabel}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  function animateRing(circleId, pctId, target, dur){
+    const circle = $(circleId), pctEl = $(pctId);
+    const R = 28, C = 2*Math.PI*R;
+    circle.style.strokeDasharray = C;
+    requestAnimationFrame(()=>{
+      circle.style.transitionDuration = dur+'ms';
+      circle.style.strokeDashoffset = C - (target/100)*C;
+    });
+    countNum(pctEl, 0, target, dur, v=>v+'%');
+  }
+
+  function renderScanRows(activeIdx){
+    $('scanRows').innerHTML = SCAN_MSGS.map((m,i)=>{
+      const done=i<activeIdx, active=i===activeIdx;
+      let icon;
+      if(done) icon='<span class="ai-row-icon done-icon">&#10003;</span>';
+      else if(active && !m.final) icon='<span class="ai-row-icon spin-ring"></span>';
+      else if(active && m.final) icon='<span class="ai-row-icon done-icon">&#10003;</span>';
+      else icon='<span class="ai-row-icon wait-icon">·</span>';
+      return `<div class="ai-row${done||active?' active':''} ${done?'done':''}">
+        ${icon}
+        <span class="ai-row-txt">${m.txt}</span>
+        ${done?`<span class="ai-row-time">${60+i*40}ms</span>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  let elapsedTick=null;
+  function startElapsed(el){
+    const t0=performance.now();
+    elapsedTick=setInterval(()=>{
+      el.textContent=((performance.now()-t0)/1000).toFixed(1)+'s';
+    },100);
+  }
+  function stopElapsed(){ clearInterval(elapsedTick); }
+
+  async function run(){
+    buildCompare();
+    buildMiniStores();
+    buildFeats();
+
+    activate(0);
+    animProgress($('pf1'),7200);
+    startElapsed($('elapsed1'));
+
+    await wait(150);
+
+    $('chromeExt').classList.add('wake');
+
+    $('laser1').classList.add('run');
+    await wait(180);
+    $('ocr-img').classList.add('in');
+    await wait(110);
+    $('ocr-title').classList.add('in');
+    await wait(90);
+    $('ocr-model').classList.add('in');
+    await wait(90);
+    $('ocr-price').classList.add('in');
+    await wait(90);
+    $('ocr-rating').classList.add('in');
+    await wait(90);
+    $('ocr-seller').classList.add('in');
+
+    await wait(160);
+    $('aiOverlay').classList.add('show');
+
+    const ppPrice=$('ppPrice');
+    let stepI=0;
+    const priceTicker = setInterval(()=>{
+      if(stepI < PRICE_STEPS.length){
+        ppPrice.textContent = PRICE_STEPS[stepI].toLocaleString('en-IN');
+        if(stepI>0) ppPrice.classList.add('highlight');
+        stepI++;
+      }
+    }, 240);
+
+    for(let i=0;i<SCAN_MSGS.length;i++){
+      renderScanRows(i);
+      if(SCAN_MSGS[i].ms>0) await wait(SCAN_MSGS[i].ms);
+    }
+    await wait(60);
+    renderScanRows(SCAN_MSGS.length);
+    clearInterval(priceTicker);
+    ppPrice.textContent = '7,559';
+    ppPrice.classList.add('highlight');
+    $('scanSub').textContent = 'Best deal locked';
+
+    await wait(300);
+    $('bestDealBar').classList.add('show');
+    spawnParticles($('pWrap1'),18);
+    stopElapsed();
+
+    await wait(650);
+
+    $('stopHero').classList.add('show');
+    await wait(1350);
+
+    $('stopHero').classList.remove('show');
+    await wait(200);
+    await exitTo(1);
+    animProgress($('pf2'),3400);
+    await wait(120);
+    drawNeural();
+    $('neuralSvg').classList.add('show');
+    const rows=[...$('compareGrid').children];
+    for(let i=0;i<rows.length;i++){
+      const r = rows[i];
+      setTimeout(()=>{ r.classList.remove('state-loading'); r.classList.add('in'); }, i*160);
+    }
+    await wait(500 + rows.length*160);
+    $('savSummary').classList.add('show');
+
+    await wait(1800);
+
+    await exitTo(2);
+    animProgress($('pf3'),2800);
+    await wait(100);
+    drawChart($('priceChart'));
+    [...$('miniStores').children].forEach((m,i)=>setTimeout(()=>m.classList.add('in'),200+i*80));
+
+    await wait(2500);
+
+    await exitTo(3);
+    animProgress($('pf4'),3600);
+    await wait(150);
+    animateRing('ring1','ringPct1',98,1200);
+    animateRing('ring2','ringPct2',99,1300);
+    animateRing('ring3','ringPct3',96,1400);
+    await wait(700);
+    [...$('featCards').children].forEach((c,i)=>setTimeout(()=>c.classList.add('in'),i*90));
+
+    await wait(2400);
+
+    await exitTo(4);
+    animProgress($('pf5'),4600);
+
+    await wait(4400);
+    reset();
+    run();
+  }
+
+  function reset(){
+    scenes.forEach(s=>s.classList.remove('active','exiting'));
+    $('chromeExt').classList.remove('wake');
+    $('laser1').classList.remove('run');
+    ['ocr-img','ocr-title','ocr-model','ocr-price','ocr-rating','ocr-seller'].forEach(id=>$(id).classList.remove('in'));
+    $('aiOverlay').classList.remove('show');
+    $('bestDealBar').classList.remove('show');
+    $('stopHero').classList.remove('show');
+    $('scanSub').textContent = 'Scanning 28 stores…';
+    $('ppPrice').textContent='9,990';
+    $('ppPrice').classList.remove('highlight');
+    $('pWrap1').innerHTML='';
+    $('savSummary').classList.remove('show');
+    $('neuralSvg').classList.remove('show');
+    $('neuralSvg').innerHTML='';
+    [...$('compareGrid').children].forEach(r=>{ r.classList.remove('in'); r.classList.add('state-loading'); });
+    [...$('miniStores').children].forEach(m=>m.classList.remove('in'));
+    [...$('featCards').children].forEach(c=>c.classList.remove('in'));
+    ['ring1','ring2','ring3'].forEach(id=>{ $(id).style.transitionDuration='0ms'; $(id).style.strokeDashoffset=175.9; });
+    ['ringPct1','ringPct2','ringPct3'].forEach(id=>$(id).textContent='0%');
+    ['pf1','pf2','pf3','pf4','pf5'].forEach(id=>{
+      const el=$(id);
+      if(el){ el.style.transition='none'; el.style.width='0'; requestAnimationFrame(()=>{ el.style.transition=''; }); }
+    });
+  }
+
+  run();
+})();
 </script>
 </body>
 </html>
