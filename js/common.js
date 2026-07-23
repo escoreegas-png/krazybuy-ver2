@@ -7,7 +7,7 @@ window.KB = (() => {
 'use strict';
 
 /* Product-comparison gateway (index.html / jobs / auth / favorites) */
-const API_BASE = window.__KB_API__ || 'https://gateway.viscocompare.online';
+const API_BASE = window.__KB_API__ || 'https://api.viscocompare.online';
 
 /* ── Theme ── */
 const getTheme = () => localStorage.getItem('kb_theme') || 'light';
