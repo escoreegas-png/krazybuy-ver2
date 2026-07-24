@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FAF7F2">
+<meta name="theme-color" content="#0A0A0B">
 <title>Sign in — KrazyBuy</title>
+<meta name="description" content="Sign in to KrazyBuy to sync your wishlist, favorites & search history across devices.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<!-- ── KrazyBuy Logo / Favicon ── -->
 <link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
 <link rel="shortcut icon" href="https://www.krazybuy.online/images/logo.png">
 <link rel="apple-touch-icon" href="https://www.krazybuy.online/images/logo.png">
 <link rel="icon" sizes="192x192" href="https://www.krazybuy.online/images/logo.png">
-
 </head>
 <body>
+
 <div id="toastArea" aria-live="polite"></div>
 
 <div class="auth-wrap">
@@ -52,9 +52,7 @@
 'use strict';
 const { API_BASE, $, toast, getUser, setUser } = KB;
 
-// Client ID is public by design — only the client secret must stay server-side.
 const GOOGLE_CLIENT_ID = '4535953854-p934prv6asm01piqq681fgqsb6pqlmtv.apps.googleusercontent.com';
-
 const next = new URLSearchParams(location.search).get('next') || 'index.html';
 
 if (getUser() && localStorage.getItem('kb_token')) location.replace(next);
@@ -62,17 +60,20 @@ if (getUser() && localStorage.getItem('kb_token')) location.replace(next);
 async function handleCredential(resp) {
   try {
     $('#gLoading').style.display = 'flex';
-    $('#gLoading').innerHTML = 'Signing you in…';
+    $('#gLoading').textContent = 'Signing you in…';
     const payload = JSON.parse(atob(resp.credential.split('.')[1]));
-console.log('TOKEN AUD:', payload.aud);
-console.log('TOKEN ISS:', payload.iss);
-console.log('EXPECTED:', GOOGLE_CLIENT_ID);
+    console.log('TOKEN AUD:', payload.aud);
+    console.log('TOKEN ISS:', payload.iss);
+    console.log('EXPECTED:', GOOGLE_CLIENT_ID);
 
+    const headers = { 'Content-Type': 'application/json' };
+    if (KB.API_KEY) headers['x-api-key'] = KB.API_KEY;
     const r = await fetch(API_BASE + '/auth/google', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ credential: resp.credential }),
     });
+
     const data = await r.json();
     if (!r.ok || !data.token) throw new Error(data.error || 'Login failed');
 
