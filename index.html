@@ -3,620 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0E0E11">
+<meta name="theme-color" content="#0A0A0B">
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison and deal analysis, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
 <link rel="shortcut icon" href="https://www.krazybuy.online/images/logo.png">
 <link rel="apple-touch-icon" href="https://www.krazybuy.online/images/logo.png">
-
-<style>
-/* ============================================================
-   KRAZYBUY — PROFESSIONAL NEUTRAL THEME
-   Warm charcoal + cream, single muted-gold accent.
-   No blue, no pure white, no saturated colors.
-============================================================ */
-:root, [data-theme="dark"]{
-  --bg:        #0E0E11;
-  --bg-2:      #16161A;
-  --bg-3:      #1E1E22;
-  --card:      rgba(245,240,228,.04);
-  --card-2:    rgba(245,240,228,.06);
-  --border:    rgba(245,240,228,.09);
-  --border-2:  rgba(245,240,228,.14);
-  --ink:       #E8E4DC;
-  --ink-2:     #B8B2A6;
-  --muted:     #8A857A;
-  --muted-2:   #5E5A52;
-  --accent:    #C9A961;
-  --accent-2:  #D4B873;
-  --accent-glow: rgba(201,169,97,.20);
-  --success:   #7FB069;
-  --success-bg: rgba(127,176,105,.12);
-  --success-deep: #5A8B47;
-  --danger:    #C97171;
-  --danger-bg: rgba(201,113,113,.12);
-  --warn:      #D4B873;
-  --btn-bg:    #C9A961;
-  --btn-fg:    #1A1714;
-  color-scheme: dark;
-}
-
-[data-theme="light"]{
-  --bg:        #F5F2EC;
-  --bg-2:      #EFEAE0;
-  --bg-3:      #E6E0D3;
-  --card:      rgba(31,29,26,.035);
-  --card-2:    rgba(31,29,26,.055);
-  --border:    rgba(31,29,26,.10);
-  --border-2:  rgba(31,29,26,.16);
-  --ink:       #1F1D1A;
-  --ink-2:     #4A4640;
-  --muted:     #6B675F;
-  --muted-2:   #8C887E;
-  --accent:    #8B6F2A;
-  --accent-2:  #6B561F;
-  --accent-glow: rgba(139,111,42,.18);
-  --success:   #4F7B3F;
-  --success-bg: rgba(79,123,63,.10);
-  --success-deep: #3A5C2E;
-  --danger:    #8C3B3B;
-  --danger-bg: rgba(140,59,59,.08);
-  --warn:      #8B6F2A;
-  --btn-bg:    #1F1D1A;
-  --btn-fg:    #F5F2EC;
-  color-scheme: light;
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{
-  background:var(--bg);
-  color:var(--ink);
-  font-family:'Inter',system-ui,sans-serif;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  overflow-x:hidden;
-  transition: background .4s ease, color .4s ease;
-}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
-img{max-width:100%;display:block}
-input{font-family:inherit}
-::selection{background:var(--accent);color:var(--btn-fg)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:8px}
-::-webkit-scrollbar-track{background:transparent}
-
-/* ===================== LAYOUT ===================== */
-.app{min-height:100dvh;display:flex;flex-direction:column}
-.maxw{max-width:1240px;margin:0 auto;width:100%}
-
-/* ===================== NAV ===================== */
-.nav{
-  position:sticky;top:0;z-index:50;
-  height:64px;
-  background:rgba(14,14,17,.72);
-  backdrop-filter:blur(18px) saturate(140%);
-  -webkit-backdrop-filter:blur(18px) saturate(140%);
-  border-bottom:1px solid var(--border);
-}
-[data-theme="light"] .nav{background:rgba(245,242,236,.78)}
-.nav-in{height:100%;display:flex;align-items:center;gap:20px;padding:0 20px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-family:'Sora',sans-serif;font-size:18px;letter-spacing:-.02em}
-.brand .dot{
-  width:28px;height:28px;border-radius:9px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  display:grid;place-items:center;
-  box-shadow:0 0 22px var(--accent-glow);
-}
-.brand .dot svg{width:16px;height:16px;color:var(--btn-fg)}
-.nav-links{display:flex;align-items:center;gap:4px;margin-left:8px}
-.nav-link{padding:8px 14px;border-radius:10px;font-size:14px;font-weight:500;color:var(--ink-2);transition:.18s}
-.nav-link:hover{color:var(--ink);background:var(--card)}
-.nav-link.active{color:var(--ink);background:var(--card-2)}
-.nav-spacer{flex:1}
-
-/* THEME TOGGLE */
-.theme-toggle{
-  width:38px;height:38px;border-radius:50%;
-  display:grid;place-items:center;color:var(--ink-2);
-  border:1px solid var(--border);background:var(--card);
-  transition:.2s;
-}
-.theme-toggle:hover{color:var(--accent);border-color:var(--accent)}
-.theme-toggle svg{width:18px;height:18px}
-[data-theme="dark"] .theme-toggle .sun{display:block}
-[data-theme="dark"] .theme-toggle .moon{display:none}
-[data-theme="light"] .theme-toggle .sun{display:none}
-[data-theme="light"] .theme-toggle .moon{display:block}
-
-.nav-cta{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 18px;border-radius:999px;
-  background:var(--btn-bg);color:var(--btn-fg);
-  font-weight:600;font-size:14px;
-  transition:transform .18s,background .25s;
-}
-.nav-cta:hover{transform:translateY(-1px)}
-@media(max-width:760px){.nav-links{display:none}}
-
-/* ===================== HERO ===================== */
-.hero{position:relative;padding:72px 20px 56px;overflow:hidden}
-.hero-bg{
-  position:absolute;inset:0;z-index:-1;
-  background:
-    radial-gradient(60% 50% at 50% 0%, var(--accent-glow), transparent 70%),
-    radial-gradient(40% 40% at 90% 30%, rgba(201,169,97,.08), transparent 70%),
-    radial-gradient(40% 40% at 10% 70%, rgba(127,176,105,.06), transparent 70%);
-}
-.hero-grid{
-  position:absolute;inset:0;z-index:-1;opacity:.35;
-  background-image:
-    linear-gradient(var(--border) 1px,transparent 1px),
-    linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:54px 54px;
-  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 30%,transparent 75%);
-  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 30%,transparent 75%);
-}
-.float-logos{position:absolute;inset:0;z-index:-1;pointer-events:none}
-.flogo{
-  position:absolute;width:60px;height:60px;border-radius:16px;
-  background:var(--card);border:1px solid var(--border);
-  display:grid;place-items:center;padding:10px;
-  opacity:.5;filter:saturate(.6) grayscale(.2);
-  animation:floaty var(--f,7s) ease-in-out infinite;
-  animation-delay:var(--d,0s);
-}
-.flogo img{width:100%;height:100%;object-fit:contain;filter:brightness(1) grayscale(.3)}
-@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(2deg)}}
-@media(max-width:760px){.flogo{display:none}}
-
-.hero-in{max-width:880px;margin:0 auto;text-align:center;position:relative;z-index:2}
-.badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:7px 14px;border-radius:999px;
-  background:var(--card);border:1px solid var(--border);
-  font-size:12.5px;font-weight:600;color:var(--ink-2);
-  margin-bottom:24px;
-}
-.badge svg{color:var(--accent-2)}
-.hero h1{
-  font-family:'Sora',sans-serif;
-  font-size:clamp(36px,6vw,64px);
-  line-height:1.05;letter-spacing:-.03em;
-  font-weight:800;margin-bottom:20px;
-}
-.grad-text{
-  background:linear-gradient(120deg,var(--accent) 0%,var(--accent-2) 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-.hero p{
-  font-size:clamp(15px,2vw,18px);color:var(--ink-2);
-  max-width:680px;margin:0 auto 36px;
-}
-
-/* ===================== COMPOSER ===================== */
-.composer{max-width:760px;margin:0 auto}
-.sform{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 10px 10px 18px;
-  background:var(--card-2);
-  border:1px solid var(--border-2);
-  border-radius:999px;
-  box-shadow:0 20px 60px -20px rgba(0,0,0,.4),0 0 0 1px var(--accent-glow);
-  transition:border-color .2s, box-shadow .2s;
-}
-.sform:focus-within{border-color:var(--accent);box-shadow:0 20px 60px -20px rgba(0,0,0,.4),0 0 0 4px var(--accent-glow)}
-.sform svg.search-ic{color:var(--muted);flex-shrink:0}
-.sinput{flex:1;background:transparent;border:0;outline:0;color:var(--ink);font-size:15px;font-weight:500;padding:8px 0}
-.sinput::placeholder{color:var(--muted)}
-.mic{
-  width:38px;height:38px;border-radius:50%;
-  display:grid;place-items:center;color:var(--muted);
-  transition:.18s;flex-shrink:0;
-}
-.mic:hover{background:var(--card);color:var(--ink)}
-.mic.on{background:var(--accent);color:var(--btn-fg);animation:pulse 1.4s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--accent-glow)}50%{box-shadow:0 0 0 8px transparent}}
-.go{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 20px;border-radius:999px;
-  background:var(--btn-bg);color:var(--btn-fg);
-  font-weight:600;font-size:14px;
-  transition:transform .15s,opacity .15s;
-  flex-shrink:0;
-}
-.go:hover{transform:translateY(-1px)}
-.go:disabled{opacity:.6;cursor:wait;transform:none}
-.go-t{white-space:nowrap}
-.vhint{display:none;align-items:center;gap:6px;justify-content:center;margin-top:14px;font-size:13px;color:var(--accent-2)}
-.vhint.show{display:flex}
-
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:28px}
-.chip{
-  padding:8px 14px;border-radius:999px;
-  background:var(--card);border:1px solid var(--border);
-  font-size:13px;color:var(--ink-2);font-weight:500;
-  transition:.18s;
-}
-.chip:hover{border-color:var(--accent);color:var(--ink);transform:translateY(-1px)}
-
-/* ===================== TRUST STRIP ===================== */
-.trust{padding:24px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:linear-gradient(180deg,transparent,var(--accent-glow))}
-[data-theme="light"] .trust{background:linear-gradient(180deg,transparent,rgba(139,111,42,.04))}
-.trust-in{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;max-width:1240px;margin:0 auto}
-.tstat{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2)}
-.tstat b{color:var(--ink);font-size:18px;font-family:'Sora',sans-serif}
-.tstat .ic{width:32px;height:32px;border-radius:9px;background:var(--card);display:grid;place-items:center;color:var(--accent-2)}
-.trust-logos{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
-.trust-logo{height:22px;opacity:.55;filter:grayscale(.5)}
-
-/* ===================== SECTIONS ===================== */
-.section{padding:80px 20px}
-.section-head{text-align:center;max-width:720px;margin:0 auto 56px}
-.eyebrow{
-  display:inline-block;padding:5px 12px;border-radius:999px;
-  background:var(--card);border:1px solid var(--border);
-  font-size:12px;font-weight:700;color:var(--accent-2);
-  letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px;
-}
-.section h2{font-family:'Sora',sans-serif;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;line-height:1.1;margin-bottom:14px}
-.section-head p{color:var(--ink-2);font-size:16px}
-
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1240px;margin:0 auto}
-@media(max-width:920px){.feat-grid{grid-template-columns:1fr}}
-.feat{
-  padding:28px;border-radius:18px;
-  background:var(--card);border:1px solid var(--border);
-  transition:.2s;position:relative;overflow:hidden;
-}
-.feat:hover{border-color:var(--accent);transform:translateY(-3px)}
-.feat::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 0% 0%,var(--accent-glow),transparent 70%);opacity:0;transition:.2s;pointer-events:none}
-.feat:hover::before{opacity:.5}
-.feat-ic{
-  width:48px;height:48px;border-radius:13px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  display:grid;place-items:center;color:var(--btn-fg);margin-bottom:18px;
-  box-shadow:0 8px 24px -8px var(--accent-glow);
-}
-.feat h3{font-size:18px;font-family:'Sora',sans-serif;margin-bottom:8px}
-.feat p{color:var(--ink-2);font-size:14.5px}
-
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1240px;margin:0 auto}
-@media(max-width:920px){.steps{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.steps{grid-template-columns:1fr}}
-.step{position:relative;padding:24px;border-radius:18px;background:var(--card);border:1px solid var(--border)}
-.step-num{
-  position:absolute;top:-14px;left:24px;
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--btn-fg);
-  display:grid;place-items:center;font-weight:800;font-family:'Sora',sans-serif;font-size:15px;
-  box-shadow:0 6px 18px -6px var(--accent-glow);
-}
-.step h4{font-size:16px;font-family:'Sora',sans-serif;margin:12px 0 8px}
-.step p{color:var(--ink-2);font-size:13.5px}
-
-/* ===================== APP SHELL ===================== */
-.app-shell{
-  display:grid;grid-template-columns:260px 1fr;
-  min-height:560px;max-width:1240px;margin:0 auto 80px;
-  border-radius:22px;overflow:hidden;
-  border:1px solid var(--border);background:var(--bg-2);
-  box-shadow:0 10px 40px -10px rgba(0,0,0,.4);
-}
-@media(max-width:880px){.app-shell{grid-template-columns:1fr}}
-.sidebar{background:var(--bg-3);border-right:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;gap:14px}
-@media(max-width:880px){.sidebar{display:none}}
-.sb-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-2);transition:.15s;width:100%;text-align:left}
-.sb-btn:hover{background:var(--card);color:var(--ink)}
-.sb-btn svg{color:var(--accent-2)}
-.sb-label{font-size:11px;font-weight:700;color:var(--muted-2);letter-spacing:.08em;text-transform:uppercase;padding:0 12px;margin-top:6px}
-.sb-list{display:flex;flex-direction:column;gap:4px;flex:1;overflow-y:auto}
-.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;transition:.15s}
-.sb-item:hover{background:var(--card)}
-.sb-item.active{background:var(--card-2)}
-.sb-ic{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--btn-fg);flex-shrink:0}
-.sb-title{font-size:13.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-empty{font-size:13px;color:var(--muted-2);padding:14px;text-align:center}
-
-.main-pane{display:flex;flex-direction:column;min-height:560px}
-.top{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border)}
-.top-q{display:flex;align-items:center;gap:10px;font-weight:700;font-family:'Sora',sans-serif;font-size:14px}
-.burger{display:none;flex-direction:column;gap:4px;padding:6px}
-.burger span{width:18px;height:2px;background:var(--ink);border-radius:2px}
-@media(max-width:880px){.burger{display:flex}}
-.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
-.sdot{width:8px;height:8px;border-radius:50%;background:var(--success)}
-.sdot.busy{background:var(--warn);animation:pulse 1.4s infinite}
-.sdot.err{background:var(--danger)}
-.sdot.offline{background:var(--muted-2)}
-
-.thread{flex:1;overflow-y:auto;padding:24px}
-.thread-hero{text-align:center;padding:48px 20px}
-.thread-hero h2{font-family:'Sora',sans-serif;font-size:32px;letter-spacing:-.02em;margin-bottom:14px}
-.thread-hero p{color:var(--ink-2);max-width:520px;margin:0 auto 28px;font-size:15px}
-.thread-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-
-.msg-user{display:flex;justify-content:flex-end;margin-bottom:18px}
-.bubble{
-  background:var(--btn-bg);color:var(--btn-fg);
-  padding:11px 16px;border-radius:16px 16px 4px 16px;
-  font-size:14px;max-width:80%;font-weight:500;
-}
-
-.loading-wrap{display:flex;flex-direction:column;gap:14px}
-.phrase{font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:8px}
-.dots{display:inline-flex;gap:3px}
-.dots span{width:5px;height:5px;border-radius:50%;background:var(--accent-2);animation:blink 1.2s infinite}
-.dots span:nth-child(2){animation-delay:.2s}
-.dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
-.progress-track{height:5px;border-radius:5px;background:var(--card);overflow:hidden}
-.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px;transition:width .4s ease}
-.skel-card{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--border);animation:shimmer 1.6s infinite}
-@keyframes shimmer{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
-.skel{background:linear-gradient(90deg,var(--card),var(--card-2),var(--card));background-size:200% 100%;animation:slide 1.5s infinite;border-radius:6px}
-@keyframes slide{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-.stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
-.stat{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border);animation:fadeup .4s ease both}
-.stat-ic{width:28px;height:28px;border-radius:8px;background:var(--card-2);display:grid;place-items:center;color:var(--accent-2)}
-.stat-v{font-size:16px;font-weight:700;font-family:'Sora',sans-serif}
-.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-.section-title{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:15px;font-weight:700;font-family:'Sora',sans-serif}
-.sec-dot{width:8px;height:8px;border-radius:50%}
-.sec-count{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--accent-glow);color:var(--accent-2);font-weight:700}
-.sec-hint{font-size:13px;color:var(--muted);font-weight:400;margin-left:4px}
-
-/* Product cards */
-.plist{display:flex;flex-direction:column;gap:18px}
-.pcard{position:relative;padding:20px;border-radius:18px;background:var(--card);border:1px solid var(--border);transition:.2s;animation:fadeup .4s ease both}
-.pcard:hover{border-color:var(--border-2)}
-.pcard.best{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 12px 40px -16px var(--accent-glow)}
-.best-tag{
-  position:absolute;top:-12px;left:20px;
-  display:flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:999px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--btn-fg);
-  font-size:11px;font-weight:800;letter-spacing:.04em;
-  box-shadow:0 6px 18px -6px var(--accent-glow);
-}
-.wish{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--card-2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);transition:.18s}
-.wish:hover{color:var(--ink);border-color:var(--danger)}
-.wish.on{color:var(--danger);border-color:var(--danger);background:var(--danger-bg)}
-
-.prow{display:flex;gap:16px;align-items:flex-start}
-.pimg{width:72px;height:72px;border-radius:14px;flex-shrink:0;background:var(--card-2);overflow:hidden}
-.pimg img{width:100%;height:100%;object-fit:contain}
-.pbody{flex:1;min-width:0}
-.pcat{font-size:11px;color:var(--accent-2);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-.pname{font-size:15.5px;font-weight:600;font-family:'Sora',sans-serif;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.pmeta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-2)}
-.prating{display:flex;align-items:center;gap:4px;color:var(--accent-2)}
-.pavail.in{color:var(--success)}
-.pavail.out{color:var(--danger)}
-.pprice{text-align:right;flex-shrink:0}
-.pprice-v{font-size:20px;font-weight:800;font-family:'Sora',sans-serif}
-.pprice-was{font-size:13px;color:var(--muted);text-decoration:line-through}
-.pprice-off{font-size:12px;font-weight:700;color:var(--success)}
-.pprice-extra{font-size:11px;font-weight:800;color:var(--accent-2);margin-top:3px}
-.buy-btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 18px;border-radius:10px;margin-top:10px;background:var(--btn-bg);color:var(--btn-fg);font-size:13px;font-weight:600;transition:.18s}
-.buy-btn:hover{transform:translateY(-1px)}
-
-/* Retzo AI card */
-.retzo{margin-top:16px;padding:16px;border-radius:14px;background:linear-gradient(180deg,var(--accent-glow),transparent);border:1px solid var(--border)}
-.rz-skel{display:flex;flex-direction:column;gap:10px}
-.rz-skel-row{display:flex;align-items:center;gap:10px}
-.skel2{background:linear-gradient(90deg,var(--card),var(--card-2),var(--card));background-size:200% 100%;animation:slide 1.5s infinite;border-radius:6px;height:11px}
-.rz-skel-circle{width:64px;height:64px;border-radius:50%}
-.rz-na{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:8px}
-.rz-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.rz-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:var(--btn-fg);flex-shrink:0}
-.rz-badge{font-weight:800;font-family:'Sora',sans-serif;font-size:14px}
-.rz-chip{font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;background:var(--accent-glow);color:var(--accent-2);margin-left:6px;letter-spacing:.06em}
-.rz-powered{font-size:11px;color:var(--muted);margin-top:2px}
-.rz-rating{font-size:12px;font-weight:800;padding:4px 10px;border-radius:8px;background:var(--success-bg);color:var(--success)}
-.rz-summary{font-size:14px;color:var(--ink-2);margin-bottom:12px;line-height:1.6}
-.rz-rec{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border);margin-bottom:12px}
-.rz-rec-tag{font-size:11px;font-weight:800;padding:4px 10px;border-radius:8px;background:var(--accent-glow);color:var(--accent-2);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
-.rz-buy{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,var(--success-bg),transparent);border:1px solid var(--border);margin-bottom:14px}
-.rz-buy-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success)}
-.rz-buy-store{font-weight:700;font-size:14px}
-.rz-buy-sub{font-size:11px;color:var(--muted)}
-.rz-buy-price{margin-left:auto;font-weight:800;font-family:'Sora',sans-serif;font-size:18px;color:var(--success)}
-.rz-buy-btn{padding:8px 14px;border-radius:9px;background:var(--success);color:#04221a;font-weight:700;font-size:12px}
-
-.gauges{display:flex;justify-content:space-around;gap:10px;margin:14px 0}
-.gauge-card{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
-.gauge-svg{position:relative;width:84px;height:84px;max-width:100%}
-.gauge-svg svg{transform:rotate(-90deg)}
-.gauge-bg{fill:none;stroke:var(--card-2);stroke-width:7}
-.gauge-fill{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
-.gauge-num{position:absolute;inset:0;display:grid;place-items:center;font-size:18px;font-weight:800;font-family:'Sora',sans-serif}
-.gauge-label{font-size:11px;color:var(--muted);text-align:center;font-weight:600}
-
-.pred-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border);margin-top:10px}
-.pred-arrow{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
-.pred-arrow.up{background:var(--danger-bg);color:var(--danger)}
-.pred-arrow.down{background:var(--success-bg);color:var(--success)}
-.pred-arrow.flat{background:var(--card-2);color:var(--muted)}
-.pred-badge{font-size:12px;font-weight:700;padding:3px 9px;border-radius:7px}
-.pred-badge.up{background:var(--danger-bg);color:var(--danger)}
-.pred-badge.down{background:var(--success-bg);color:var(--success)}
-.pred-badge.flat{background:var(--card-2);color:var(--muted)}
-.pred-conf{font-size:12px;color:var(--muted)}
-.pred-note{font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5}
-
-.exp{border-top:1px solid var(--border);margin-top:10px}
-.exp-h{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 4px;font-size:13px;font-weight:700;color:var(--ink-2)}
-.exp-h svg{transition:transform .2s}
-.exp.open .exp-h svg{transform:rotate(180deg)}
-.exp-b{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.exp.open .exp-b{max-height:400px}
-.exp-b p{font-size:13px;color:var(--ink-2);padding-bottom:12px;line-height:1.6}
-
-.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-@media(max-width:560px){.pc-grid{grid-template-columns:1fr}}
-.pc-col{padding:12px;border-radius:12px;background:var(--card)}
-.pc-col.pros{border:1px solid rgba(127,176,105,.25)}
-[data-theme="light"] .pc-col.pros{border-color:rgba(79,123,63,.25)}
-.pc-col.cons{border:1px solid rgba(201,113,113,.25)}
-[data-theme="light"] .pc-col.cons{border-color:rgba(140,59,59,.25)}
-.pc-col h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.pc-col.pros h4{color:var(--success)}
-.pc-col.cons h4{color:var(--danger)}
-.pc-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-2);padding:5px 0;animation:fadeup .4s ease both}
-.pc-ic{width:16px;height:16px;flex-shrink:0;margin-top:1px}
-.pro .pc-ic{color:var(--success)}
-.con .pc-ic{color:var(--danger)}
-
-/* Merchant offers */
-.moff{border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-top:12px;background:var(--card);display:flex;flex-direction:column;gap:9px}
-.moff-head{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.moff-head .mh-ic{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--accent-glow);color:var(--accent);flex-shrink:0}
-.moff-save{margin-left:auto;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--success-bg);color:var(--success)}
-.moff-empty{flex-direction:row;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:500}
-.moff-empty svg{flex-shrink:0;color:var(--muted)}
-.moff-group{display:flex;flex-direction:column;gap:6px}
-.moff-gh{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-.moff-cnt{font-size:9.5px;font-weight:800;padding:1px 7px;border-radius:999px;background:var(--card-2);color:var(--muted)}
-.moff-item{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-2)}
-.moff-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.moff-code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border:1.5px dashed var(--border-2);border-radius:8px;background:var(--card-2);flex-shrink:0}
-.moff-copy{font-size:10px;font-weight:800;letter-spacing:.04em;padding:5px 11px;border-radius:8px;border:0;background:var(--btn-bg);color:var(--btn-fg);cursor:pointer;flex-shrink:0;transition:transform .15s}
-.moff-copy:hover{transform:translateY(-1px)}
-.moff-copy.copied{background:var(--success);color:#04221a}
-.moff-link{font-size:11px;font-weight:800;color:var(--accent-2);text-decoration:none;flex-shrink:0}
-.moff-link:hover{text-decoration:underline}
-.moff-val{font-size:11.5px;font-weight:800;color:var(--success);flex-shrink:0}
-
-/* Offer rows */
-.ptoggle{display:flex;align-items:center;justify-content:space-between;padding:12px 4px 0;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2)}
-.ptoggle svg{transition:transform .2s}
-.ptoggle.open svg{transform:rotate(180deg)}
-.offers{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.offers-in{padding-top:12px;display:flex;flex-direction:column;gap:8px}
-.orow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;background:var(--bg-2);border:1px solid var(--border);animation:fadeup .4s ease both}
-.ologo{width:36px;height:36px;border-radius:9px;background:var(--card-2);display:grid;place-items:center;font-weight:800;color:var(--ink-2);flex-shrink:0;overflow:hidden}
-.ologo img{width:100%;height:100%;object-fit:contain}
-.ostore{font-size:13.5px;font-weight:700}
-.otags{display:flex;gap:6px;margin-top:2px}
-.otag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px}
-.otag.free{background:var(--success-bg);color:var(--success)}
-.otag.out{background:var(--danger-bg);color:var(--danger)}
-.oprice{font-size:15px;font-weight:800;font-family:'Sora',sans-serif}
-.osave{font-size:11px;color:var(--success);font-weight:700}
-.obuy{padding:8px 14px;border-radius:9px;background:var(--btn-bg);color:var(--btn-fg);font-size:12px;font-weight:700;transition:.18s}
-.obuy:hover{transform:translateY(-1px)}
-
-/* States */
-.state{text-align:center;padding:48px 20px}
-.state-ic{width:64px;height:64px;border-radius:18px;background:var(--card);display:grid;place-items:center;margin:0 auto 16px;color:var(--muted)}
-.state h3{font-family:'Sora',sans-serif;font-size:18px;margin-bottom:8px}
-.state p{color:var(--muted);font-size:14px;max-width:400px;margin:0 auto 22px}
-.err-card{display:inline-block;padding:24px;border-radius:16px;background:var(--card);border:1px solid rgba(201,113,113,.25)}
-[data-theme="light"] .err-card{border-color:rgba(140,59,59,.25)}
-.err-ic{width:48px;height:48px;border-radius:50%;background:var(--danger-bg);color:var(--danger);display:grid;place-items:center;margin:0 auto 14px}
-.btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:.18s}
-.btn-primary{background:var(--btn-bg);color:var(--btn-fg)}
-.btn-primary:hover{transform:translateY(-1px)}
-.btn-ghost{background:var(--card);color:var(--ink-2);border:1px solid var(--border)}
-.btn-ghost:hover{color:var(--ink)}
-
-.composer-app{padding:14px 18px;border-top:1px solid var(--border);background:var(--bg-3)}
-.composer-app .sform{box-shadow:none}
-
-/* CTA */
-.cta-section{padding:80px 20px}
-.cta-box{
-  max-width:1240px;margin:0 auto;padding:56px 40px;
-  border-radius:28px;text-align:center;position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--accent-glow),transparent);
-  border:1px solid var(--border-2);
-}
-.cta-box::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 60% at 50% 0%,var(--accent-glow),transparent 70%);pointer-events:none}
-.cta-box h2{font-family:'Sora',sans-serif;font-size:clamp(28px,4vw,42px);letter-spacing:-.02em;margin-bottom:14px;position:relative}
-.cta-box p{color:var(--ink-2);font-size:16px;margin-bottom:28px;position:relative}
-.cta-btn{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:14px 28px;border-radius:999px;
-  background:var(--btn-bg);color:var(--btn-fg);
-  font-weight:700;font-size:15px;
-  box-shadow:0 10px 30px -8px var(--accent-glow);
-  transition:transform .18s;position:relative;
-}
-.cta-btn:hover{transform:translateY(-2px)}
-
-/* Footer */
-footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(--bg-2)}
-.foot-in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
-@media(max-width:760px){.foot-in{grid-template-columns:1fr 1fr;gap:24px}}
-@media(max-width:480px){.foot-in{grid-template-columns:1fr}}
-.foot-brand p{color:var(--muted);font-size:13px;margin-top:12px;max-width:280px}
-.foot-col h5{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px}
-.foot-col a{display:block;font-size:13.5px;color:var(--ink-2);padding:4px 0;transition:.15s}
-.foot-col a:hover{color:var(--ink)}
-.foot-bottom{max-width:1240px;margin:32px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted)}
-
-/* Toast */
-#toastArea{position:fixed;top:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
-.toast{
-  pointer-events:auto;min-width:240px;max-width:340px;
-  padding:12px 16px;border-radius:12px;
-  background:var(--bg-3);border:1px solid var(--border-2);
-  box-shadow:0 10px 40px -10px rgba(0,0,0,.4);
-  animation:slidein .3s ease;
-  display:flex;flex-direction:column;gap:2px;
-}
-.toast.success{border-left:3px solid var(--success)}
-.toast.error{border-left:3px solid var(--danger)}
-.toast.warning{border-left:3px solid var(--warn)}
-.toast.info{border-left:3px solid var(--accent)}
-.toast-t{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.toast.success .toast-t{color:var(--success)}
-.toast.error .toast-t{color:var(--danger)}
-.toast.warning .toast-t{color:var(--warn)}
-.toast.info .toast-t{color:var(--accent-2)}
-.toast-m{font-size:13px;font-weight:600}
-.toast-d{font-size:12px;color:var(--ink-2)}
-@keyframes slidein{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.thread::-webkit-scrollbar,.sb-list::-webkit-scrollbar{width:6px}
-.thread::-webkit-scrollbar-thumb,.sb-list::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:6px}
-
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
-}
-</style>
 </head>
 <body>
 
-<div id="toastArea" aria-live="polite"></div>
-
 <div class="app">
-
-  <!-- ============ NAV ============ -->
   <nav class="nav">
     <div class="nav-in maxw">
-      <a href="#" class="brand">
+      <a href="index.html" class="brand">
         <span class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg></span>
         KrazyBuy
       </a>
       <div class="nav-links">
-        <a class="nav-link active" href="#agent">Agent8</a>
+        <a class="nav-link active" href="chat.html">Analyze</a>
         <a class="nav-link" href="#features">Features</a>
         <a class="nav-link" href="#how">How it works</a>
+        <a class="nav-link" href="history.html">History</a>
         <a class="nav-link" href="#giftcards">Gift Cards</a>
       </div>
       <div class="nav-spacer"></div>
@@ -624,14 +35,29 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <a class="nav-cta" href="#agent">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
-        Try Retzo AI
+      <a class="signin-btn" href="login.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>
+        <span>Sign In</span>
       </a>
+      <a class="nav-cta" href="chat.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
+        <span class="go-t">Try Retzo AI</span>
+      </a>
+      <button class="burger-nav" id="burgerNav" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
-  <!-- ============ HERO ============ -->
+  <div class="mm-overlay" id="mmOverlay"></div>
+  <aside class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <button class="close-mm" id="closeMM" aria-label="Close menu">✕</button>
+    <a href="chat.html">Analyze</a>
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="history.html">History</a>
+    <a href="#giftcards">Gift Cards</a>
+    <a href="login.html">Sign In</a>
+  </aside>
+
   <header class="hero">
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
@@ -652,27 +78,20 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
         Retzo AI · Search by name or product link
       </span>
       <h1>Every product, analyzed.<br><span class="grad-text">Its own verdict.</span></h1>
-      <p>Search any product — or just paste a product URL from Amazon, Flipkart and more. Retzo AI compares verified retailers for each result independently, scores every deal, and tells you where to buy.</p>
+      <p>Search any product — or paste a product URL from Amazon, Flipkart and more. Retzo AI compares verified retailers for each result independently, scores every deal, and tells you where to buy.</p>
 
-      <form class="composer" id="heroForm" role="search">
+      <form class="composer" id="heroForm" role="search" action="chat.html" method="get">
         <div class="sform">
           <svg class="search-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input class="sinput" id="heroInput" type="text" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
-          <button class="mic" id="micBtnHero" type="button" aria-label="Voice search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
-          </button>
+          <input class="sinput" id="heroInput" name="q" type="search" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
           <button class="go" id="goBtnHero" type="submit">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
             <span class="go-t">Analyze</span>
           </button>
         </div>
-        <div class="vhint" id="vhintHero">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
-          Listening… speak now
-        </div>
       </form>
 
-      <div class="chips">
+      <div class="chips" id="heroChips">
         <button class="chip" data-q="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
         <button class="chip" data-q="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
         <button class="chip" data-q="MacBook Air M3">MacBook Air M3</button>
@@ -682,7 +101,6 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
     </div>
   </header>
 
-  <!-- ============ TRUST STRIP ============ -->
   <section class="trust">
     <div class="trust-in">
       <div class="tstat"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></span><span><b>28+</b><br>Marketplaces</span></div>
@@ -699,48 +117,46 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
     </div>
   </section>
 
-  <!-- ============ FEATURES ============ -->
   <section class="section" id="features">
     <div class="section-head">
       <span class="eyebrow">Why KrazyBuy</span>
       <h2>Built for people who hate overpaying</h2>
-      <p>Retzo AI does the boring part — checking 28+ stores, stacking coupons, predicting price moves — so you just get the verdict.</p>
+      <p>Retzo AI does the boring part — scanning 28+ stores, stacking coupons, predicting price moves — so you just get the verdict.</p>
     </div>
     <div class="feat-grid">
-      <div class="feat">
+      <div class="feat" style="animation-delay:.1s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
         <h3>Verified price comparison</h3>
         <p>Live prices from Amazon, Flipkart, Croma, Myntra, JioMart and 20+ more — no stale cached numbers, no affiliate bias.</p>
       </div>
-      <div class="feat">
+      <div class="feat" style="animation-delay:.2s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
         <h3>Per-product AI verdict</h3>
         <p>Every result gets its own Deal Score, Trust Score, pros/cons, and a clear "Buy Now" or "Wait" recommendation from Retzo AI.</p>
       </div>
-      <div class="feat">
+      <div class="feat" style="animation-delay:.3s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></div>
         <h3>Coupon & cashback stacking</h3>
         <p>Each product shows applicable coupons, bank offers, gift-card discounts, and cashback — with copyable codes and live savings.</p>
       </div>
-      <div class="feat">
+      <div class="feat" style="animation-delay:.4s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
         <h3>Price move prediction</h3>
         <p>Retzo AI flags whether the price is likely to rise, drop, or hold — so you know whether to grab it now or wait a week.</p>
       </div>
-      <div class="feat">
+      <div class="feat" style="animation-delay:.5s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 9h6v6H9z"/></svg></div>
         <h3>One link, any store</h3>
         <p>Paste an Amazon or Flipkart product URL — Retzo AI identifies the exact product and compares it across every retailer.</p>
       </div>
-      <div class="feat">
+      <div class="feat" style="animation-delay:.6s">
         <div class="feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg></div>
         <h3>Wishlist & history</h3>
-        <p>Save products, track them across searches, and pull up recent analyses from your sidebar — synced locally, no signup.</p>
+        <p>Save products, track them across searches, and pull up recent analyses from your history page — synced locally, no signup.</p>
       </div>
     </div>
   </section>
 
-  <!-- ============ HOW IT WORKS ============ -->
   <section class="section" id="how" style="background:var(--bg-2)">
     <div class="section-head">
       <span class="eyebrow">How it works</span>
@@ -748,155 +164,48 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
       <p>No tabs, no manual coupon hunting. Drop a name or a link, let Retzo AI do the rest.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="step-num">1</span><h4>Search or paste</h4><p>Type a product name or drop an Amazon / Flipkart URL into the composer.</p></div>
-      <div class="step"><span class="step-num">2</span><h4>Scrape & verify</h4><p>Retzo AI scans every supported marketplace and pulls live, in-stock prices.</p></div>
-      <div class="step"><span class="step-num">3</span><h4>Stack & score</h4><p>Coupons, bank offers, gift cards and cashback are stacked per product, then a Deal Score is calculated.</p></div>
-      <div class="step"><span class="step-num">4</span><h4>Get the verdict</h4><p>Each product gets a Buy Now / Wait call, price prediction, pros & cons, and a direct buy link.</p></div>
+      <div class="step" style="animation-delay:.1s"><span class="step-num">1</span><h4>Search or paste</h4><p>Type a product name or drop an Amazon / Flipkart URL into the composer.</p></div>
+      <div class="step" style="animation-delay:.2s"><span class="step-num">2</span><h4>Scan & verify</h4><p>Retzo AI scans every supported marketplace and pulls live, in-stock prices.</p></div>
+      <div class="step" style="animation-delay:.3s"><span class="step-num">3</span><h4>Stack & score</h4><p>Coupons, bank offers, gift cards and cashback are stacked per product, then a Deal Score is calculated.</p></div>
+      <div class="step" style="animation-delay:.4s"><span class="step-num">4</span><h4>Get the verdict</h4><p>Each product gets a Buy Now / Wait call, price prediction, pros & cons, and a direct buy link.</p></div>
     </div>
   </section>
 
-  <!-- ============ AGENT ============ -->
-  <section class="section" id="agent">
-    <div class="section-head">
-      <span class="eyebrow">Live demo</span>
-      <h2>Try the Retzo AI agent</h2>
-      <p>Same engine that powers every KrazyBuy search — try a sample query below.</p>
-    </div>
-
-    <div class="app-shell">
-      <aside class="sidebar" id="sidebar">
-        <button class="sb-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> New chat</button>
-        <button class="sb-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search history</button>
-        <button class="sb-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25"/></svg> Gift cards</button>
-        <div class="sb-label">Recent</div>
-        <div class="sb-list" id="sbList"><div class="sb-empty">No recent searches</div></div>
-      </aside>
-
-      <div class="main-pane">
-        <div class="top">
-          <div class="top-q"><button class="burger" aria-label="Menu"><span></span><span></span><span></span></button><span id="topQ">KrazyBuy</span></div>
-          <div class="status"><span class="sdot online" id="sdot"></span><span id="slabel">Ready</span></div>
-        </div>
-
-        <div class="thread" id="thread">
-          <div class="thread-hero" id="threadHero">
-            <h2>What should we analyze today?</h2>
-            <p>Search any product, or paste a link from Amazon, Flipkart, Myntra, Croma and more.</p>
-            <div class="thread-chips">
-              <button class="chip" data-q="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
-              <button class="chip" data-q="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
-              <button class="chip" data-q="MacBook Air M3">MacBook Air M3</button>
-              <button class="chip" data-q="Sony WH-1000XM5">Sony WH-1000XM5</button>
-            </div>
-          </div>
-
-          <div class="content" id="contentArea" style="display:none">
-            <div class="msg-user" id="msgUser" style="display:none"><div class="bubble" id="bubble"></div></div>
-
-            <div class="loading-wrap" id="loadingWrap" style="display:none">
-              <div class="phrase"><span id="phraseText">Retzo AI is initializing analysis…</span><span class="dots"><span></span><span></span><span></span></span></div>
-              <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
-              <div class="skel-card">
-                <div class="skel" style="width:56px;height:56px;border-radius:12px;flex-shrink:0"></div>
-                <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:11px;width:50%"></div><div class="skel" style="height:11px;width:78%"></div></div>
-                <div class="skel" style="height:14px;width:70px;flex-shrink:0"></div>
-              </div>
-              <div class="skel-card">
-                <div class="skel" style="width:56px;height:56px;border-radius:12px;flex-shrink:0"></div>
-                <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:11px;width:38%"></div><div class="skel" style="height:11px;width:64%"></div></div>
-                <div class="skel" style="height:14px;width:56px;flex-shrink:0"></div>
-              </div>
-            </div>
-
-            <div id="resultsArea" style="display:none">
-              <div class="stats" id="stats"></div>
-              <div class="section-title">
-                <span class="sec-dot" style="background:var(--success)"></span>
-                Products &amp; AI Verdicts
-                <span class="sec-count" id="productCount">0</span>
-                <span class="sec-hint">· each product analyzed independently by Retzo AI</span>
-              </div>
-              <div class="plist" id="plist"></div>
-            </div>
-
-            <div id="emptyArea" style="display:none">
-              <div class="state">
-                <div class="state-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
-                <h3>No products found</h3>
-                <p id="emptyMsg">Try a different search query.</p>
-              </div>
-            </div>
-
-            <div id="errorArea" style="display:none">
-              <div class="state">
-                <div class="err-card">
-                  <div class="err-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg></div>
-                  <h3>Something went wrong</h3>
-                  <p id="errMsg" style="margin:10px auto 22px">We couldn't complete this analysis.</p>
-                  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-                    <button class="btn btn-primary" id="retryBtn">Retry</button>
-                    <button class="btn btn-ghost" id="errNewBtn">New Search</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="composer-app">
-          <form class="sform" id="appForm" role="search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input class="sinput" id="appInput" type="text" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
-            <button class="mic" id="micBtnApp" type="button" aria-label="Voice search">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
-            </button>
-            <button class="go" id="goBtnApp" type="submit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
-              <span class="go-t">Analyze</span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CTA ============ -->
   <section class="cta-section" id="giftcards">
     <div class="cta-box">
       <h2>Stop guessing. Start saving.</h2>
-      <p>KrazyBuy + Retzo AI compares every store, stacks every offer, and gives you a verdict on every product — in seconds.</p>
-      <a class="cta-btn" href="#agent">
+      <p>KrazyBuy + Retzo AI scans every store, stacks every offer, and gives you a verdict on every product — in seconds.</p>
+      <a class="cta-btn" href="chat.html">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
-        Launch the agent
+        Launch the analyzer
       </a>
     </div>
   </section>
 
-  <!-- ============ FOOTER ============ -->
   <footer>
     <div class="foot-in">
       <div class="foot-brand">
-        <a href="#" class="brand"><span class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg></span>KrazyBuy</a>
+        <a href="index.html" class="brand"><span class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg></span>KrazyBuy</a>
         <p>AI price intelligence for Indian shoppers. Powered by Retzo AI. Built to find the best online offer — every time.</p>
       </div>
       <div class="foot-col">
         <h5>Product</h5>
-        <a href="#agent">Agent8</a>
+        <a href="chat.html">Analyze</a>
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
         <a href="#giftcards">Gift cards</a>
       </div>
       <div class="foot-col">
         <h5>Marketplaces</h5>
-        <a href="#">Amazon</a>
-        <a href="#">Flipkart</a>
-        <a href="#">Myntra</a>
-        <a href="#">Croma</a>
+        <a href="chat.html?q=Amazon">Amazon</a>
+        <a href="chat.html?q=Flipkart">Flipkart</a>
+        <a href="chat.html?q=Myntra">Myntra</a>
+        <a href="chat.html?q=Croma">Croma</a>
       </div>
       <div class="foot-col">
         <h5>Company</h5>
         <a href="#">About</a>
-        <a href="#">Retzo AI</a>
+        <a href="history.html">History</a>
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
       </div>
@@ -906,375 +215,38 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
       <span>Made for Indian shoppers</span>
     </div>
   </footer>
-
 </div>
 
+<script src="js/common.js"></script>
 <script>
-/* ============================================================
-   THEME TOGGLE — applied as early as possible to avoid flash
-============================================================ */
-(function(){
-  'use strict';
-  const stored = localStorage.getItem('kb-theme');
-  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-  const theme = stored || (prefersLight ? 'light' : 'dark');
-  document.documentElement.setAttribute('data-theme', theme);
-})();
-
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('themeToggle');
-  if (!toggle) return;
-  toggle.addEventListener('click', () => {
+  if (toggle) toggle.addEventListener('click', () => {
     const root = document.documentElement;
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     localStorage.setItem('kb-theme', next);
-    // update theme-color meta
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', next === 'dark' ? '#0E0E11' : '#F5F2EC');
+    if (meta) meta.setAttribute('content', next === 'dark' ? '#0A0A0B' : '#F5F2EC');
+  });
+
+  const burger = document.getElementById('burgerNav');
+  const mm = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('mmOverlay');
+  const closeMM = document.getElementById('closeMM');
+  const openMM = () => { mm.classList.add('open'); overlay.classList.add('open'); mm.setAttribute('aria-hidden','false'); };
+  const closeM = () => { mm.classList.remove('open'); overlay.classList.remove('open'); mm.setAttribute('aria-hidden','true'); };
+  if (burger) burger.addEventListener('click', openMM);
+  if (closeMM) closeMM.addEventListener('click', closeM);
+  if (overlay) overlay.addEventListener('click', closeM);
+
+  document.querySelectorAll('#heroChips .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      const q = c.dataset.q;
+      window.location.href = 'chat.html?q=' + encodeURIComponent(q);
+    });
   });
 });
-</script>
-
-<script>
-/* ============================================================
-   KRAZYBUY APP LOGIC
-============================================================ */
-(function(){
-'use strict';
-
-const KB = window.KB || {};
-const API_BASE = window.__KB_API__ || 'https://gateway.viscocompare.online';
-const $  = (s,r=document)=>r.querySelector(s);
-const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
-const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const cssEsc = s => esc(s).replace(/"/g,'\\$&');
-const fmtPrice = n => { n=Number(n||0); return '₹'+n.toLocaleString('en-IN'); };
-
-function toast(type,msg,detail){
-  const area=$('#toastArea'); if(!area) return;
-  const el=document.createElement('div');
-  el.className='toast '+type;
-  el.innerHTML=`<div class="toast-t">${esc(type)}</div>${msg?`<div class="toast-m">${esc(msg)}</div>`:''}${detail?`<div class="toast-d">${esc(detail)}</div>`:''}`;
-  area.appendChild(el);
-  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(20px)';el.style.transition='.3s';setTimeout(()=>el.remove(),300)},3500);
-}
-
-const HKEY='kb_history', WKEY='kb_wishlist';
-const getHist = ()=>{ try{return JSON.parse(localStorage.getItem(HKEY)||'[]')}catch{return[]} };
-const addHist = h=>{ const l=getHist().filter(x=>x.q!==h.q); l.unshift(h); localStorage.setItem(HKEY,JSON.stringify(l.slice(0,30))) };
-const updateHist = (q,patch)=>{ const l=getHist(); const i=l.findIndex(x=>x.q===q); if(i>=0){l[i]={...l[i],...patch}; localStorage.setItem(HKEY,JSON.stringify(l))} };
-const getWL = ()=>{ try{return JSON.parse(localStorage.getItem(WKEY)||'[]')}catch{return[]} };
-const inWL = pid => getWL().some(x=>x.pid===pid);
-function toggleWL(pid,data){ const l=getWL(); const i=l.findIndex(x=>x.pid===pid); if(i>=0){l.splice(i,1);localStorage.setItem(WKEY,JSON.stringify(l));return false} l.push({pid,...data});localStorage.setItem(WKEY,JSON.stringify(l));return true }
-
-const POLL_INTERVAL=1000, MAX_RETRIES=3;
-const state={ jobId:null, polling:false, timer:null, controller:null, retries:0, products:[], query:'', done:false };
-let gid=0;
-
-const ICONS={
-  crown:'<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 7.5 7 11l5-7 5 7 4.5-3.5L19.5 18h-15L2.5 7.5z"/><rect x="4.5" y="19.5" width="15" height="2" rx="1"/></svg>',
-  star:'<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21l1.2-6.9-5-4.9 6.9-1z"/></svg>',
-  spark:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>',
-  heart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>',
-  trendUp:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
-  trendDown:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/></svg>',
-  trendFlat:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h16"/><path d="M16 8l4 4-4 4"/></svg>',
-  chev:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
-  check:'<svg class="pc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>',
-  cross:'<svg class="pc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 16.5h.01"/><path d="M10.3 3.9 1.8 18a1.5 1.5 0 0 0 1.3 2.3h17.8a1.5 1.5 0 0 0 1.3-2.3L13.7 3.9a1.5 1.5 0 0 0-2.6 0z"/></svg>',
-  tag:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/></svg>',
-  gift:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v8h14v-8M12 8v12M12 8s-1.5-4-4-4a2 2 0 0 0 0 4M12 8s1.5-4 4-4a2 2 0 0 1 0 4"/></svg>'
-};
-
-function lowest(p){
-  if(p.retzo?.verified_price) return Number(p.retzo.verified_price);
-  if(p.retzo?.best_offer?.price) return Number(p.retzo.best_offer.price);
-  if(p.bestOffer?.price) return Number(p.bestOffer.price);
-  if(p.lowestPrice) return Number(p.lowestPrice);
-  const prices=(p.offers||[]).map(o=>Number(o.price)).filter(x=>x>100);
-  return prices.length?Math.min(...prices):0;
-}
-function pidOf(p){ return String(p.normalized_product_id||p.url||p.title||p.name||'') }
-function getProducts(data){
-  const raw=data.products??data.returnvalue?.products??data.result?.products??data.dbStatus?.result?.products??[];
-  if(Array.isArray(raw)) return raw;
-  return [...(raw.exact||[]),...(raw.variants||[]),...(raw.related||[])];
-}
-function bestOfferOf(p){
-  const offers=(p.offers||[]).filter(o=>Number(o.price)>0 && o.is_available!==false);
-  if(!offers.length) return null;
-  return offers.reduce((a,b)=>Number(a.price)<=Number(b.price)?a:b);
-}
-function merchantOffersOf(p){
-  const nest=p.merchantOffers||p.offerData||p.offer_data||p.extraOffers||p.savingsData||{};
-  const pick=(...keys)=>{ for(const k of keys){ if(Array.isArray(nest[k])&&nest[k].length) return nest[k]; if(Array.isArray(p[k])&&p[k].length) return p[k] } return [] };
-  return {
-    merchant: nest.merchant||p.merchant||p.detectedMerchant||p.resolvedMerchant||'',
-    coupons: pick('coupons','coupon_list','applicableCoupons'),
-    deals: pick('deals','deal_list','applicableDeals'),
-    giftcards: pick('giftcards','giftCards','gift_cards'),
-    cashback: pick('cashback','cashbackItems','cashback_items'),
-    moreOffers: pick('applicableOffers','appliedOffers','merchant_offers','storeOffers'),
-    totalSavings: Number(p.totalSavings??nest.totalSavings??p.total_savings??0)||0,
-    basePrice: Number(p.basePrice??nest.basePrice??0)||0,
-    originalPrice: Number(p.originalPrice??nest.originalPrice??0)||0
-  };
-}
-function offerValText(x){
-  if(x==null) return '';
-  const v=Number(x.discount_amount??x.savings??x.value??x.amount??0);
-  if(v>0) return `− ${fmtPrice(v)}`;
-  const pct=Number(x.discount_percent??x.percent??0);
-  if(pct>0) return `${pct}% off`;
-  return '';
-}
-function offersBlockHTML(p){
-  const mo=merchantOffersOf(p);
-  const count=mo.coupons.length+mo.deals.length+mo.giftcards.length+mo.cashback.length+mo.moreOffers.length;
-  if(!count && mo.totalSavings<=0){
-    return `<div class="moff moff-empty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/></svg>No coupons, deals or gift cards${mo.merchant?` from ${esc(mo.merchant)}`:''} for this product right now.</div>`;
-  }
-  const group=(icon,label,items,render)=>items.length?`<div class="moff-group"><div class="moff-gh">${icon} ${label} <span class="moff-cnt">${items.length}</span></div>${items.map(render).join('')}</div>`:'';
-  const couponRow=c=>{ const code=c.coupon_code||c.code||''; const title=c.title||c.description||'Coupon'; const val=offerValText(c); return `<div class="moff-item"><span class="moff-t" title="${esc(title)}">${esc(title)}</span>${val?`<span class="moff-val">${esc(val)}</span>`:''}${code?`<span class="moff-code">${esc(code)}</span><button type="button" class="moff-copy" data-code="${esc(code)}">COPY</button>`:''}</div>` };
-  const linkRow=d=>{ const title=d.title||d.description||'Offer'; const url=d.tracking_url||d.url||d.link||''; const val=offerValText(d); return `<div class="moff-item"><span class="moff-t" title="${esc(title)}">${esc(title)}</span>${val?`<span class="moff-val">${esc(val)}</span>`:''}${url?`<a class="moff-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">View</a>`:''}</div>` };
-  return `<div class="moff"><div class="moff-head"><span class="mh-ic">${ICONS.tag}</span>Coupons &amp; Extra Offers${mo.merchant?` · ${esc(mo.merchant)}`:''}${mo.totalSavings>0?`<span class="moff-save">Save ${fmtPrice(mo.totalSavings)} extra</span>`:''}</div>${group(ICONS.tag,'Coupons',mo.coupons,couponRow)}${group(ICONS.tag,'Deals',mo.deals,linkRow)}${group(ICONS.gift,'Gift Cards',mo.giftcards,linkRow)}${group(ICONS.tag,'Cashback',mo.cashback,linkRow)}${group(ICONS.tag,'More Offers',mo.moreOffers,linkRow)}</div>`;
-}
-
-function setStatus(mode,label){ const d=$('#sdot'); if(d) d.className='sdot '+mode; const l=$('#slabel'); if(l) l.textContent=label; }
-function showHero(){ const h=$('#threadHero'); if(h) h.style.display=''; $('#contentArea').style.display='none'; }
-function showContent(){ const h=$('#threadHero'); if(h) h.style.display='none'; $('#contentArea').style.display=''; }
-function resetViews(){ ['#msgUser','#loadingWrap','#resultsArea','#emptyArea','#errorArea'].forEach(id=>{const e=$(id);if(e)e.style.display='none'}); const pl=$('#plist'); if(pl) pl.innerHTML=''; }
-function setBusy(b){ ['goBtnApp','goBtnHero'].forEach(id=>{const btn=$('#'+id);if(!btn)return;btn.disabled=b;btn.innerHTML=b?'<svg style="animation:spin .8s linear infinite" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="go-t">Analyzing…</span>':'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg><span class="go-t">Analyze</span>'}); }
-function showError(msg){ $('#loadingWrap').style.display='none'; $('#resultsArea').style.display='none'; $('#emptyArea').style.display='none'; $('#errMsg').textContent=msg; $('#errorArea').style.display=''; }
-
-function gaugeColor(v){ return v>=75?'var(--success)':v>=50?'var(--warn)':'var(--danger)' }
-function gaugeHTML(label,value,id){ const r=42,C=2*Math.PI*r; return `<div class="gauge-card"><div class="gauge-svg"><svg width="100%" height="100%" viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="${r}"/><circle class="gauge-fill" id="${id}" cx="50" cy="50" r="${r}" stroke="${gaugeColor(value)}" stroke-dasharray="${C}" stroke-dashoffset="${C}"/></svg><div class="gauge-num" id="${id}-n" style="color:${gaugeColor(value)}">0</div></div><div class="gauge-label">${esc(label)}</div></div>` }
-function animateGauge(id,value){ const el=document.getElementById(id),num=document.getElementById(id+'-n'); if(!el||!num) return; const r=42,C=2*Math.PI*r; requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.strokeDashoffset=C*(1-Math.min(100,Math.max(0,value))/100)})); const t0=performance.now(),dur=1300; (function step(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);num.textContent=Math.round(value*e);if(p<1)requestAnimationFrame(step)})(t0) }
-
-function retzoSkeletonHTML(){ return `<div class="rz-skel"><div class="rz-skel-row"><div class="skel2" style="width:36px;height:36px;border-radius:11px;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:7px"><div class="skel2" style="height:11px;width:32%"></div><div class="skel2" style="height:9px;width:52%"></div></div></div><div class="skel2" style="height:11px;width:92%"></div><div class="skel2" style="height:11px;width:74%"></div><div class="rz-skel-row" style="justify-content:space-around;padding:6px 0"><div class="skel2 rz-skel-circle"></div><div class="skel2 rz-skel-circle"></div><div class="skel2 rz-skel-circle"></div></div><div class="skel2" style="height:40px;border-radius:14px"></div></div>` }
-function retzoNaHTML(){ return `<div class="rz-na"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>AI analysis is currently unavailable.</div>` }
-function predMeta(direction){ const d=(direction||'').toLowerCase(); if(d.includes('incr')||d.includes('up')) return {svg:ICONS.trendUp,cls:'up',label:direction||'Likely Increase'}; if(d.includes('decr')||d.includes('drop')||d.includes('down')) return {svg:ICONS.trendDown,cls:'down',label:direction||'Likely Drop'}; return {svg:ICONS.trendFlat,cls:'flat',label:direction||'Likely Stable'} }
-function retzoHTML(retzo,p){
-  const ids={deal:`g${++gid}-deal`,trust:`g${gid}-trust`,conf:`g${gid}-conf`};
-  const best=bestOfferOf(p);
-  const bestUrl=best?.buyUrl||best?.url||'';
-  const bestStore=best?.store||'Best Store';
-  const pred=retzo.prediction?predMeta(retzo.prediction.direction):null;
-  const html=`<div class="rz-head"><div class="rz-icon">${ICONS.spark}</div><div style="flex:1;min-width:0"><div class="rz-badge">Retzo AI <span class="rz-chip">AI ANALYSIS</span></div><div class="rz-powered">Powered by Retzo AI · Verified Marketplace Comparison</div></div>${retzo.deal_rating?`<span class="rz-rating">${esc(retzo.deal_rating)}</span>`:''}</div>${retzo.summary?`<p class="rz-summary">${esc(retzo.summary)}</p>`:''}${retzo.recommendation?`<div class="rz-rec"><span class="rz-rec-tag">${retzo.buy_now===true?'Buy Now':retzo.buy_now===false?'Wait':'Verdict'}</span><span>${esc(retzo.recommendation)}</span></div>`:''}${best?`<div class="rz-buy"><span class="rz-buy-dot"></span><div><div class="rz-buy-store">Buy from ${esc(bestStore)}</div><div class="rz-buy-sub">Lowest verified price</div></div><div class="rz-buy-price">${fmtPrice(best.price)}</div>${bestUrl?`<a href="${esc(bestUrl)}" target="_blank" rel="noopener noreferrer" class="rz-buy-btn">Buy Now</a>`:''}</div>`:''}<div class="gauges">${gaugeHTML('Deal Score',Number(retzo.deal_score)||0,ids.deal)}${gaugeHTML('Trust Score',Number(retzo.trust_score)||0,ids.trust)}${gaugeHTML('Confidence',Number(retzo.confidence)||0,ids.conf)}</div>${pred?`<div class="pred-card"><div class="pred-arrow ${pred.cls}">${pred.svg}</div><div style="flex:1;min-width:0"><span class="pred-badge ${pred.cls}">${esc(pred.label)}</span><span class="pred-conf"> · ${Number(retzo.prediction.confidence)||0}% confidence</span>${retzo.prediction.note?`<div class="pred-note">${esc(retzo.prediction.note)}</div>`:''}</div></div>`:''}${retzo.price_analysis?`<div class="exp"><button type="button" class="exp-h">Price Analysis ${ICONS.chev}</button><div class="exp-b"><p>${esc(retzo.price_analysis)}</p></div></div>`:''}${retzo.seller_analysis?`<div class="exp"><button type="button" class="exp-h">Seller Analysis ${ICONS.chev}</button><div class="exp-b"><p>${esc(retzo.seller_analysis)}</p></div></div>`:''}${(retzo.pros?.length||retzo.cons?.length)?`<div class="pc-grid"><div class="pc-col pros"><h4>Pros</h4>${(retzo.pros||[]).map((x,i)=>`<div class="pc-item pro" style="animation-delay:${i*70}ms">${ICONS.check}<span>${esc(x)}</span></div>`).join('')||'<div class="pc-item pro"><span style="color:var(--muted)">None listed</span></div>'}</div><div class="pc-col cons"><h4>Cons</h4>${(retzo.cons||[]).map((x,i)=>`<div class="pc-item con" style="animation-delay:${i*70}ms">${ICONS.cross}<span>${esc(x)}</span></div>`).join('')||'<div class="pc-item con"><span style="color:var(--muted)">None listed</span></div>'}</div></div>`:''}`;
-  return {html,ids};
-}
-function renderRetzoInto(slot,retzo,p){ const {html,ids}=retzoHTML(retzo,p); slot.innerHTML=html; slot.dataset.state='done'; animateGauge(ids.deal,Number(retzo.deal_score)||0); animateGauge(ids.trust,Number(retzo.trust_score)||0); animateGauge(ids.conf,Number(retzo.confidence)||0) }
-function syncRetzo(products,jobDone){ products.forEach(p=>{ const pid=pidOf(p); const slot=document.querySelector(`.retzo[data-pid="${cssEsc(pid)}"]`); if(!slot) return; if(p.retzo && slot.dataset.state!=='done'){ renderRetzoInto(slot,p.retzo,p) } else if(!p.retzo && jobDone && slot.dataset.state==='loading'){ slot.innerHTML=retzoNaHTML(); slot.dataset.state='na' } }) }
-function syncMerchantOffers(products){ products.forEach(p=>{ const pid=pidOf(p); const slot=document.querySelector(`.moff-slot[data-pid="${cssEsc(pid)}"]`); if(!slot) return; const mo=merchantOffersOf(p); const sig=JSON.stringify([mo.totalSavings,mo.coupons.length,mo.deals.length,mo.giftcards.length,mo.cashback.length,mo.moreOffers.length,mo.merchant]); if(slot.dataset.sig!==sig){ slot.dataset.sig=sig; slot.innerHTML=offersBlockHTML(p) } }) }
-
-function renderStats(products,s){
-  const offerCount=products.reduce((n,p)=>n+(p.offers?.length||0),0);
-  const stores=new Set(products.flatMap(p=>(p.offers||[]).map(o=>o.store||o.store_key)).filter(Boolean)).size;
-  let low=0; products.forEach(p=>{const pr=lowest(p);if(pr>0&&(low===0||pr<low))low=pr});
-  const totalSavings=Number(s.totalSavings)||products.reduce((n,p)=>n+(Number(p.totalSavings)||0),0);
-  const withSavings=Number(s.productsWithSavings)||products.filter(p=>(Number(p.totalSavings)||0)>0).length;
-  const items=[
-    {v:products.length,l:'Products'},
-    {v:offerCount||s.offersFound||0,l:'Offers'},
-    {v:stores||s.storesCompared||0,l:'Stores'},
-    {v:low?fmtPrice(low):(s.lowestPrice?fmtPrice(s.lowestPrice):'—'),l:'Lowest Price'},
-    {v:totalSavings>0?fmtPrice(totalSavings):`${withSavings}/${products.length}`,l:totalSavings>0?'Extra Savings':'With Coupons'}
-  ];
-  $('#stats').innerHTML=items.map((it,i)=>`<div class="stat" style="animation-delay:${i*60}ms"><div class="stat-ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/></svg></div><div><div class="stat-v">${it.v}</div><div class="stat-l">${it.l}</div></div></div>`).join('');
-}
-function imgFor(p){
-  const img=p.image||'';
-  if(img&&img.startsWith('http')) return img;
-  const name=(p.title||p.name||'P').trim(),L=name[0].toUpperCase();
-  const hue=((name.charCodeAt(0)||65)*13)%360;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="hsl(${hue},22%,22%)"/><text x="60" y="80" font-family="Inter,sans-serif" font-size="52" font-weight="800" fill="#E8E4DC" text-anchor="middle">${L}</text></svg>`;
-  return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
-}
-function buildCard(p,i){
-  const title=p.title||p.name||'Unknown Product';
-  const pid=pidOf(p);
-  const cat=p.classification?.sub_category||p.category||'';
-  const rating=Number(p.rating||0);
-  const avail=(p.availability||'in stock').toLowerCase().includes('out')?'out':'in';
-  const offers=Array.isArray(p.offers)?p.offers:[];
-  const lo=lowest(p);
-  const hi=Number(p.highestPrice||p.analytics?.highest_price||0);
-  const disc=lo>0&&hi>lo?Math.round((1-lo/hi)*100):0;
-  const buyUrl=p.bestOffer?.buyUrl||offers.find(o=>o.buyUrl||o.url)?.buyUrl||offers.find(o=>o.buyUrl||o.url)?.url||p.productUrl||p.url||'#';
-  const mo=merchantOffersOf(p);
-  const offersHtml=offers.length?offers.map((o,j)=>{const store=o.store||`Store ${j+1}`,init=store[0]?.toUpperCase()||'S';const price=Number(o.price||0);const free=(o.delivery||'').toLowerCase().includes('free')||o.freeDelivery||(o.delivery||'')==='0';const ok=o.is_available!==false;const save=price>0&&hi>price?hi-price:0;const link=o.buyUrl||o.url||'#';return `<div class="orow" style="animation-delay:${j*40}ms"><div class="ologo">${o.logo?`<img src="${esc(o.logo)}" alt="${esc(store)}" loading="lazy" onerror="this.parentNode.textContent='${init}'">`:init}</div><div style="flex:1;min-width:0"><div class="ostore">${esc(store)}</div><div class="otags">${free?'<span class="otag free">Free delivery</span>':''}${!ok?'<span class="otag out">Out of stock</span>':''}</div></div><div style="text-align:right;flex-shrink:0"><div class="oprice">${price>0?fmtPrice(price):'—'}</div>${save>0?`<div class="osave">Save ${fmtPrice(save)}</div>`:''}</div><a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="obuy">Buy Now</a></div>`}).join(''):'<div style="padding:12px;text-align:center;font-size:13px;color:var(--muted)">No offer details</div>';
-  const wished=inWL(pid);
-  const card=document.createElement('div');
-  card.className='pcard';
-  card.dataset.pid=pid;
-  card.style.animationDelay=(Math.min(i,8)*60)+'ms';
-  card.innerHTML=`<button class="wish ${wished?'on':''}" aria-label="Save to wishlist" title="Save to wishlist">${ICONS.heart}</button><div class="prow"><div class="pimg"><img src="${imgFor(p)}" alt="${esc(title)}" loading="lazy"></div><div class="pbody">${cat?`<div class="pcat">${esc(cat)}</div>`:''}<div class="pname" title="${esc(title)}">${esc(title)}</div><div class="pmeta">${rating>0?`<div class="prating">${ICONS.star}${rating.toFixed(1)}</div>`:''}<span class="pavail ${avail}">${avail==='in'?'In Stock':'Out of Stock'}</span></div></div><div class="pprice"><div class="pprice-v">${lo>0?fmtPrice(lo):'—'}</div>${hi>lo&&lo>0?`<div class="pprice-was">${fmtPrice(hi)}</div>`:''}${disc>0?`<div class="pprice-off">${disc}% off</div>`:''}${mo.totalSavings>0?`<div class="pprice-extra">+ ${fmtPrice(mo.totalSavings)} via coupons</div>`:''}</div>${buyUrl!=='#'?`<a href="${esc(buyUrl)}" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>`:''}</div><div class="retzo" data-pid="${esc(pid)}" data-state="loading">${retzoSkeletonHTML()}</div><div class="moff-slot" data-pid="${esc(pid)}">${offersBlockHTML(p)}</div><div class="ptoggle" role="button" aria-expanded="false" tabindex="0"><span class="ptoggle-l">View ${offers.length} offer${offers.length!==1?'s':''}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div><div class="offers"><div class="offers-in">${offersHtml}</div></div>`;
-  const tog=card.querySelector('.ptoggle'),acc=card.querySelector('.offers');
-  function toggleOffers(){const open=!tog.classList.contains('open');tog.classList.toggle('open',open);tog.setAttribute('aria-expanded',String(open));if(open){acc.style.maxHeight=acc.scrollHeight+'px';acc.addEventListener('transitionend',function te(e){if(e.propertyName==='max-height'&&tog.classList.contains('open'))acc.style.maxHeight='none';acc.removeEventListener('transitionend',te)})}else{acc.style.maxHeight=acc.scrollHeight+'px';requestAnimationFrame(()=>{acc.style.maxHeight='0px'})}}
-  tog.addEventListener('click',toggleOffers);
-  tog.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleOffers()}});
-  const wb=card.querySelector('.wish');
-  wb.addEventListener('click',()=>{const added=toggleWL(pid,{title,image:imgFor(p),price:lo,url:buyUrl,store:bestOfferOf(p)?.store||'',query:state.query});wb.classList.toggle('on',added);toast(added?'success':'info',added?'Saved to wishlist':'Removed from wishlist',title)});
-  return card;
-}
-function renderProducts(products){
-  const list=$('#plist');
-  $('#productCount').textContent=products.length;
-  products.forEach((p,i)=>{const pid=pidOf(p);if(!list.querySelector(`.pcard[data-pid="${cssEsc(pid)}"]`))list.appendChild(buildCard(p,i))});
-  let bestId=null,bestP=Infinity; products.forEach(p=>{const pr=lowest(p);if(pr>0&&pr<bestP){bestP=pr;bestId=pidOf(p)}});
-  [...list.children].forEach(c=>{const isBest=products.length>1&&c.dataset.pid===bestId;c.classList.toggle('best',isBest);const tag=c.querySelector('.best-tag');if(isBest&&!tag)c.insertAdjacentHTML('afterbegin',`<div class="best-tag">${ICONS.crown} Best Deal</div>`);if(!isBest&&tag)tag.remove()});
-}
-
-$('#plist').addEventListener('click',async e=>{
-  const copyBtn=e.target.closest('.moff-copy');
-  if(copyBtn){
-    const code=copyBtn.dataset.code||'';
-    let ok=false;
-    try{ await navigator.clipboard.writeText(code); ok=true; }
-    catch{
-      const ta=document.createElement('textarea');
-      ta.value=code; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select();
-      try{ ok=document.execCommand('copy'); }catch{}
-      ta.remove();
-    }
-    if(ok){
-      const orig=copyBtn.textContent;
-      copyBtn.textContent='✓ COPIED'; copyBtn.classList.add('copied');
-      setTimeout(()=>{ copyBtn.textContent=orig; copyBtn.classList.remove('copied'); },2000);
-      toast('success','Coupon copied',code);
-    }
-    return;
-  }
-  const h=e.target.closest('.exp-h'); if(!h) return;
-  h.closest('.exp').classList.toggle('open');
-});
-
-async function api(path,opts={}){
-  state.controller?.abort();
-  state.controller=new AbortController();
-  const res=await fetch(API_BASE+path,{...opts,signal:state.controller.signal});
-  if(!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
-function stopPolling(){ state.polling=false; clearTimeout(state.timer); state.controller?.abort(); state.controller=null }
-async function poll(){
-  if(!state.jobId||!state.polling) return;
-  try{
-    const data=await api(`/jobs/${state.jobId}`);
-    state.retries=0;
-    const status=(data.status||'').toLowerCase();
-    const pct=typeof data.progress==='number'?data.progress:0;
-    $('#pFill').style.width=Math.min(100,pct)+'%';
-    const phrase=$('#phraseText');
-    if(pct<20) phrase.textContent='Retzo AI is scanning the market…';
-    else if(pct<50) phrase.textContent=`Collecting live offers… ${Math.round(pct)}%`;
-    else if(pct<75) phrase.textContent=`Comparing verified retailers… ${Math.round(pct)}%`;
-    else phrase.textContent='Retzo AI is analyzing each product…';
-    const products=getProducts(data);
-    if(products.length){ state.products=products; $('#resultsArea').style.display=''; renderStats(products,data.stats||{}); renderProducts(products); syncRetzo(products,false); syncMerchantOffers(products) }
-    if(status==='completed'||status==='complete'){
-      stopPolling(); $('#pFill').style.width='100%'; $('#loadingWrap').style.display='none'; setStatus('online','Ready'); setBusy(false); state.done=true;
-      const finalProducts=products.length?products:state.products;
-      if(finalProducts.length){
-        state.products=finalProducts; renderStats(finalProducts,data.stats||{}); renderProducts(finalProducts); syncRetzo(finalProducts,true); syncMerchantOffers(finalProducts); $('#resultsArea').style.display='';
-        let low=0; finalProducts.forEach(p=>{const pr=lowest(p);if(pr>0&&(low===0||pr<low))low=pr});
-        updateHist(state.query,{products:finalProducts.length,low});
-        const analyzed=finalProducts.filter(p=>p.retzo).length;
-        const withSavings=finalProducts.filter(p=>(Number(p.totalSavings)||0)>0).length;
-        toast('success','Analysis complete',analyzed?`Retzo AI analyzed ${analyzed} of ${finalProducts.length} products${withSavings?` · ${withSavings} with extra coupon savings`:''}.`:`${finalProducts.length} products compared.`);
-      } else { $('#emptyArea').style.display=''; $('#emptyMsg').textContent=`No products found for "${state.query}". Try a different search or paste a product URL.` }
-      return;
-    }
-    if(status==='failed'||status==='error'){ stopPolling(); setStatus('err','Error'); setBusy(false); showError(data.failedReason||data.error_message||'The analysis could not be completed.'); toast('error','Analysis failed',data.failedReason||data.error_message||'Try again shortly.'); return }
-    if(state.polling) state.timer=setTimeout(poll,POLL_INTERVAL);
-  }catch(err){
-    if(err.name==='AbortError') return;
-    state.retries++;
-    if(state.retries>MAX_RETRIES*4){ stopPolling(); setStatus('err','Offline'); setBusy(false); showError('Lost connection to the analysis server.'); return }
-    if(state.polling) state.timer=setTimeout(poll,POLL_INTERVAL*2);
-  }
-}
-
-function normalizeProductUrl(url){
-  try{
-    const u=new URL(url); const host=u.hostname;
-    if(host.includes('amazon.')){ const m=u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/i); if(m) return `${u.protocol}//${host}/dp/${m[1]}`; return url }
-    if(host.includes('flipkart.')){ const pid=u.searchParams.get('pid'); return `${u.protocol}//${host}${u.pathname}${pid?`?pid=${pid}`:''}` }
-    ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','fbclid','gclid','ref','ref_','tag'].forEach(k=>u.searchParams.delete(k));
-    return u.toString();
-  }catch{ return url }
-}
-
-async function search(query){
-  query=(query||'').trim();
-  if(query.startsWith('http')) query=normalizeProductUrl(query);
-  if(!query){ toast('warning','Enter a search term','Type a product name or paste a product URL.'); return }
-  stopPolling();
-  state.query=query; state.products=[]; state.jobId=null; state.retries=0; state.done=false;
-  addHist({q:query,products:0,low:0}); renderRecents();
-  resetViews(); showContent();
-  $('#bubble').textContent=query; $('#msgUser').style.display='flex';
-  $('#loadingWrap').style.display='flex'; $('#pFill').style.width='5%';
-  $('#topQ').innerHTML=`Analyzing: <span>${esc(query)}</span>`;
-  setStatus('busy','Analyzing…'); setBusy(true);
-  document.getElementById('agent').scrollIntoView({behavior:'smooth',block:'start'});
-  let attempt=0;
-  while(attempt<MAX_RETRIES){
-    try{
-      const data=await api('/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query})});
-      if(!data.jobId) throw new Error(data.message||'No jobId returned');
-      state.jobId=data.jobId; state.polling=true; state.timer=setTimeout(poll,600);
-      return;
-    }catch(err){
-      if(err.name==='AbortError') return;
-      attempt++;
-      if(attempt>=MAX_RETRIES){ setStatus('err','Error'); setBusy(false); showError(err.message||'Failed to start analysis.'); toast('error','Failed to start',err.message||''); return }
-      await new Promise(r=>setTimeout(r,800*attempt));
-    }
-  }
-}
-
-function renderRecents(){
-  const slot=$('#sbList'); if(!slot) return;
-  const hist=getHist();
-  slot.innerHTML=hist.length?hist.slice(0,15).map(h=>`<div class="sb-item ${h.q===state.query?'active':''}" data-q="${esc(h.q)}"><div class="sb-ic">${esc(h.q.trim()[0]?.toUpperCase()||'S')}</div><div class="sb-title">${esc(h.q)}</div></div>`).join(''):'<div class="sb-empty">No recent searches</div>';
-  $$('.sb-item',slot).forEach(el=>el.addEventListener('click',()=>{ const inp=$('#appInput'); if(inp) inp.value=el.dataset.q; search(el.dataset.q) }));
-}
-
-let rec=null,listening=false;
-function initVoice(btnId,hintId){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  const btn=$('#'+btnId); if(!btn) return;
-  if(!SR){ btn.style.opacity='.35'; btn.onclick=()=>toast('warning','Voice unavailable','Use Chrome or Edge for voice search.'); return }
-  rec=new SR(); rec.lang='en-IN'; rec.interimResults=true;
-  rec.onstart=()=>{ listening=true; btn.classList.add('on'); $('#'+hintId)?.classList.add('show') };
-  rec.onresult=e=>{ let t=''; for(const r of e.results) t+=r[0].transcript; const target=$('#appInput')||$('#heroInput'); if(target) target.value=t; if(e.results[e.results.length-1].isFinal){ stopVoice(); if(t.trim()) search(t.trim()) } };
-  rec.onerror=e=>{ stopVoice(); if(e.error==='not-allowed') toast('error','Microphone blocked','Allow mic access in browser settings.') };
-  rec.onend=stopVoice;
-  btn.onclick=()=>{ if(listening){rec.stop();return} try{rec.start()}catch{} };
-}
-function stopVoice(){ listening=false; ['micBtnApp','micBtnHero'].forEach(id=>$('#'+id)?.classList.remove('on')); ['vhint','vhintHero'].forEach(id=>$('#'+id)?.classList.remove('show')) }
-
-$('#appForm').addEventListener('submit',e=>{ e.preventDefault(); search($('#appInput').value) });
-$('#heroForm').addEventListener('submit',e=>{ e.preventDefault(); const v=$('#heroInput').value; if($('#appInput')) $('#appInput').value=v; search(v) });
-$$('.chip').forEach(c=>c.addEventListener('click',()=>{ const q=c.dataset.q; const appIn=$('#appInput'); if(appIn) appIn.value=q; const heroIn=$('#heroInput'); if(heroIn) heroIn.value=q; search(q) }));
-$('#appInput')?.addEventListener('paste',e=>{ const text=(e.clipboardData||window.clipboardData).getData('text')||''; if(text.trim().startsWith('http')) toast('info','Product link detected','Hit Analyze — Retzo AI will identify the product and compare prices.') });
-const goHome=()=>{ stopPolling(); setBusy(false); setStatus('online','Ready'); showHero(); state.query=''; $('#topQ').textContent='KrazyBuy'; const appIn=$('#appInput'); if(appIn) appIn.value=''; $('#appInput')?.focus() };
-$('#errNewBtn').addEventListener('click',goHome);
-$('#retryBtn').addEventListener('click',()=>state.query?search(state.query):goHome());
-document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='k'){ e.preventDefault(); $('#appInput')?.focus() } });
-
-renderRecents();
-setStatus('online','Ready');
-showHero();
-initVoice('micBtnApp','vhint');
-initVoice('micBtnHero','vhintHero');
-
-const dq=new URLSearchParams(location.search).get('q');
-if(dq){ $('#appInput').value=dq; search(dq) }
-})();
 </script>
 </body>
 </html>
