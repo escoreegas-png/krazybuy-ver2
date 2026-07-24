@@ -286,3 +286,379 @@ footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
 }
+/* ==========================================================
+   KRAZYBUY MOBILE RESPONSIVE PACK v1.0
+   Add at the END of your CSS
+========================================================== */
+
+/* Large Tablets */
+@media (max-width:1024px){
+
+  .maxw{
+    padding-inline:20px;
+  }
+
+  .hero{
+    padding:60px 20px 40px;
+  }
+
+  .hero h1{
+    font-size:clamp(32px,7vw,52px);
+  }
+
+  .hero p{
+    max-width:620px;
+  }
+
+  .section{
+    padding:70px 20px;
+  }
+
+}
+
+/* =======================================================
+   TABLETS
+======================================================= */
+
+@media (max-width:768px){
+
+  .nav{
+    height:60px;
+  }
+
+  .nav-in{
+    padding-inline:16px;
+  }
+
+  .brand{
+    font-size:16px;
+  }
+
+  .brand .dot{
+    width:24px;
+    height:24px;
+  }
+
+  .hero{
+    padding:48px 18px 30px;
+  }
+
+  .hero h1{
+    font-size:42px;
+    line-height:1.1;
+  }
+
+  .hero p{
+    font-size:15px;
+    margin-bottom:28px;
+  }
+
+  /* Search */
+
+  .composer{
+    width:100%;
+  }
+
+  .sform{
+
+    border-radius:24px;
+
+    flex-direction:column;
+
+    align-items:stretch;
+
+    gap:14px;
+
+    padding:16px;
+
+  }
+
+  .search-ic{
+    display:none;
+  }
+
+  .sinput{
+
+    width:100%;
+
+    font-size:16px;
+
+    padding:8px;
+
+  }
+
+  .go{
+
+    width:100%;
+
+    justify-content:center;
+
+    border-radius:14px;
+
+    height:52px;
+
+  }
+
+  .chips{
+
+    justify-content:flex-start;
+
+    overflow-x:auto;
+
+    flex-wrap:nowrap;
+
+    padding-bottom:8px;
+
+    scrollbar-width:none;
+
+  }
+
+  .chips::-webkit-scrollbar{
+    display:none;
+  }
+
+  .chip{
+    flex-shrink:0;
+  }
+
+  .trust-in{
+
+    flex-direction:column;
+
+    gap:18px;
+
+  }
+
+  .feat-grid{
+    grid-template-columns:1fr;
+  }
+
+  .steps{
+    grid-template-columns:1fr;
+  }
+
+  .foot-bottom{
+    flex-direction:column;
+    text-align:center;
+  }
+
+}
+
+/* =====================================================
+   PHONES
+===================================================== */
+
+@media (max-width:480px){
+
+  html{
+    font-size:15px;
+  }
+
+  body{
+    overflow-x:hidden;
+  }
+
+  .maxw{
+    padding-inline:16px;
+  }
+
+  .hero{
+    padding:34px 14px 20px;
+  }
+
+  .hero h1{
+
+    font-size:34px;
+
+    line-height:1.08;
+
+    letter-spacing:-1px;
+
+  }
+
+  .hero p{
+
+    font-size:14px;
+
+    margin-bottom:24px;
+
+  }
+
+  .badge{
+
+    font-size:11px;
+
+    padding:6px 12px;
+
+  }
+
+  .section{
+
+    padding:50px 14px;
+
+  }
+
+  .section h2{
+
+    font-size:28px;
+
+  }
+
+  .section-head{
+
+    margin-bottom:34px;
+
+  }
+
+  .feat{
+
+    padding:20px;
+
+    border-radius:16px;
+
+  }
+
+  .step{
+
+    padding:20px;
+
+  }
+
+  .cta-section{
+
+    padding:50px 14px;
+
+  }
+
+  .cta-box{
+
+    padding:30px 18px;
+
+    border-radius:20px;
+
+  }
+
+  .cta-box h2{
+
+    font-size:28px;
+
+  }
+
+  .cta-btn{
+
+    width:100%;
+
+    justify-content:center;
+
+  }
+
+  footer{
+
+    padding:40px 14px 26px;
+
+  }
+
+  .foot-in{
+
+    grid-template-columns:1fr;
+
+    text-align:center;
+
+  }
+
+  .foot-brand p{
+
+    margin-inline:auto;
+
+  }
+
+  .toast{
+
+    left:12px;
+
+    right:12px;
+
+    min-width:auto;
+
+    max-width:none;
+
+  }
+
+  #toastArea{
+
+    top:12px;
+
+    left:12px;
+
+    right:12px;
+
+  }
+
+  .auth-card{
+
+    padding:28px 18px;
+
+    border-radius:18px;
+
+  }
+
+}
+
+/* ==========================================
+   VERY SMALL DEVICES
+========================================== */
+
+@media (max-width:360px){
+
+  .hero h1{
+    font-size:30px;
+  }
+
+  .hero p{
+    font-size:13px;
+  }
+
+  .btn,
+  .go,
+  .cta-btn{
+    height:48px;
+    font-size:14px;
+  }
+
+}
+
+/* ==========================================
+   Prevent overflow
+========================================== */
+
+img,
+video,
+canvas,
+iframe{
+    max-width:100%;
+    height:auto;
+}
+
+table{
+    width:100%;
+    display:block;
+    overflow-x:auto;
+}
+
+pre,
+code{
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+*{
+    min-width:0;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+html{
+    overflow-x:hidden;
+}
