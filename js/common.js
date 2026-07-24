@@ -1,21 +1,21 @@
 /* ============================================================
-   KRAZYBUY — SHARED UTILITIES v3.1
-   auth · wishlist · history · toast · nav · theme · network
-   + smart Amazon URL normalization (AI-first pipeline)
+   KRAZYBUY — SHARED UTILITIES v4.0
+   Black + Cream theme · auth · wishlist · history · toast · nav
 ============================================================ */
 window.KB = (() => {
 'use strict';
 
-/* Product-comparison gateway (index.html / jobs / auth / favorites) */
-const API_BASE = window.__KB_API__ || 'https://api.viscocompare.online';
+const API_BASE = window.__KB_API__ || 'https://gateway.viscocompare.online';
+const API_KEY = window.__KB_KEY__ || '';
+const API_KEY_HEADER = 'x-api-key';
 
 /* ── Theme ── */
-const getTheme = () => localStorage.getItem('kb_theme') || 'light';
+const getTheme = () => localStorage.getItem('kb_theme') || 'dark';
 function applyTheme(t){
   document.documentElement.dataset.theme = t;
   localStorage.setItem('kb_theme', t);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = t === 'dark' ? '#131211' : '#FAF7F2';
+  if (meta) meta.content = t === 'dark' ? '#0A0A0B' : '#F5F2EC';
 }
 applyTheme(getTheme());
 
@@ -66,9 +66,7 @@ function toast(type,title,msg='',dur=4000){
     info:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>'};
   const t=document.createElement('div');
   t.className=`toast ${type}`;
-  t.innerHTML=`<span class="toast-icon">${icons[type]||icons.info}</span>
-    <div><div class="toast-title">${esc(title)}</div>${msg?`<div class="toast-msg">${esc(msg)}</div>`:''}</div>
-    <button class="toast-close" aria-label="Close"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
+  t.innerHTML=`<span class="toast-icon">${icons[type]||icons.info}</span><div><div class="toast-title">${esc(title)}</div>${msg?`<div class="toast-msg">${esc(msg)}</div>`:''}</div><button class="toast-close" aria-label="Close"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
   const kill=()=>{ if(t._d)return; t._d=1; clearTimeout(t._t); t.classList.add('out'); setTimeout(()=>t.remove(),250); };
   t.querySelector('.toast-close').onclick=kill;
   area.appendChild(t); t._t=setTimeout(kill,dur);
@@ -93,44 +91,88 @@ const requireAuth = () => {
   return true;
 };
 
-async function authFetch(path, opts={}){
-  const token=getToken();
-  const res=await fetch(API_BASE+path,{
-    ...opts,
-    headers:{ 'Content-Type':'application/json', ...(opts.headers||{}), ...(token?{Authorization:'Bearer '+token}:{}) },
-  });
-  if(res.status===401 && token){
-    localStorage.removeItem('kb_token'); localStorage.removeItem('kb_user');
+async function apiFetch(path, opts = {}){
+  const token = getToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(opts.headers || {}),
+  };
+  if (API_KEY) headers[API_KEY_HEADER] = API_KEY;
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  let res;
+  try{
+    res = await fetch(API_BASE + path, { ...opts, headers });
+  }catch(networkErr){
+    if (networkErr.name === 'AbortError') throw networkErr;
+    console.error('[KB] Network/CORS failure calling', API_BASE + path, networkErr);
+    const err = new Error(
+      `Could not reach ${API_BASE}${path}. This is almost always a CORS or ` +
+      `network problem, not a code problem — check the Network tab for a ` +
+      `red/failed request and check the Console for a CORS message.`
+    );
+    err.isNetworkError = true;
+    err.cause = networkErr;
+    throw err;
+  }
+
+  if (res.status === 401 && token){
+    localStorage.removeItem('kb_token');
+    localStorage.removeItem('kb_user');
     toast('warning','Session expired','Please sign in again.');
   }
-  return res;
+
+  if (!res.ok){
+    let body = '';
+    try{ body = await res.text(); }catch{}
+    console.error(`[KB] HTTP ${res.status} from ${path}`, body);
+    const err = new Error(
+      res.status === 401 || res.status === 403
+        ? `Server rejected the request (HTTP ${res.status}) — the API key/auth header is missing, wrong, or not accepted by the gateway.`
+        : `HTTP ${res.status}${body ? ' — ' + body.slice(0,300) : ''}`
+    );
+    err.status = res.status;
+    err.body = body;
+    throw err;
+  }
+  return res.json();
+}
+
+async function authFetch(path, opts={}){
+  try{
+    const data = await apiFetch(path, opts);
+    return { ok:true, status:200, json: async () => data };
+  }catch(err){
+    return { ok:false, status: err.status||0, json: async () => ({ error: err.message }) };
+  }
 }
 
 /* ── Wishlist ── */
 const getWL = () => { try{ return JSON.parse(localStorage.getItem('kb_wishlist')||'[]'); }catch{ return []; } };
 const saveWL = w => localStorage.setItem('kb_wishlist', JSON.stringify(w));
-const inWL = id => getWL().some(x=>x.id===id);
+const inWL = id => getWL().some(x=>x.id===id || x.pid===id);
 
 function toggleWL(id,item){
   let w=getWL();
-  if(w.some(x=>x.id===id)){
-    saveWL(w.filter(x=>x.id!==id));
-    if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
+  const exists = w.some(x=>x.id===id || x.pid===id);
+  if(exists){
+    saveWL(w.filter(x=>x.id!==id && x.pid!==id));
+    if(getToken()) apiFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
     return false;
   }
   if(item && item.url) item = { ...item, url: normalizeAmazonUrl(item.url) };
   if(item && item.query) item = { ...item, query: normalizeAmazonUrl(item.query) };
   w.unshift({ id, ...item, added:Date.now() });
   saveWL(w.slice(0,100));
-  if(getToken()) authFetch('/favorites',{method:'POST',body:JSON.stringify({product_id:id,...item})}).catch(()=>{});
+  if(getToken()) apiFetch('/favorites',{method:'POST',body:JSON.stringify({product_id:id,...item})}).catch(()=>{});
   return true;
 }
 function removeWL(id){
-  saveWL(getWL().filter(x=>x.id!==id));
-  if(getToken()) authFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
+  saveWL(getWL().filter(x=>x.id!==id && x.pid!==id));
+  if(getToken()) apiFetch('/favorites/'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
 }
 function updateWLPrice(id, newPrice){
-  const w=getWL(); const i=w.findIndex(x=>x.id===id);
+  const w=getWL(); const i=w.findIndex(x=>x.id===id || x.pid===id);
   if(i<0 || !Number(newPrice)) return;
   if(Number(newPrice)!==Number(w[i].price)){ w[i].prevPrice=w[i].price; w[i].price=Number(newPrice); w[i].priceTs=Date.now(); saveWL(w); }
 }
@@ -139,13 +181,12 @@ const priceDrop = item => (item.prevPrice && item.prevPrice > item.price) ? item
 async function syncWL(){
   if(!getToken()) return;
   try{
-    const r=await authFetch('/favorites');
-    if(!r.ok) return;
-    const { favorites=[] } = await r.json();
-    const local=getWL(), ids=new Set(local.map(x=>x.id));
+    const data = await apiFetch('/favorites');
+    const { favorites=[] } = data;
+    const local=getWL(), ids=new Set(local.map(x=>x.id||x.pid));
     favorites.forEach(f=>{
       if(!ids.has(f.product_id)) local.push({
-        id:f.product_id, title:f.title, image:f.image, price:f.price,
+        id:f.product_id, pid:f.product_id, title:f.title, image:f.image, price:f.price,
         store:f.store,
         url:normalizeAmazonUrl(f.url),
         query:normalizeAmazonUrl(f.query),
@@ -153,7 +194,7 @@ async function syncWL(){
       });
     });
     saveWL(local.slice(0,100));
-  }catch{}
+  }catch(err){ console.warn('[KB] syncWL failed (non-fatal):', err.message); }
 }
 
 /* ── History ── */
@@ -173,7 +214,7 @@ function updateHist(q,patch){
   const h=getHist();
   const i=h.findIndex(x=>x.q.toLowerCase()===q.toLowerCase());
   if(i>-1){ h[i]={...h[i],...patch}; saveHist(h); }
-  if(getToken()) authFetch('/history',{method:'POST',body:JSON.stringify({query:q,products:patch.products||0,low:patch.low||0})}).catch(()=>{});
+  if(getToken()) apiFetch('/history',{method:'POST',body:JSON.stringify({query:q,products:patch.products||0,low:patch.low||0})}).catch(()=>{});
 }
 function removeHist(q){ saveHist(getHist().filter(x=>x.q!==q)); }
 function clearHist(){ localStorage.removeItem('kb_hist'); }
@@ -203,8 +244,16 @@ function lazyImages(root=document){
   $$('img[data-src]',root).forEach(img=>{ _io ? _io.observe(img) : (img.src=img.dataset.src); });
 }
 
-/* ── Network monitor ── */
-
+/* ── Startup connectivity check ── */
+function checkGatewayHealth(){
+  apiFetch('/health').catch(err=>{
+    if (err.status && err.status !== 404){
+      toast('error','Cannot reach KrazyBuy server', err.message, 8000);
+    } else if (err.isNetworkError){
+      toast('error','Cannot reach KrazyBuy server', err.message, 8000);
+    }
+  });
+}
 
 /* ── Shared sidebar ── */
 const NAV_ICONS = {
@@ -226,7 +275,7 @@ function mountSidebar(active){
   sb.innerHTML=`
     <div class="sb-head">
       <a href="index.html" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-        <div class="logo-mark"><img src="[krazybuy.online](https://www.krazybuy.online/images/logo.png)" alt="KrazyBuy" loading="eager" onerror="this.parentNode.textContent='K'"></div>
+        <div class="logo-mark"><img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy" loading="eager" onerror="this.parentNode.textContent='K'"></div>
         <div>
           <div class="logo-name">Krazy<span class="grad-text">Buy</span></div>
           <div class="logo-sub">Price Intelligence</div>
@@ -279,8 +328,10 @@ function mountSidebar(active){
 
 function closeSidebar(){ $('#sidebar')?.classList.remove('open'); $('#overlay')?.classList.remove('active'); }
 
-return { API_BASE, $, $$, esc, cssEsc, fmtPrice, timeAgo, debounce, toast, animateOut,
-  normalizeAmazonUrl,
+setTimeout(checkGatewayHealth, 400);
+
+return { API_BASE, API_KEY, $, $$, esc, cssEsc, fmtPrice, timeAgo, debounce, toast, animateOut,
+  normalizeAmazonUrl, apiFetch,
   getUser, setUser, getToken, logout, requireAuth, authFetch,
   getWL, inWL, toggleWL, removeWL, syncWL, updateWLPrice, priceDrop,
   getHist, addHist, updateHist, removeHist, clearHist, toggleHistFav, groupHist,
