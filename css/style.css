@@ -562,7 +562,303 @@ body.sb-open .overlay { display: block; animation: fadein var(--t) both; }
 [data-theme="light"] .theme-toggle .sun  { display: none;  }
 [data-theme="light"] .theme-toggle .moon { display: block; }
 
+/* =====================================================
+   KRAZYBUY PREMIUM LAYOUT UPDATE
+   ADD THIS AT THE END OF style.css
+===================================================== */
 
+/* Better container */
+.maxw{
+    width:min(94%,1360px);
+    margin-inline:auto;
+}
+
+/* Bigger hero */
+.hero{
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:120px 0;
+}
+
+.hero-in{
+    max-width:1100px;
+}
+
+/* Hero title */
+.hero h1{
+    font-size:clamp(56px,7vw,84px);
+    line-height:.92;
+    letter-spacing:-3px;
+    max-width:900px;
+    margin-inline:auto;
+}
+
+/* Hero paragraph */
+.hero p{
+    max-width:720px;
+    margin-inline:auto;
+    font-size:20px;
+    line-height:1.8;
+    margin-top:24px;
+}
+
+/* Search box */
+.composer{
+    margin-top:50px;
+}
+
+.sform{
+    min-height:72px;
+    padding:14px 18px;
+    border-radius:999px;
+}
+
+.sinput{
+    font-size:18px;
+}
+
+.go{
+    height:56px;
+    padding-inline:30px;
+    font-size:15px;
+}
+
+/* Sections */
+.section{
+    padding:120px 0;
+}
+
+.section-head{
+    max-width:760px;
+    margin:0 auto 80px;
+}
+
+.section h2{
+    font-size:48px;
+    line-height:1.1;
+    margin-bottom:20px;
+}
+
+.section-head p{
+    font-size:18px;
+    line-height:1.8;
+}
+
+/* Feature grid */
+.feat-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+    align-items:stretch;
+}
+
+/* Cards */
+.feat{
+    padding:40px;
+    min-height:360px;
+    border-radius:28px;
+    transition:
+        transform .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+}
+
+.feat:hover{
+    transform:translateY(-10px);
+    box-shadow:0 30px 60px rgba(0,0,0,.25);
+}
+
+/* Icons */
+.feat-ic{
+    width:64px;
+    height:64px;
+    border-radius:18px;
+    margin-bottom:26px;
+}
+
+/* Steps */
+.steps{
+    gap:32px;
+}
+
+.step{
+    padding:38px;
+    min-height:280px;
+    border-radius:28px;
+}
+
+/* CTA */
+.cta-box{
+    padding:80px;
+    border-radius:36px;
+}
+
+.cta-box h2{
+    font-size:56px;
+}
+
+.cta-box p{
+    font-size:18px;
+}
+
+/* Footer */
+footer{
+    padding:100px 0 60px;
+}
+
+.foot-in{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+    gap:60px;
+}
+
+.foot-col h5{
+    margin-bottom:20px;
+    font-size:13px;
+}
+
+.foot-col a{
+    margin-bottom:12px;
+}
+
+.foot-bottom{
+    margin-top:70px;
+    padding-top:30px;
+}
+
+/* Better buttons */
+.btn,
+.nav-cta,
+.signin-btn,
+.cta-btn{
+    height:54px;
+    padding-inline:28px;
+    border-radius:999px;
+}
+
+/* Cards same height */
+.feat,
+.step{
+    display:flex;
+    flex-direction:column;
+}
+
+/* Better images */
+img{
+    border-radius:24px;
+}
+
+/* Uniform border radius */
+.sform{
+    border-radius:999px;
+}
+
+.feat,
+.step{
+    border-radius:24px;
+}
+
+.cta-box{
+    border-radius:32px;
+}
+
+/* More whitespace */
+.badge{
+    margin-bottom:32px;
+}
+
+.hero h1{
+    margin-bottom:30px;
+}
+
+.hero p{
+    margin-bottom:40px;
+}
+
+/* Nice hover */
+.feat::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    opacity:0;
+    transition:.35s;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.feat:hover::after{
+    opacity:1;
+}
+
+/* Better mobile */
+@media(max-width:991px){
+
+    .feat-grid{
+        grid-template-columns:1fr;
+    }
+
+    .steps{
+        grid-template-columns:1fr;
+    }
+
+    .foot-in{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .hero{
+        padding:90px 0;
+    }
+
+    .hero h1{
+        font-size:52px;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .hero{
+        min-height:auto;
+        padding:70px 0;
+    }
+
+    .hero h1{
+        font-size:38px;
+        letter-spacing:-1px;
+    }
+
+    .hero p{
+        font-size:16px;
+    }
+
+    .section{
+        padding:70px 0;
+    }
+
+    .section h2{
+        font-size:34px;
+    }
+
+    .cta-box{
+        padding:40px 24px;
+    }
+
+    .cta-box h2{
+        font-size:34px;
+    }
+
+    .foot-in{
+        grid-template-columns:1fr;
+    }
+
+    .feat{
+        min-height:auto;
+    }
+
+}
 /* ==========================================================================
    8. Navigation Bar (landing page)
    ========================================================================== */
