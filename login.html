@@ -200,16 +200,109 @@
     box-shadow: var(--shadow-lift), 0 0 80px rgba(22,163,74,.06);
     animation: scaleIn .35s var(--ease) both;
   }
+  @media (max-width:768px){
+
+body{
+    padding:20px;
+}
+
+.auth-card{
+    padding:28px 20px;
+}
+
+.logo-mark{
+    width:48px;
+    height:48px;
+}
+
+.logo-name{
+    font-size:22px;
+}
+
+.auth-sub{
+    font-size:14px;
+}
+
+.auth-foot{
+    font-size:12px;
+}
+
+.gbtn-wrap{
+    padding:12px;
+}
+
+}
+
+@media (max-width:480px){
+
+body{
+    padding:16px;
+}
+
+.auth-card{
+    border-radius:18px;
+    padding:24px 18px;
+}
+
+.logo-mark{
+    width:42px;
+    height:42px;
+}
+
+.logo-name{
+    font-size:20px;
+}
+
+.logo-sub{
+    font-size:10px;
+}
+
+.auth-sub{
+    font-size:13px;
+    line-height:1.6;
+}
+
+.gbtn-wrap{
+    min-height:48px;
+}
+
+.auth-guest{
+    min-height:48px;
+}
+
+#toastArea{
+    left:12px;
+    right:12px;
+    width:auto;
+}
+
+.flogo{
+    width:34px;
+    height:34px;
+}
+}
 
   .auth-logo{ display:flex; align-items:center; gap: var(--s-3); justify-content:center; margin-bottom: var(--s-3); }
-  .logo-mark{
-    width:38px; height:38px; border-radius: var(--r-sm);
-    background: var(--btn-bg); color: var(--btn-fg);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size: var(--fs-md); letter-spacing:-.02em;
+.logo-mark{
+    width:54px;
+    height:54px;
+    border-radius:16px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
     flex-shrink:0;
-    animation: logoPulse 3s ease-in-out infinite;
-  }
+}
+
+.logo-mark img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+}
   @keyframes logoPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); box-shadow:0 0 24px rgba(22,163,74,.28); } }
   .logo-name{ font-size: var(--fs-lg); font-weight:700; letter-spacing:-.03em; white-space:nowrap; }
   .logo-sub{ font-size: var(--fs-xs); color: var(--muted2); font-weight:600; letter-spacing:.09em; text-transform:uppercase; margin-top:-1px; }
@@ -308,7 +401,10 @@
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">
-      <div class="logo-mark">K</div>
+      <div class="logo-mark">
+    <img src="https://www.krazybuy.online/images/logo.png"
+         alt="KrazyBuy Logo">
+</div>
       <div>
         <div class="logo-name">Krazy<span class="grad-text">Buy</span></div>
         <div class="logo-sub">Price Intelligence</div>
