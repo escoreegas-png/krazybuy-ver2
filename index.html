@@ -7,10 +7,10 @@
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap)" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/png" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
 <style>
   /* ===== Ambient lighting & extra design layer ===== */
   .ambient-glow {
@@ -893,7 +893,7 @@ html[data-theme="light"] .ai-node::after{
 
 }
 /* ============================================
-      AI LOGO ANALYZER
+      AI LOGO ANALYZER (legacy layer, kept for compatibility)
 ============================================ */
 
 .ai-logo-layer{
@@ -1033,6 +1033,92 @@ rotateY(360deg);
 }
 
 }
+
+/* ============================================================
+   AI SEARCH FLIP OVERLAY — the improved, real "flipping logos"
+   effect that plays across the whole screen while Retzo AI
+   is analyzing a search. This is the layer actually driven by
+   startAISearchAnimation()/stopAISearchAnimation() in the JS.
+============================================================ */
+
+#aiSearchAnimation{
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+#aiSearchAnimation.running{ opacity: 1; }
+
+/* soft dark scrim so flipping logos read clearly over any content */
+#aiSearchAnimation::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(140% 90% at 50% 40%, rgba(250,247,242,.35), rgba(250,247,242,.72) 70%);
+  opacity:0;
+  transition: opacity .4s ease;
+}
+#aiSearchAnimation.running::before{ opacity:1; }
+[data-theme="dark"] #aiSearchAnimation::before{
+  background: radial-gradient(140% 90% at 50% 40%, rgba(14,13,12,.35), rgba(14,13,12,.78) 70%);
+}
+
+.search-logo{
+  position:absolute;
+  border-radius: 16px;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(255,255,255,.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 14px 34px rgba(17,17,17,.16), inset 0 1px 0 rgba(255,255,255,.5);
+  opacity: 0;
+  transform-style: preserve-3d;
+  perspective: 600px;
+  animation-name: logoFlipFloat;
+  animation-timing-function: cubic-bezier(.45,.05,.35,1);
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+[data-theme="dark"] .search-logo{
+  background: rgba(28,26,24,.82);
+  border-color: rgba(255,255,255,.10);
+}
+.search-logo img{
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  backface-visibility: hidden;
+}
+
+@keyframes logoFlipFloat{
+  0%{
+    opacity: 0;
+    transform: translateY(26px) scale(.35) rotateY(0deg) rotate(0deg);
+  }
+  12%{
+    opacity: 1;
+  }
+  50%{
+    opacity: 1;
+    transform: translateY(-18px) scale(1.08) rotateY(180deg) rotate(var(--rot, 90deg));
+  }
+  88%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+    transform: translateY(-46px) scale(.5) rotateY(360deg) rotate(calc(var(--rot, 90deg) * 2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .search-logo{ animation: none !important; opacity: .9; }
+}
 </style>
 </head>
 <body>
@@ -1058,6 +1144,9 @@ rotateY(360deg);
 </div>
 <div id="toastArea" aria-live="polite"></div>
 <div class="overlay" id="overlay"></div>
+
+<!-- Full-screen flipping-logo overlay, shown while Retzo AI analyzes a search -->
+<div class="ai-search-overlay" id="aiSearchAnimation" aria-hidden="true"></div>
 
 <!-- Ambient background lighting -->
 <div class="ambient-glow" aria-hidden="true">
@@ -1160,6 +1249,9 @@ rotateY(360deg);
 
 <script src="js/common.js"></script>
 <script>
+  /* ============================================================
+     Logo directory used by the flipping "AI is searching" overlay
+  ============================================================ */
   const logos = [
   { name: "Amazon", logo: "https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
   { name: "Flipkart", logo: "https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
@@ -1215,58 +1307,62 @@ rotateY(360deg);
   { name: "Anthropic", logo: "https://www.google.com/s2/favicons?domain=anthropic.com&sz=256" },
   { name: "Meta AI", logo: "https://www.google.com/s2/favicons?domain=meta.ai&sz=256" }
 ];
+
+  /* ============================================================
+     Flipping-logo "Retzo AI is searching" overlay
+     — plays across the full viewport whenever a search starts,
+       and is called directly from search() below.
+  ============================================================ */
   const aiSearchAnimation = document.getElementById("aiSearchAnimation");
+  let aiSearchTimeout = null;
 
-function startAISearchAnimation() {
-
+  function startAISearchAnimation() {
+    if (!aiSearchAnimation) return;
+    clearTimeout(aiSearchTimeout);
     aiSearchAnimation.innerHTML = "";
 
-    // Pick random logos every search
+    // Pick a fresh random set of logos every search
     const selected = [...logos]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 24);
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 20);
 
-    selected.forEach((item, index) => {
+    selected.forEach((item) => {
+      const logo = document.createElement("div");
+      logo.className = "search-logo";
 
-        const logo = document.createElement("div");
-        logo.className = "search-logo";
+      // Random position across the viewport
+      logo.style.left = (Math.random() * 84 + 4) + "%";
+      logo.style.top = (Math.random() * 68 + 10) + "%";
 
-        // Random position
-        logo.style.left = (Math.random() * 85 + 5) + "%";
-        logo.style.top = (Math.random() * 70 + 10) + "%";
+      // Random flip timing so logos don't move in sync
+      logo.style.animationDelay = (Math.random() * 1.8) + "s";
+      logo.style.animationDuration = (2.6 + Math.random() * 2.4) + "s";
 
-        // Random animation timing
-        logo.style.animationDelay = (Math.random() * 2) + "s";
-        logo.style.animationDuration = (3 + Math.random() * 2) + "s";
+      // Random size
+      const size = 32 + Math.random() * 22;
+      logo.style.width = size + "px";
+      logo.style.height = size + "px";
 
-        // Random size
-        const size = 34 + Math.random() * 22;
-        logo.style.width = size + "px";
-        logo.style.height = size + "px";
+      // Random flip/rotate amount, used inside the keyframes via var(--rot)
+      logo.style.setProperty("--rot", (Math.random() * 300 - 150) + "deg");
 
-        // Random rotation
-        logo.style.setProperty("--rot", (Math.random() * 360) + "deg");
+      logo.innerHTML = '<img src="' + item.logo + '" alt="' + item.name + '" title="' + item.name + '" loading="lazy">';
 
-        logo.innerHTML = `
-            <img
-                src="${item.logo}"
-                alt="${item.name}"
-                title="${item.name}"
-                loading="lazy"
-            >
-        `;
-
-        aiSearchAnimation.appendChild(logo);
+      aiSearchAnimation.appendChild(logo);
     });
 
     aiSearchAnimation.classList.add("running");
 
-    setTimeout(() => {
-        aiSearchAnimation.classList.remove("running");
-        aiSearchAnimation.innerHTML = "";
-    }, 6000);
+    // Auto-stop as a safety net in case a search never resolves
+    aiSearchTimeout = setTimeout(stopAISearchAnimation, 6000);
+  }
 
-}
+  function stopAISearchAnimation() {
+    if (!aiSearchAnimation) return;
+    clearTimeout(aiSearchTimeout);
+    aiSearchAnimation.classList.remove("running");
+    setTimeout(() => { aiSearchAnimation.innerHTML = ""; }, 400);
+  }
 
 (() => {
 'use strict';
@@ -1356,7 +1452,7 @@ function showHero() { $('#hero').style.display = ''; $('#contentArea').style.dis
 function showContent() { $('#hero').style.display = 'none'; $('#contentArea').style.display = ''; }
 function resetViews() { ['#msgUser', '#loadingWrap', '#resultsArea', '#emptyArea', '#errorArea'].forEach(id => $(id).style.display = 'none'); $('#plist').innerHTML = ''; }
 function setBusy(b) { const btn = $('#goBtn'); btn.disabled = b; btn.style.opacity = b ? '.7' : '1'; btn.style.cursor = b ? 'wait' : 'pointer'; }
-function showError(msg) { $('#loadingWrap').style.display = 'none'; $('#resultsArea').style.display = 'none'; $('#emptyArea').style.display = 'none'; $('#errMsg').textContent = msg; $('#errorArea').style.display = ''; }
+function showError(msg) { $('#loadingWrap').style.display = 'none'; $('#resultsArea').style.display = 'none'; $('#emptyArea').style.display = 'none'; $('#errMsg').textContent = msg; $('#errorArea').style.display = ''; stopAISearchAnimation(); }
 
 function gaugeColor(v) { return v >= 75 ? '#34D399' : v >= 50 ? '#FBBF24' : '#F87171'; }
 function gaugeHTML(label, value, id) {
@@ -1430,7 +1526,7 @@ function imgFor(p) {
   if (img && img.startsWith('http')) return img;
   const name = (p.title || p.name || 'P').trim(), L = name[0].toUpperCase();
   const hue = ((name.charCodeAt(0) || 65) * 13) % 360;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="[w3.org](http://www.w3.org/2000/svg)" width="120" height="120"><rect width="120" height="120" fill="hsl(' + hue + ',42%,22%)"/><text x="60" y="80" font-family="Inter,sans-serif" font-size="52" font-weight="800" fill="#C9BADF" text-anchor="middle">' + L + '</text></svg>');
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="hsl(' + hue + ',42%,22%)"/><text x="60" y="80" font-family="Inter,sans-serif" font-size="52" font-weight="800" fill="#C9BADF" text-anchor="middle">' + L + '</text></svg>');
 }
 
 function buildCard(p, i) {
@@ -1545,10 +1641,12 @@ async function poll() {
       renderStats(products, data.stats || {});
       renderProducts(products);
       syncRetzo(products, false);
+      stopAISearchAnimation();
     }
 
     if (status === 'completed' || status === 'complete') {
       stopPolling();
+      stopAISearchAnimation();
       $('#pFill').style.width = '100%';
       $('#loadingWrap').style.display = 'none';
       setStatus('online', 'Ready'); setBusy(false);
@@ -1603,6 +1701,7 @@ async function search(query) {
   addHist({ q: query, products: 0, low: 0 });
   renderRecents();
   resetViews(); showContent();
+  startAISearchAnimation();
   $('#bubble').textContent = query;
   $('#msgUser').style.display = 'flex';
   $('#loadingWrap').style.display = 'flex';
@@ -1648,7 +1747,7 @@ function stopVoice() { listening = false; $('#micBtn').classList.remove('on'); $
 $('#sform').addEventListener('submit', e => { e.preventDefault(); search($('#sinput').value); });
 $('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; $('#sinput').value = c.dataset.q; search(c.dataset.q); });
 $('#sinput').addEventListener('paste', e => { const text = (e.clipboardData || window.clipboardData).getData('text') || ''; if (text.trim().startsWith('http')) toast('info', 'Product link detected', 'Hit Analyze — Retzo AI will identify the product and compare prices.'); });
-const goHome = () => { stopPolling(); setBusy(false); setStatus('online', 'Ready'); showHero(); state.query = ''; $('#topQ').textContent = 'KrazyBuy'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
+const goHome = () => { stopPolling(); stopAISearchAnimation(); setBusy(false); setStatus('online', 'Ready'); showHero(); state.query = ''; $('#topQ').textContent = 'KrazyBuy'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
 $('#errNewBtn').addEventListener('click', goHome);
 $('#retryBtn').addEventListener('click', () => state.query ? search(state.query) : goHome());
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); $('#sinput').focus(); } });
