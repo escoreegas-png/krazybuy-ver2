@@ -7,14 +7,1064 @@
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap)" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
+<link rel="icon" type="image/png" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<style>
+  /* ===== Ambient lighting & extra design layer ===== */
+  .ambient-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: .35;
+    animation: orbDrift 18s ease-in-out infinite;
+    will-change: transform;
+  }
+  .glow-orb.o1 { width: 480px; height: 480px; background: radial-gradient(circle, rgba(22,163,74,.18), transparent 70%); top: -120px; left: -120px; }
+  .glow-orb.o2 { width: 540px; height: 540px; background: radial-gradient(circle, rgba(17,17,17,.10), transparent 70%); bottom: -160px; right: -140px; animation-delay: -6s; animation-duration: 22s; }
+  .glow-orb.o3 { width: 360px; height: 360px; background: radial-gradient(circle, rgba(245,158,11,.12), transparent 70%); top: 40%; left: 55%; animation-delay: -10s; animation-duration: 26s; }
+  [data-theme="dark"] .glow-orb { opacity: .22; }
+  [data-theme="dark"] .glow-orb.o1 { background: radial-gradient(circle, rgba(74,222,128,.16), transparent 70%); }
+  [data-theme="dark"] .glow-orb.o2 { background: radial-gradient(circle, rgba(245,245,244,.06), transparent 70%); }
+
+  /* Hero card glassmorphism */
+  .hero {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(22,163,74,.05), transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(245,158,11,.04), transparent 50%);
+  }
+  .hero-badge {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,.7);
+    box-shadow: 0 8px 24px rgba(17,17,17,.08), inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  [data-theme="dark"] .hero-badge { background: rgba(28,26,24,.7); }
+
+  /* Shimmer sweep on hero title */
+  .grad-text {
+    background: linear-gradient(110deg, var(--text) 30%, var(--success-deep) 50%, var(--text) 70%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmerText 4s linear infinite;
+  }
+
+  /* Floating logos enhanced */
+  .flogo {
+    backdrop-filter: blur(6px);
+    transition: transform .4s var(--ease);
+  }
+  .flogo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,.4), transparent 50%);
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  /* Chips pulse glow */
+  .chip {
+    position: relative;
+    overflow: hidden;
+  }
+  .chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(22,163,74,.08), transparent);
+    transform: translateX(-100%);
+    transition: transform .6s var(--ease);
+  }
+  .chip:hover::before { transform: translateX(100%); }
+
+  /* Save8-inspired pill CTA button */
+  .cta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-6);
+    border-radius: var(--r-pill);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    letter-spacing: -.01em;
+    box-shadow: 0 8px 20px rgba(17,17,17,.18), 0 2px 4px rgba(17,17,17,.08);
+    transition: transform var(--t) var(--ease), box-shadow var(--t), background var(--t);
+    cursor: pointer;
+    border: 0;
+  }
+  .cta-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(17,17,17,.22), 0 4px 8px rgba(17,17,17,.10);
+    background: var(--btn-hover);
+  }
+  .cta-pill:active { transform: translateY(0) scale(.98); }
+  .cta-pill .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 0 rgba(22,163,74,.6);
+    animation: pulseRing 2s infinite;
+  }
+
+  .cta-ghost {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    box-shadow: var(--shadow-sm);
+  }
+  .cta-ghost:hover { background: var(--card2); border-color: var(--border-strong); }
+
+  /* Product card hover lift enhanced */
+  .pcard {
+    position: relative;
+  }
+  .pcard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(22,163,74,.25), transparent 40%, transparent 60%, rgba(17,17,17,.10));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity .4s var(--ease);
+    pointer-events: none;
+  }
+  .pcard:hover::before { opacity: 1; }
+
+  /* Stat card shimmer top edge */
+  .stat {
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--success), transparent);
+    transform: translateX(-100%);
+    animation: edgeSweep 3s ease-in-out infinite;
+  }
+
+  /* Composer focus glow ring */
+  .sform:focus-within {
+    box-shadow: 0 0 0 4px rgba(22,163,74,.10), 0 0 0 1px var(--text), var(--shadow);
+  }
+
+  /* Top bar refined */
+  .top {
+    box-shadow: 0 1px 0 var(--border), 0 8px 24px rgba(17,17,17,.03);
+  }
+
+  /* Loading dots enhanced */
+  .dots span {
+    background: var(--success-deep);
+    box-shadow: 0 0 8px rgba(22,163,74,.4);
+  }
+
+  /* Gauge ring glow */
+  .gauge-fill {
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+
+  /* Best deal badge shine */
+  .best-tag {
+    position: relative;
+    overflow: hidden;
+  }
+  .best-tag::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+    animation: shine 3s ease-in-out infinite;
+  }
+
+  @keyframes orbDrift {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(40px,-30px) scale(1.08); }
+    66% { transform: translate(-30px,40px) scale(.95); }
+  }
+  @keyframes shimmerText {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+  @keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(22,163,74,.5); }
+    70% { box-shadow: 0 0 0 8px rgba(22,163,74,0); }
+    100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+  }
+  @keyframes edgeSweep {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+  @keyframes shine {
+    0% { left: -100%; }
+    50%, 100% { left: 200%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow-orb, .stat::after, .best-tag::after, .grad-text { animation: none !important; }
+  }
+  /* ==========================================================
+   KRAZYBUY AI NEURAL NETWORK
+==========================================================*/
+
+.ai-network{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+}
+
+/* --------------------------
+   AI NODES
+---------------------------*/
+
+.ai-node{
+
+    position:absolute;
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:#F8F3EA;
+
+    box-shadow:
+    0 0 12px rgba(248,243,234,.8),
+    0 0 25px rgba(248,243,234,.45);
+
+    animation:
+
+    nodePulse 2.8s ease-in-out infinite,
+
+    nodeMove 14s ease-in-out infinite;
+
+}
+
+/* random positions */
+
+.ai-node:nth-child(1){top:12%;left:18%;animation-delay:0s;}
+.ai-node:nth-child(2){top:28%;left:70%;animation-delay:.6s;}
+.ai-node:nth-child(3){top:62%;left:14%;animation-delay:1.1s;}
+.ai-node:nth-child(4){top:72%;left:80%;animation-delay:1.7s;}
+.ai-node:nth-child(5){top:48%;left:52%;animation-delay:2.3s;}
+.ai-node:nth-child(6){top:20%;left:40%;animation-delay:2.8s;}
+.ai-node:nth-child(7){top:80%;left:34%;animation-delay:3.2s;}
+.ai-node:nth-child(8){top:34%;left:86%;animation-delay:3.9s;}
+.ai-node:nth-child(9){top:58%;left:66%;animation-delay:4.3s;}
+.ai-node:nth-child(10){top:14%;left:88%;animation-delay:4.9s;}
+.ai-line{
+
+    position:absolute;
+
+    height:1px;
+
+    transform-origin:left center;
+
+    background:
+
+    linear-gradient(
+    90deg,
+    transparent,
+    rgba(248,243,234,.9),
+    transparent);
+
+    opacity:.55;
+
+    animation:
+
+    linePulse 3.5s ease-in-out infinite,
+
+    scanTravel 5s linear infinite;
+
+}
+
+/* sample lines */
+
+.l1{
+
+top:18%;
+left:18%;
+width:260px;
+transform:rotate(18deg);
+
+}
+
+.l2{
+
+top:44%;
+left:22%;
+width:300px;
+transform:rotate(-12deg);
+
+}
+
+.l3{
+
+top:70%;
+left:20%;
+width:340px;
+transform:rotate(8deg);
+
+}
+
+.l4{
+
+top:28%;
+left:50%;
+width:220px;
+transform:rotate(36deg);
+
+}
+
+.l5{
+
+top:56%;
+left:48%;
+width:280px;
+transform:rotate(-24deg);
+
+}
+.ai-line::after{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:-2px;
+
+width:10px;
+height:5px;
+
+border-radius:20px;
+
+background:#FFF8EC;
+
+box-shadow:
+
+0 0 12px rgba(255,248,236,.8);
+
+animation:dataPacket 2.4s linear infinite;
+
+}@keyframes nodePulse{
+
+0%,100%{
+
+transform:scale(1);
+
+opacity:.6;
+
+}
+
+50%{
+
+transform:scale(2);
+
+opacity:1;
+
+}
+
+}
+@keyframes nodeMove{
+
+0%,100%{
+
+transform:translate(0,0);
+
+}
+
+25%{
+
+transform:translate(10px,-8px);
+
+}
+
+50%{
+
+transform:translate(-8px,10px);
+
+}
+
+75%{
+
+transform:translate(6px,-5px);
+
+}
+
+}
+@keyframes linePulse{
+
+0%,100%{
+
+opacity:.25;
+
+}
+
+50%{
+
+opacity:1;
+
+}
+
+}
+@keyframes dataPacket{
+
+0%{
+
+left:0;
+
+opacity:0;
+
+}
+
+10%{
+
+opacity:1;
+
+}
+
+90%{
+
+opacity:1;
+
+}
+
+100%{
+
+left:100%;
+
+opacity:0;
+
+}
+
+}
+@keyframes scanTravel{
+
+0%{
+
+filter:brightness(1);
+
+}
+
+50%{
+
+filter:brightness(2.5);
+
+}
+
+100%{
+
+filter:brightness(1);
+
+}
+}
+[data-theme="dark"] .ai-node{
+
+background:#FFF8EC;
+
+box-shadow:
+
+0 0 18px rgba(255,248,236,.75);
+
+}
+
+[data-theme="dark"] .ai-line{
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,248,236,.45),
+
+transparent
+
+);
+
+}
+/* ==========================================================
+   LIGHT THEME BLACK GLASS NEURONS
+========================================================== */
+
+[data-theme="light"] .ai-node{
+
+    position:absolute;
+
+    width:10px;
+    height:10px;
+
+    border-radius:50%;
+
+    background:rgba(15,15,15,.82);
+
+    border:1px solid rgba(255,255,255,.18);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    box-shadow:
+        0 0 0 1px rgba(0,0,0,.08),
+        0 8px 20px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.18);
+
+    animation:
+        nodePulse 2.8s ease-in-out infinite,
+        nodeMove 14s ease-in-out infinite;
+
+}
+/* ==========================================================
+   LIGHT THEME NEURAL LINES
+========================================================== */
+/* ===========================
+   LIGHT THEME
+=========================== */
+
+html[data-theme="light"] .ai-node{
+
+    background:#111 !important;
+    border:1px solid rgba(255,255,255,.25);
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.22),
+    inset 0 1px 1px rgba(255,255,255,.2);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+}
+
+html[data-theme="light"] .ai-line{
+
+    background:
+    linear-gradient(
+        90deg,
+        transparent,
+        rgba(0,0,0,.65),
+        transparent
+    ) !important;
+
+    opacity:.8;
+
+}
+
+html[data-theme="light"] .ai-line::after{
+
+    background:#000;
+
+    box-shadow:
+    0 0 10px rgba(0,0,0,.3);
+
+}
+
+html[data-theme="light"] .ai-node::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-8px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle,
+    rgba(0,0,0,.15),
+    transparent 70%);
+
+    filter:blur(8px);
+
+}
+
+html[data-theme="light"] .ai-node::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:1px;
+    left:2px;
+
+    width:45%;
+    height:35%;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.55);
+
+}
+/*=====================================================
+      PART 3 - ADVANCED AI NETWORK EFFECTS
+======================================================*/
+
+/* Entire Network Layer */
+
+.ai-network{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    isolation:isolate;
+}
+
+/* Soft animated fog */
+
+.ai-network::before{
+    content:"";
+
+    position:absolute;
+    inset:-25%;
+
+    background:
+
+        radial-gradient(circle at 20% 20%,rgba(0,0,0,.08),transparent 30%),
+        radial-gradient(circle at 80% 40%,rgba(0,0,0,.06),transparent 28%),
+        radial-gradient(circle at 50% 80%,rgba(0,0,0,.08),transparent 32%);
+
+    filter:blur(80px);
+
+    animation:networkFog 18s linear infinite;
+}
+
+/* dark mode fog */
+
+[data-theme="dark"] .ai-network::before{
+
+    background:
+
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.05),transparent 35%),
+        radial-gradient(circle at 80% 40%,rgba(255,255,255,.04),transparent 35%),
+        radial-gradient(circle at 50% 80%,rgba(255,255,255,.05),transparent 35%);
+}
+
+/*=====================================================
+      FLOATING GLASS RINGS
+======================================================*/
+
+.ai-node::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-8px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(0,0,0,.08);
+
+    animation:ringExpand 3.5s ease-out infinite;
+
+}
+
+[data-theme="dark"] .ai-node::after{
+
+    border-color:rgba(255,255,255,.10);
+
+}
+
+/*=====================================================
+      DATA FLOW
+======================================================*/
+
+.ai-line{
+
+    overflow:hidden;
+
+}
+
+.ai-line::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-25%;
+
+    top:0;
+
+    width:35%;
+
+    height:100%;
+
+    background:
+
+    linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.9),
+        transparent
+    );
+
+    filter:blur(3px);
+
+    animation:dataFlow 3s linear infinite;
+
+}
+
+[data-theme="light"] .ai-line::before{
+
+    background:
+
+    linear-gradient(
+        90deg,
+        transparent,
+        rgba(0,0,0,.45),
+        transparent
+    );
+
+}
+
+/*=====================================================
+      NODE HOVER GLOW
+======================================================*/
+
+.ai-node{
+
+    transition:
+
+        transform .5s,
+
+        box-shadow .5s;
+
+}
+
+.ai-network:hover .ai-node{
+
+    animation-duration:2s;
+
+}
+
+.ai-network:hover .ai-node:nth-child(odd){
+
+    transform:scale(1.8);
+
+}
+
+.ai-network:hover .ai-node:nth-child(even){
+
+    transform:scale(1.4);
+
+}
+
+/*=====================================================
+      AI BREATHING
+======================================================*/
+
+.ai-network{
+
+    animation:networkBreath 12s ease-in-out infinite;
+
+}
+
+/*=====================================================
+      KEYFRAMES
+======================================================*/
+
+@keyframes dataFlow{
+
+    0%{
+
+        left:-40%;
+
+        opacity:0;
+
+    }
+
+    10%{
+
+        opacity:1;
+
+    }
+
+    90%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        left:120%;
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes networkFog{
+
+    0%{
+
+        transform:translateX(0) translateY(0);
+
+    }
+
+    25%{
+
+        transform:translateX(40px) translateY(-20px);
+
+    }
+
+    50%{
+
+        transform:translateX(-30px) translateY(30px);
+
+    }
+
+    75%{
+
+        transform:translateX(20px) translateY(-15px);
+
+    }
+
+    100%{
+
+        transform:translateX(0) translateY(0);
+
+    }
+
+}
+
+@keyframes ringExpand{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.8;
+
+    }
+
+    100%{
+
+        transform:scale(2.4);
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes networkBreath{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.02);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+/* ============================================
+      AI LOGO ANALYZER
+============================================ */
+
+.ai-logo-layer{
+
+    position:absolute;
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:5;
+
+}
+
+.ai-logo{
+
+    position:absolute;
+
+    width:42px;
+    height:42px;
+
+    border-radius:14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(255,255,255,.75);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+
+        0 15px 35px rgba(0,0,0,.12),
+        inset 0 1px rgba(255,255,255,.4);
+
+    opacity:0;
+
+    transform:
+
+        translateY(50px)
+        scale(.4)
+        rotateY(180deg);
+
+}
+
+.ai-logo img{
+
+    width:24px;
+    height:24px;
+
+    object-fit:contain;
+
+    user-select:none;
+
+    pointer-events:none;
+
+}
+
+/* DARK */
+
+[data-theme="dark"] .ai-logo{
+
+    background:rgba(30,30,30,.72);
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.searching .ai-logo{
+
+    animation:
+
+        logoFly 3s linear forwards;
+
+}
+
+/* Flip */
+
+@keyframes logoFly{
+
+0%{
+
+opacity:0;
+
+transform:
+
+translateY(80px)
+scale(.2)
+rotateY(180deg)
+rotate(-15deg);
+
+}
+
+10%{
+
+opacity:1;
+
+}
+
+40%{
+
+transform:
+
+translateY(-10px)
+scale(1)
+rotateY(0deg)
+rotate(5deg);
+
+}
+
+70%{
+
+transform:
+
+translateY(-80px)
+translateX(30px)
+rotateY(180deg)
+scale(.95);
+
+}
+
+100%{
+
+opacity:0;
+
+transform:
+
+translateY(-170px)
+translateX(60px)
+scale(.4)
+rotateY(360deg);
+
+}
+
+}
+</style>
 </head>
 <body>
+  <div class="ai-network">
+
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+<div class="ai-node"></div>
+
+<div class="ai-line l1"></div>
+<div class="ai-line l2"></div>
+<div class="ai-line l3"></div>
+<div class="ai-line l4"></div>
+<div class="ai-line l5"></div>
+
+</div>
 <div id="toastArea" aria-live="polite"></div>
 <div class="overlay" id="overlay"></div>
+
+<!-- Ambient background lighting -->
+<div class="ambient-glow" aria-hidden="true">
+  <div class="glow-orb o1"></div>
+  <div class="glow-orb o2"></div>
+  <div class="glow-orb o3"></div>
+</div>
 
 <div class="app">
   <aside class="sidebar" id="sidebar"></aside>
@@ -110,6 +1160,114 @@
 
 <script src="js/common.js"></script>
 <script>
+  const logos = [
+  { name: "Amazon", logo: "https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
+  { name: "Flipkart", logo: "https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
+  { name: "Myntra", logo: "https://www.google.com/s2/favicons?domain=myntra.com&sz=256" },
+  { name: "Ajio", logo: "https://www.google.com/s2/favicons?domain=ajio.com&sz=256" },
+  { name: "Meesho", logo: "https://www.google.com/s2/favicons?domain=meesho.com&sz=256" },
+  { name: "Snapdeal", logo: "https://www.google.com/s2/favicons?domain=snapdeal.com&sz=256" },
+  { name: "Croma", logo: "https://www.google.com/s2/favicons?domain=croma.com&sz=256" },
+  { name: "Reliance Digital", logo: "https://www.google.com/s2/favicons?domain=reliancedigital.in&sz=256" },
+  { name: "Vijay Sales", logo: "https://www.google.com/s2/favicons?domain=vijaysales.com&sz=256" },
+  { name: "JioMart", logo: "https://www.google.com/s2/favicons?domain=jiomart.com&sz=256" },
+  { name: "FirstCry", logo: "https://www.google.com/s2/favicons?domain=firstcry.com&sz=256" },
+  { name: "Nykaa", logo: "https://www.google.com/s2/favicons?domain=nykaa.com&sz=256" },
+  { name: "Pepperfry", logo: "https://www.google.com/s2/favicons?domain=pepperfry.com&sz=256" },
+  { name: "IKEA", logo: "https://www.google.com/s2/favicons?domain=ikea.com&sz=256" },
+  { name: "Decathlon", logo: "https://www.google.com/s2/favicons?domain=decathlon.in&sz=256" },
+  { name: "Boat", logo: "https://www.google.com/s2/favicons?domain=boat-lifestyle.com&sz=256" },
+  { name: "Samsung", logo: "https://www.google.com/s2/favicons?domain=samsung.com&sz=256" },
+  { name: "Apple", logo: "https://www.google.com/s2/favicons?domain=apple.com&sz=256" },
+  { name: "OnePlus", logo: "https://www.google.com/s2/favicons?domain=oneplus.com&sz=256" },
+  { name: "Xiaomi", logo: "https://www.google.com/s2/favicons?domain=mi.com&sz=256" },
+  { name: "Lenovo", logo: "https://www.google.com/s2/favicons?domain=lenovo.com&sz=256" },
+  { name: "HP", logo: "https://www.google.com/s2/favicons?domain=hp.com&sz=256" },
+  { name: "Dell", logo: "https://www.google.com/s2/favicons?domain=dell.com&sz=256" },
+  { name: "Asus", logo: "https://www.google.com/s2/favicons?domain=asus.com&sz=256" },
+  { name: "Blinkit", logo: "https://www.google.com/s2/favicons?domain=blinkit.com&sz=256" },
+  { name: "Zepto", logo: "https://www.google.com/s2/favicons?domain=zeptonow.com&sz=256" },
+  { name: "BigBasket", logo: "https://www.google.com/s2/favicons?domain=bigbasket.com&sz=256" },
+  { name: "Swiggy", logo: "https://www.google.com/s2/favicons?domain=swiggy.com&sz=256" },
+  { name: "Zomato", logo: "https://www.google.com/s2/favicons?domain=zomato.com&sz=256" },
+  { name: "Dominos", logo: "https://www.google.com/s2/favicons?domain=dominos.co.in&sz=256" },
+  { name: "Pizza Hut", logo: "https://www.google.com/s2/favicons?domain=pizzahut.co.in&sz=256" },
+  { name: "KFC", logo: "https://www.google.com/s2/favicons?domain=kfc.co.in&sz=256" },
+  { name: "McDonalds", logo: "https://www.google.com/s2/favicons?domain=mcdonaldsindia.com&sz=256" },
+  { name: "PhonePe", logo: "https://www.google.com/s2/favicons?domain=phonepe.com&sz=256" },
+  { name: "Google Pay", logo: "https://www.google.com/s2/favicons?domain=pay.google.com&sz=256" },
+  { name: "Paytm", logo: "https://www.google.com/s2/favicons?domain=paytm.com&sz=256" },
+  { name: "Visa", logo: "https://www.google.com/s2/favicons?domain=visa.com&sz=256" },
+  { name: "Mastercard", logo: "https://www.google.com/s2/favicons?domain=mastercard.com&sz=256" },
+  { name: "SBI", logo: "https://www.google.com/s2/favicons?domain=sbi.co.in&sz=256" },
+  { name: "HDFC", logo: "https://www.google.com/s2/favicons?domain=hdfcbank.com&sz=256" },
+  { name: "ICICI", logo: "https://www.google.com/s2/favicons?domain=icicibank.com&sz=256" },
+  { name: "Axis", logo: "https://www.google.com/s2/favicons?domain=axisbank.com&sz=256" },
+  { name: "CashKaro", logo: "https://www.google.com/s2/favicons?domain=cashkaro.com&sz=256" },
+  { name: "Magicpin", logo: "https://www.google.com/s2/favicons?domain=magicpin.in&sz=256" },
+  { name: "CRED", logo: "https://www.google.com/s2/favicons?domain=cred.club&sz=256" },
+  { name: "Netflix", logo: "https://www.google.com/s2/favicons?domain=netflix.com&sz=256" },
+  { name: "Spotify", logo: "https://www.google.com/s2/favicons?domain=spotify.com&sz=256" },
+  { name: "YouTube", logo: "https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
+  { name: "OpenAI", logo: "https://www.google.com/s2/favicons?domain=openai.com&sz=256" },
+  { name: "Gemini", logo: "https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
+  { name: "Perplexity", logo: "https://www.google.com/s2/favicons?domain=perplexity.ai&sz=256" },
+  { name: "Anthropic", logo: "https://www.google.com/s2/favicons?domain=anthropic.com&sz=256" },
+  { name: "Meta AI", logo: "https://www.google.com/s2/favicons?domain=meta.ai&sz=256" }
+];
+  const aiSearchAnimation = document.getElementById("aiSearchAnimation");
+
+function startAISearchAnimation() {
+
+    aiSearchAnimation.innerHTML = "";
+
+    // Pick random logos every search
+    const selected = [...logos]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 24);
+
+    selected.forEach((item, index) => {
+
+        const logo = document.createElement("div");
+        logo.className = "search-logo";
+
+        // Random position
+        logo.style.left = (Math.random() * 85 + 5) + "%";
+        logo.style.top = (Math.random() * 70 + 10) + "%";
+
+        // Random animation timing
+        logo.style.animationDelay = (Math.random() * 2) + "s";
+        logo.style.animationDuration = (3 + Math.random() * 2) + "s";
+
+        // Random size
+        const size = 34 + Math.random() * 22;
+        logo.style.width = size + "px";
+        logo.style.height = size + "px";
+
+        // Random rotation
+        logo.style.setProperty("--rot", (Math.random() * 360) + "deg");
+
+        logo.innerHTML = `
+            <img
+                src="${item.logo}"
+                alt="${item.name}"
+                title="${item.name}"
+                loading="lazy"
+            >
+        `;
+
+        aiSearchAnimation.appendChild(logo);
+    });
+
+    aiSearchAnimation.classList.add("running");
+
+    setTimeout(() => {
+        aiSearchAnimation.classList.remove("running");
+        aiSearchAnimation.innerHTML = "";
+    }, 6000);
+
+}
+
 (() => {
 'use strict';
 const { API_BASE, $, $$, esc, cssEsc, fmtPrice, toast, mountSidebar, closeSidebar, addHist, updateHist, getHist, inWL, toggleWL } = KB;
@@ -152,6 +1310,7 @@ function bestOfferOf(p) {
   return offers.reduce((a, b) => Number(a.price) <= Number(b.price) ? a : b);
 }
 
+
 function merchantOffersOf(p) {
   const nest = p.merchantOffers || p.offerData || p.offer_data || p.extraOffers || p.savingsData || {};
   const pick = (...keys) => { for (const k of keys) { if (Array.isArray(nest[k]) && nest[k].length) return nest[k]; if (Array.isArray(p[k]) && p[k].length) return p[k]; } return []; };
@@ -180,7 +1339,7 @@ function offersBlockHTML(p) {
   }
   const group = (label, items, render) => items.length ? '<div style="margin-top:8px"><div style="font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px">' + label + ' <span style="font-size:9px;padding:1px 6px;border-radius:99px;background:var(--border)">' + items.length + '</span></div>' + items.map(render).join('') + '</div>' : '';
   const couponRow = c => { const code = c.coupon_code || c.code || ''; const title = c.title || c.description || 'Coupon'; const val = offerValText(c); return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--card);margin-bottom:5px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">' + esc(title) + '</span>' + (val ? '<span style="font-size:11px;font-weight:800;color:var(--success-deep)">' + esc(val) + '</span>' : '') + (code ? '<span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:800;padding:3px 8px;border:1.5px dashed var(--border2);border-radius:7px">' + esc(code) + '</span><button type="button" class="moff-copy" data-code="' + esc(code) + '" style="font-size:10px;font-weight:800;padding:4px 9px;border-radius:7px;border:0;background:var(--btn-bg);color:var(--btn-fg);cursor:pointer">COPY</button>' : '') + '</div>'; };
-  const linkRow = d => { const title = d.title || d.description || 'Offer'; const url = d.tracking_url || d.url || ''; const val = offerValText(d); return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--card);margin-bottom:5px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">' + esc(title) + '</span>' + (val ? '<span style="font-size:11px;font-weight:800;color:var(--success-deep)">' + esc(val) + '</span>' : '') + (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:800;color:var(--accent)">View</a>' : '') + '</div>'; };
+  const linkRow = d => { const title = d.title || d.description || 'Offer'; const url = d.tracking_url || d.url || ''; const val = offerValText(d); return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--card);margin-bottom:5px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">' + esc(title) + '</span>' + (val ? '<span style="font-size:11px;font-weight:800;color:var(--success-deep)">' + esc(val) + '</span>' : '') + (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:800;color:#8B5CF6">View</a>' : '') + '</div>'; };
   return '<div style="margin-top:10px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card2)"><div style="display:flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)">🎟️ Coupons &amp; Offers' + (mo.merchant ? ' · ' + esc(mo.merchant) : '') + (mo.totalSavings > 0 ? '<span style="margin-left:auto;font-size:10px;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--success-bg);color:var(--success-deep)">Save ' + fmtPrice(mo.totalSavings) + '</span>' : '') + '</div>' + group('Coupons', mo.coupons, couponRow) + group('Deals', mo.deals, linkRow) + group('Gift Cards', mo.giftcards, linkRow) + group('Cashback', mo.cashback, linkRow) + group('More', mo.moreOffers, linkRow) + '</div>';
 }
 
@@ -303,7 +1462,7 @@ function buildCard(p, i) {
   card.dataset.pid = pid;
   card.style.animationDelay = (Math.min(i, 8) * 60) + 'ms';
   card.innerHTML = '<button class="wish ' + (wished ? 'on' : '') + '" aria-label="Save to wishlist">' + ICONS.heart + '</button>' +
-    '<div class="prow"><div class="pimg"><img src="' + imgFor(p) + '" alt="' + esc(title) + '" loading="lazy"></div><div class="pbody">' + (cat ? '<div class="pcat">' + esc(cat) + '</div>' : '') + '<div class="pname" title="' + esc(title) + '">' + esc(title) + '</div><div class="pmeta">' + (rating > 0 ? '<div class="prating">' + ICONS.star + rating.toFixed(1) + '</div>' : '') + '<span class="pavail ' + avail + '">' + (avail === 'in' ? 'In Stock' : 'Out of Stock') + '</span></div></div><div class="pprice"><div class="pprice-v">' + (lo > 0 ? fmtPrice(lo) : '—') + '</div>' + (hi > lo && lo > 0 ? '<div class="pprice-was">' + fmtPrice(hi) + '</div>' : '') + (disc > 0 ? '<div class="pprice-off">' + disc + '% off</div>' : '') + (mo.totalSavings > 0 ? '<div style="font-size:10.5px;font-weight:800;color:var(--accent);margin-top:2px">+ ' + fmtPrice(mo.totalSavings) + ' via coupons</div>' : '') + '</div>' + (buyUrl !== '#' ? '<a href="' + esc(buyUrl) + '" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>' : '') + '</div>' +
+    '<div class="prow"><div class="pimg"><img src="' + imgFor(p) + '" alt="' + esc(title) + '" loading="lazy"></div><div class="pbody">' + (cat ? '<div class="pcat">' + esc(cat) + '</div>' : '') + '<div class="pname" title="' + esc(title) + '">' + esc(title) + '</div><div class="pmeta">' + (rating > 0 ? '<div class="prating">' + ICONS.star + rating.toFixed(1) + '</div>' : '') + '<span class="pavail ' + avail + '">' + (avail === 'in' ? 'In Stock' : 'Out of Stock') + '</span></div></div><div class="pprice"><div class="pprice-v">' + (lo > 0 ? fmtPrice(lo) : '—') + '</div>' + (hi > lo && lo > 0 ? '<div class="pprice-was">' + fmtPrice(hi) + '</div>' : '') + (disc > 0 ? '<div class="pprice-off">' + disc + '% off</div>' : '') + (mo.totalSavings > 0 ? '<div style="font-size:10.5px;font-weight:800;color:#8B5CF6;margin-top:2px">+ ' + fmtPrice(mo.totalSavings) + ' via coupons</div>' : '') + '</div>' + (buyUrl !== '#' ? '<a href="' + esc(buyUrl) + '" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>' : '') + '</div>' +
     '<div class="retzo" data-pid="' + esc(pid) + '" data-state="loading">' + retzoSkeletonHTML() + '</div>' +
     offersBlockHTML(p) +
     '<div class="ptoggle" role="button" aria-expanded="false" tabindex="0"><span class="ptoggle-l">View ' + offers.length + ' offer' + (offers.length !== 1 ? 's' : '') + '</span>' + ICONS.chev + '</div><div class="offers"><div class="offers-in">' + offersHtml + '</div></div>';
