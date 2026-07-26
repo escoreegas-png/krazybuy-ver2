@@ -346,6 +346,562 @@
 
   /* Hide legacy product list styles */
   .plist { display:block; }
+  .product-slider{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    gap:22px;
+    padding:10px 4px 20px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.product-slider::-webkit-scrollbar{
+    display:none;
+}
+
+.product-card{
+    flex:0 0 100%;
+    scroll-snap-align:center;
+    transition:.45s ease;
+}
+.store-slider{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding:10px 0 12px;
+    scrollbar-width:none;
+}
+
+.store-slider::-webkit-scrollbar{
+    display:none;
+}
+
+.store-card{
+    flex:0 0 240px;
+    scroll-snap-align:center;
+}.product-card{
+    transform:scale(.93);
+    opacity:.55;
+    filter:blur(.3px);
+}
+
+.product-card.active{
+    transform:scale(1);
+    opacity:1;
+    filter:none;
+}.store-card{
+    transition:.35s;
+}
+
+.store-card:hover{
+    transform:translateY(-8px);
+}.product-card,
+.store-card{
+
+backdrop-filter:blur(18px);
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+
+0 10px 35px rgba(0,0,0,.25);
+
+border-radius:24px;
+
+}.product-image{
+
+width:170px;
+
+height:170px;
+
+object-fit:contain;
+
+margin:auto;
+
+transition:.5s;
+
+}.product-card.active .product-image{
+
+transform:
+
+scale(1.08)
+
+rotate(-2deg);
+
+}.ai-verdict{
+
+animation:fadeVerdict .8s ease;
+
+}
+
+@keyframes fadeVerdict{
+
+0%{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:none;
+
+}
+
+}.best-price{
+
+animation:pop .45s;
+
+}
+
+@keyframes pop{
+
+0%{
+
+transform:scale(.6);
+
+}
+
+70%{
+
+transform:scale(1.12);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}.store-count{
+
+font-size:14px;
+
+opacity:.7;
+
+text-align:center;
+
+margin-top:14px;
+
+}.swipe-hint{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:8px;
+
+font-size:13px;
+
+opacity:.65;
+
+margin:18px 0;
+
+animation:swipe 2s infinite;
+
+}
+
+@keyframes swipe{
+
+0%{
+
+transform:translateX(-8px);
+
+}
+
+50%{
+
+transform:translateX(8px);
+
+}
+
+100%{
+
+transform:translateX(-8px);
+
+}
+
+}.product-dots{
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+margin-top:18px;
+
+}
+
+.product-dots span{
+
+width:8px;
+
+height:8px;
+
+border-radius:50%;
+
+background:#666;
+
+transition:.3s;
+
+}
+
+.product-dots span.active{
+
+width:28px;
+
+border-radius:20px;
+
+background:#fff;
+
+}.store-dots{
+
+display:flex;
+
+justify-content:center;
+
+gap:8px;
+
+margin-top:12px;
+
+}
+
+.store-dots span{
+
+width:7px;
+
+height:7px;
+
+border-radius:50%;
+
+background:#666;
+
+}
+
+.store-dots span.active{
+
+background:#fff;
+
+}.product-card{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.product-card::before{
+
+content:"";
+
+position:absolute;
+
+width:320px;
+
+height:320px;
+
+border-radius:50%;
+
+background:radial-gradient(circle,
+
+rgba(255,255,255,.18),
+
+transparent 70%);
+
+top:-120px;
+
+left:-80px;
+
+filter:blur(60px);
+
+pointer-events:none;
+
+}.product-card{
+
+animation:cardAppear .45s ease;
+
+}
+
+@keyframes cardAppear{
+
+from{
+
+opacity:0;
+
+transform:
+
+translateY(30px)
+
+scale(.95);
+
+}
+
+to{
+
+opacity:1;
+
+transform:none;
+
+}
+
+}.product-slider{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    gap:22px;
+    padding:10px 4px 20px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.product-slider::-webkit-scrollbar{
+    display:none;
+}
+
+.product-card{
+    flex:0 0 100%;
+    scroll-snap-align:center;
+    transition:.45s ease;
+}.store-slider{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding:10px 0 12px;
+    scrollbar-width:none;
+}
+
+.store-slider::-webkit-scrollbar{
+    display:none;
+}
+
+.store-card{
+    flex:0 0 240px;
+    scroll-snap-align:center;
+}.product-card{
+    transform:scale(.93);
+    opacity:.55;
+    filter:blur(.3px);
+}
+
+.product-card.active{
+    transform:scale(1);
+    opacity:1;
+    filter:none;
+}
+/* TRUST */
+
+.trust-section{
+
+padding:90px 8%;
+
+text-align:center;
+
+}
+
+.trust-section h2{
+
+font-size:38px;
+
+margin-bottom:15px;
+
+}
+
+.trust-section p{
+
+color:#999;
+
+max-width:700px;
+
+margin:auto;
+
+}
+
+.trust-grid{
+
+margin-top:50px;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+.trust-card{
+
+background:#111;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:20px;
+
+padding:30px;
+
+transition:.35s;
+
+}
+
+.trust-card:hover{
+
+transform:translateY(-8px);
+
+border-color:#F7E7C6;
+
+}
+
+.trust-icon{
+
+font-size:40px;
+
+margin-bottom:15px;
+
+}
+
+.trust-card h3{
+
+margin-bottom:10px;
+
+}
+
+.trust-card p{
+
+font-size:14px;
+
+color:#999;
+
+line-height:1.6;
+
+}
+
+/* FOOTER */
+
+.footer{
+
+margin-top:80px;
+
+background:#090909;
+
+border-top:1px solid rgba(255,255,255,.08);
+
+}
+
+.footer-container{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:70px 8%;
+
+flex-wrap:wrap;
+
+gap:60px;
+
+}
+
+.footer-brand{
+
+max-width:400px;
+
+}
+
+.footer-brand h2{
+
+font-size:34px;
+
+margin-bottom:15px;
+
+color:#F7E7C6;
+
+}
+
+.footer-brand p{
+
+color:#999;
+
+line-height:1.8;
+
+}
+
+.footer-links{
+
+display:flex;
+
+gap:70px;
+
+flex-wrap:wrap;
+
+}
+
+.footer-links div{
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.footer-links h4{
+
+margin-bottom:8px;
+
+}
+
+.footer-links a{
+
+text-decoration:none;
+
+color:#999;
+
+transition:.3s;
+
+}
+
+.footer-links a:hover{
+
+color:#F7E7C6;
+
+padding-left:6px;
+
+}
+
+.footer-bottom{
+
+padding:20px;
+
+text-align:center;
+
+border-top:1px solid rgba(255,255,255,.08);
+
+color:#888;
+
+}
+
+.footer-bottom span{
+
+color:#F7E7C6;
+
+font-weight:600;
+
+}
 </style>
 </head>
 <body>
@@ -1053,5 +1609,118 @@ const dq = new URLSearchParams(location.search).get('q');
 if (dq) { $('#sinput').value = dq; search(dq); }
 })();
 </script>
+<!-- ===========================
+     TRUST SECTION
+============================ -->
+
+<section class="trust-section">
+
+    <h2>Trusted by Smart Shoppers</h2>
+
+    <p>
+        Compare prices from India's top online stores using
+        Retzo AI before making your purchase.
+    </p>
+
+    <div class="trust-grid">
+
+        <div class="trust-card">
+            <div class="trust-icon">🤖</div>
+            <h3>AI Analysis</h3>
+            <p>Every product is analyzed independently.</p>
+        </div>
+
+        <div class="trust-card">
+            <div class="trust-icon">🛒</div>
+            <h3>50+ Stores</h3>
+            <p>Amazon, Flipkart, Croma and many more.</p>
+        </div>
+
+        <div class="trust-card">
+            <div class="trust-icon">⚡</div>
+            <h3>Fast Comparison</h3>
+            <p>Compare prices instantly.</p>
+        </div>
+
+        <div class="trust-card">
+            <div class="trust-icon">🔒</div>
+            <h3>Secure</h3>
+            <p>No unnecessary permissions required.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<footer class="footer">
+
+<div class="footer-container">
+
+<div class="footer-brand">
+
+<h2>KrazyBuy</h2>
+
+<p>
+AI Price Intelligence powered by Retzo AI.
+Compare products across trusted online stores and discover the best available price.
+</p>
+
+</div>
+
+<div class="footer-links">
+
+<div>
+
+<h4>Company</h4>
+
+<a href="about.html">About</a>
+
+<a href="contact.html">Contact</a>
+
+<a href="privacy.html">Privacy Policy</a>
+
+<a href="terms.html">Terms & Conditions</a>
+
+</div>
+
+<div>
+
+<h4>Features</h4>
+
+<a href="#">Price Comparison</a>
+
+<a href="#">AI Verdict</a>
+
+<a href="#">Product Search</a>
+
+<a href="#">Retailers</a>
+
+</div>
+
+<div>
+
+<h4>Support</h4>
+
+<a href="mailto:support@krazybuy.online">support@krazybuy.online</a>
+
+<a href="https://krazybuy.online">krazybuy.online</a>
+
+<a href="https://instagram.com/krazybuy.ai">Instagram</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 KrazyBuy • Powered by <span>Retzo AI</span>
+
+</div>
+
+</footer>
 </body>
 </html>
