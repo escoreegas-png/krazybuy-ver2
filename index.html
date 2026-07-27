@@ -3,671 +3,958 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FAF7F2">
+<meta name="theme-color" content="#F8F6F1">
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
+
 <style>
-  /* ============================================================
-     PERFORMANCE NOTE
-     Every animated element below is restricted to transform +
-     opacity so the compositor can run them off the main thread.
-     will-change / translateZ(0) / backface-visibility promote each
-     to its own GPU layer; contain: layout/paint stops repaints from
-     leaking into neighbouring elements. Nothing here changes the
-     visual identity, colours, spacing, or layout of KrazyBuy.
-  ============================================================ */
-  html, body { overflow-x: hidden; }
+/* ============================================================
+   DESIGN TOKENS — Premium Minimalist Cream
+============================================================ */
+:root {
+  --bg:        #F8F6F1;
+  --card:      #FFFDF8;
+  --card2:     #F2EEE6;
+  --border:    #E4DED2;
+  --border2:   #D4CEC2;
+  --text:      #1D1D1D;
+  --muted:     #6D6B68;
+  --muted2:    #9D9B98;
+  --accent:    #6BCB77;
+  --accent-dk: #4FAE5C;
+  --accent-hv: #84D98F;
+  --accent-bg: rgba(107,203,119,.08);
+  --success:   #68C76B;
+  --warn:      #F59E0B;
+  --err:       #EF4444;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+  --shadow:    0 8px 24px rgba(0,0,0,.06);
+  --shadow-md: 0 16px 40px rgba(0,0,0,.08);
+  --r:         24px;
+  --r-sm:      16px;
+  --r-pill:    999px;
+  --t:         200ms;
+  --ease:      cubic-bezier(.4,0,.2,1);
 
-  /* ===== Ambient lighting & extra design layer ===== */
-  .ambient-glow { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; contain: layout style paint; }
-  .glow-orb {
-    position: absolute; border-radius: 50%;
-    filter: blur(60px); opacity: .28;
-    animation: orbDrift 20s cubic-bezier(.22,1,.36,1) infinite;
-    will-change: transform; transform: translateZ(0); backface-visibility: hidden;
-  }
-  .glow-orb.o1 { width: 440px; height: 440px; background: radial-gradient(circle, rgba(22,163,74,.18), transparent 70%); top: -120px; left: -120px; }
-  .glow-orb.o2 { width: 480px; height: 480px; background: radial-gradient(circle, rgba(17,17,17,.10), transparent 70%); bottom: -160px; right: -140px; animation-delay: -6s; animation-duration: 24s; }
-  .glow-orb.o3 { width: 320px; height: 320px; background: radial-gradient(circle, rgba(245,158,11,.12), transparent 70%); top: 40%; left: 55%; animation-delay: -10s; animation-duration: 28s; }
-  [data-theme="dark"] .glow-orb { opacity: .18; }
-  [data-theme="dark"] .glow-orb.o1 { background: radial-gradient(circle, rgba(74,222,128,.16), transparent 70%); }
-  [data-theme="dark"] .glow-orb.o2 { background: radial-gradient(circle, rgba(245,245,244,.06), transparent 70%); }
+  /* Override any legacy vars from style.css */
+  --btn-bg:   #1D1D1D;
+  --btn-fg:   #FFFDF8;
+  --btn-hover:#333;
+}
 
-  /* Pause decorative backgrounds when tab is hidden or search overlay is running */
-  body.paused-fx .glow-orb,
-  body.paused-fx .ai-node,
-  body.paused-fx .ai-line,
-  body.paused-fx .ai-network::before,
-  body.paused-fx .flogo { animation-play-state: paused !important; }
-  .ai-network.offscreen .ai-node,
-  .ai-network.offscreen .ai-line,
-  .ai-network.offscreen::before { animation-play-state: paused; }
+[data-theme="dark"] {
+  --bg:        #141210;
+  --card:      #1C1A17;
+  --card2:     #232119;
+  --border:    #2E2B26;
+  --border2:   #3A3730;
+  --text:      #F0EDE8;
+  --muted:     #9D9B98;
+  --muted2:    #6D6B68;
+  --btn-bg:    #F0EDE8;
+  --btn-fg:    #141210;
+  --btn-hover: #D4D0C8;
+}
 
-  .hero { background: radial-gradient(ellipse at 50% 0%, rgba(22,163,74,.05), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(245,158,11,.04), transparent 50%); }
-  .hero-badge { backdrop-filter: blur(10px); background: rgba(255,255,255,.7); box-shadow: 0 8px 24px rgba(17,17,17,.08), inset 0 1px 0 rgba(255,255,255,.6); }
-  [data-theme="dark"] .hero-badge { background: rgba(28,26,24,.7); }
+/* ============================================================
+   RESET / BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; border: 0; background: none; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
 
-  .grad-text { background: linear-gradient(110deg, var(--text) 30%, var(--success-deep) 50%, var(--text) 70%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shimmerText 4s linear infinite; will-change: background-position; }
-  .flogo { backdrop-filter: blur(6px); transition: transform .35s var(--ease); will-change: transform, opacity; transform: translateZ(0); backface-visibility: hidden; }
-  .flogo::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,.4), transparent 50%); opacity: .5; pointer-events: none; }
+/* ============================================================
+   LAYOUT
+============================================================ */
+.app { display: flex; height: 100dvh; overflow: hidden; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.thread { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding-bottom: env(safe-area-inset-bottom, 0px); }
 
-  .chip { position: relative; overflow: hidden; }
-  .chip::before { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, transparent, rgba(22,163,74,.08), transparent); transform: translateX(-100%); transition: transform .5s var(--ease); }
-  .chip:hover::before { transform: translateX(100%); }
+/* ============================================================
+   HEADER
+============================================================ */
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  position: sticky; top: 0; z-index: 10;
+  flex-shrink: 0;
+}
+.top-q { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); }
+.burger { display: flex; flex-direction: column; gap: 5px; padding: 6px; border-radius: 8px; }
+.burger span { display: block; width: 18px; height: 2px; background: var(--muted); border-radius: 2px; }
+.status { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); }
+.sdot.online { background: var(--accent); }
+.sdot.busy { background: var(--warn); }
+.sdot.err { background: var(--err); }
 
-  .cta-pill { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-3) var(--s-6); border-radius: var(--r-pill); background: var(--btn-bg); color: var(--btn-fg); font-size: var(--fs-sm); font-weight: 700; letter-spacing: -.01em; box-shadow: 0 8px 20px rgba(17,17,17,.18), 0 2px 4px rgba(17,17,17,.08); transition: transform .22s var(--ease), box-shadow .22s var(--ease), background .22s var(--ease); cursor: pointer; border: 0; }
-  .cta-pill:hover { transform: translateY(-2px) translateZ(0); box-shadow: 0 14px 28px rgba(17,17,17,.22), 0 4px 8px rgba(17,17,17,.10); background: var(--btn-hover); }
-  .cta-pill:active { transform: translateY(0) scale(.98) translateZ(0); }
-  .cta-pill .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulseRing 2s infinite; will-change: box-shadow; }
+/* ============================================================
+   HERO
+============================================================ */
+.hero {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 64px 24px 80px;
+  min-height: calc(100dvh - 120px);
+  gap: 0;
+  position: relative;
+}
 
-  .top { box-shadow: 0 1px 0 var(--border), 0 8px 24px rgba(17,17,17,.03); }
-  .dots span { background: var(--success-deep); }
-  .gauge-fill { filter: drop-shadow(0 0 6px currentColor); }
+/* Floating store logos — subtle, no animation chaos */
+.float-logos { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.flogo {
+  position: absolute;
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  animation: floatLogo var(--f, 7s) ease-in-out var(--d, 0s) infinite alternate;
+  opacity: .7;
+}
+.flogo img { width: 72%; height: 72%; object-fit: contain; }
+@keyframes floatLogo {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-10px); }
+}
 
-  .stat { position: relative; overflow: hidden; }
-  .stat::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--success), transparent); transform: translateX(-100%) translateZ(0); animation: edgeSweep 3.2s ease-in-out infinite; will-change: transform; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: var(--r-pill);
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  margin-bottom: 28px;
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
-  .sform:focus-within { box-shadow: 0 0 0 4px rgba(22,163,74,.10), 0 0 0 1px var(--text), var(--shadow); }
+.hero h1 {
+  font-family: Sora, Inter, sans-serif;
+  font-size: clamp(28px, 6vw, 52px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.025em;
+  color: var(--text);
+  margin-bottom: 18px;
+  max-width: 640px;
+}
+.hero h1 span { color: var(--accent-dk); }
 
-  @keyframes orbDrift { 0%,100% { transform: translate3d(0,0,0) scale(1); } 33% { transform: translate3d(36px,-26px,0) scale(1.06); } 66% { transform: translate3d(-26px,34px,0) scale(.96); } }
-  @keyframes shimmerText { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
-  @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.5); } 70% { box-shadow: 0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
-  @keyframes edgeSweep { 0%,100% { transform: translateX(-100%) translateZ(0); } 50% { transform: translateX(100%) translateZ(0); } }
-  @keyframes shine { 0% { left: -100%; } 50%,100% { left: 200%; } }
+.hero p {
+  font-size: 15px; font-weight: 400; line-height: 1.7;
+  color: var(--muted);
+  max-width: 480px;
+  margin-bottom: 36px;
+}
 
-  @media (prefers-reduced-motion: reduce) { .glow-orb, .stat::after, .grad-text { animation: none !important; } }
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 560px; }
+.chip {
+  padding: 8px 16px; border-radius: var(--r-pill);
+  background: var(--card); border: 1px solid var(--border);
+  font-size: 13px; font-weight: 500; color: var(--text);
+  transition: background var(--t) var(--ease), border-color var(--t) var(--ease), color var(--t) var(--ease);
+}
+.chip:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent-dk);
+}
 
-  /* ============================================================
-     AI NETWORK — thinned out: fewer nodes, no per-node blur,
-     lighter shadows, single combined pulse+move animation.
-  ============================================================ */
-  .ai-network { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; isolation:isolate; contain: layout style paint; }
-  .ai-node {
-    position:absolute; width:8px; height:8px; border-radius:50%;
-    background:rgba(15,15,15,.75);
-    box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 6px 16px rgba(0,0,0,.16);
-    animation: nodeLife 5.2s ease-in-out infinite;
-    will-change: transform, opacity; transform: translateZ(0); backface-visibility: hidden;
-  }
-  .ai-node:nth-child(1){top:12%;left:18%;animation-delay:0s;}
-  .ai-node:nth-child(2){top:28%;left:70%;animation-delay:.9s;}
-  .ai-node:nth-child(3){top:62%;left:14%;animation-delay:1.7s;}
-  .ai-node:nth-child(4){top:72%;left:80%;animation-delay:2.6s;}
-  .ai-node:nth-child(5){top:48%;left:52%;animation-delay:3.4s;}
-  .ai-node:nth-child(6){top:20%;left:40%;animation-delay:4.3s;}
-  .ai-line {
-    position:absolute; height:1px; transform-origin:left center;
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,.55), transparent);
-    opacity:.7; overflow:hidden;
-    animation: linePulse 4.2s ease-in-out infinite;
-    will-change: opacity; transform: translateZ(0);
-  }
-  .l1{ top:18%; left:18%; width:260px; transform:rotate(18deg); }
-  .l2{ top:44%; left:22%; width:300px; transform:rotate(-12deg); animation-delay: 1.2s; }
-  .l3{ top:70%; left:20%; width:340px; transform:rotate(8deg); animation-delay: 2.4s; }
-  .ai-line::before { content:""; position:absolute; left:-25%; top:0; width:35%; height:100%; background: linear-gradient(90deg, transparent, rgba(0,0,0,.4), transparent); animation: dataFlow 3.6s linear infinite; will-change: transform, opacity; }
-  [data-theme="dark"] .ai-node { background:#FFF8EC; box-shadow: 0 0 12px rgba(255,248,236,.55); }
-  [data-theme="dark"] .ai-line { background: linear-gradient(90deg, transparent, rgba(255,248,236,.4), transparent); }
-  [data-theme="dark"] .ai-line::before { background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent); }
-  .ai-network::before { content:""; position:absolute; inset:-25%; background: radial-gradient(circle at 20% 20%, rgba(0,0,0,.06), transparent 30%), radial-gradient(circle at 80% 40%, rgba(0,0,0,.05), transparent 28%); filter:blur(60px); animation: networkFog 22s linear infinite; will-change: transform; }
-  [data-theme="dark"] .ai-network::before { background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.04), transparent 35%), radial-gradient(circle at 80% 40%, rgba(255,255,255,.03), transparent 35%); }
-  @keyframes nodeLife { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity:.55; } 50% { transform: translate3d(6px,-6px,0) scale(1.7); opacity:1; } }
-  @keyframes linePulse { 0%,100% { opacity:.2; } 50% { opacity:.85; } }
-  @keyframes dataFlow { 0% { transform: translateX(0); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform: translateX(420%); opacity:0; } }
-  @keyframes networkFog { 0% { transform: translate3d(0,0,0); } 50% { transform: translate3d(20px,-14px,0); } 100% { transform: translate3d(0,0,0); } }
+/* ============================================================
+   COMPOSER / SEARCH BAR
+============================================================ */
+.composer {
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  flex-shrink: 0;
+}
+.sform {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--r-pill);
+  background: var(--card2); border: 1px solid var(--border);
+  transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.sform:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+.sinput {
+  flex: 1; border: 0; background: none; outline: none;
+  font-family: inherit; font-size: 15px; font-weight: 400;
+  color: var(--text);
+}
+.sinput::placeholder { color: var(--muted2); }
+.mic, .go {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+.mic:hover { background: var(--border); color: var(--text); }
+.mic.on { color: var(--err); }
+.go {
+  background: var(--btn-bg); color: var(--btn-fg);
+  width: 34px; height: 34px;
+}
+.go:hover { background: var(--btn-hover); }
+.go:disabled { opacity: .5; cursor: wait; }
+.vhint {
+  display: none; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--accent-dk);
+  padding: 8px 4px 0;
+}
+.vhint.show { display: flex; }
 
-  /* AI SEARCH FLIP OVERLAY (visual look preserved, node count/logic optimized in JS) */
-  #aiSearchAnimation { position: fixed; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity .3s ease; contain: layout style paint; }
-  #aiSearchAnimation.running { opacity: 1; }
-  #aiSearchAnimation::before { content:""; position:absolute; inset:0; background: radial-gradient(140% 90% at 50% 40%, rgba(250,247,242,.35), rgba(250,247,242,.72) 70%); opacity:0; transition: opacity .35s ease; }
-  #aiSearchAnimation.running::before { opacity:1; }
-  [data-theme="dark"] #aiSearchAnimation::before { background: radial-gradient(140% 90% at 50% 40%, rgba(14,13,12,.35), rgba(14,13,12,.78) 70%); }
-  .search-logo {
-    position:absolute; border-radius: 16px; display:flex; align-items:center; justify-content:center;
-    background: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.6);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 14px 34px rgba(17,17,17,.16), inset 0 1px 0 rgba(255,255,255,.5);
-    opacity: 0; transform-style: preserve-3d; perspective: 600px;
-    animation-name: logoFlipFloat; animation-timing-function: cubic-bezier(.22,1,.36,1);
-    animation-iteration-count: infinite; will-change: transform, opacity;
-    backface-visibility: hidden;
-  }
-  [data-theme="dark"] .search-logo { background: rgba(28,26,24,.82); border-color: rgba(255,255,255,.10); }
-  .search-logo img { width: 62%; height: 62%; object-fit: contain; pointer-events: none; user-select: none; backface-visibility: hidden; }
-  @keyframes logoFlipFloat {
-    0% { opacity:0; transform: translate3d(0,26px,0) scale(.35) rotateY(0deg) rotate(0deg); }
-    12% { opacity:1; }
-    50% { opacity:1; transform: translate3d(0,-18px,0) scale(1.08) rotateY(180deg) rotate(var(--rot,90deg)); }
-    88% { opacity:1; }
-    100% { opacity:0; transform: translate3d(0,-46px,0) scale(.5) rotateY(360deg) rotate(calc(var(--rot,90deg) * 2)); }
-  }
-  @media (prefers-reduced-motion: reduce){ .search-logo{ animation: none !important; opacity: .9; } }
+/* ============================================================
+   CONTENT AREA
+============================================================ */
+.content { padding: 20px 16px 32px; }
 
-  /* ============================================================
-     MOBILE-FIRST SLIDER EXPERIENCE
-  ============================================================ */
-  .pslider {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 14px;
-    padding: 6px 4px 4px;
-  }
-  .pslider::-webkit-scrollbar { display: none; width: 0; height: 0; }
-  .pslide {
-    flex: 0 0 100%;
-    scroll-snap-align: center;
-    transform: scale(.96) translateZ(0);
-    opacity: .55;
-    transition: transform .3s var(--ease), opacity .3s var(--ease), box-shadow .3s var(--ease);
-    will-change: transform, opacity;
-    contain: layout style;
-  }
-  .pslide.active {
-    transform: scale(1) translateZ(0);
-    opacity: 1;
-  }
+/* User bubble */
+.msg-user { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.bubble {
+  background: var(--btn-bg); color: var(--btn-fg);
+  padding: 10px 16px; border-radius: 18px 18px 4px 18px;
+  font-size: 14px; font-weight: 500; max-width: 80%;
+}
 
-  .scard {
-    position: relative;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    box-shadow: 0 10px 40px rgba(17,17,17,.10), 0 2px 10px rgba(17,17,17,.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    overflow: hidden;
-    transition: box-shadow .3s var(--ease), border-color .3s var(--ease);
-    contain: layout style paint;
-  }
-  .pslide.active .scard {
-    border-color: rgba(22,163,74,.45);
-    box-shadow:
-      0 18px 48px rgba(22,163,74,.18),
-      0 6px 18px rgba(17,17,17,.10),
-      0 0 0 1px rgba(22,163,74,.22) inset;
-  }
-  .scard::before {
-    content:"";
-    position:absolute; inset:0;
-    border-radius: inherit;
-    padding:1px;
-    background: linear-gradient(135deg, rgba(22,163,74,.30), transparent 40%, transparent 60%, rgba(17,17,17,.08));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    pointer-events:none;
-    opacity:0;
-    transition: opacity .3s var(--ease);
-  }
-  .pslide.active .scard::before { opacity:1; }
+/* Loading */
+.loading-wrap { display: flex; flex-direction: column; gap: 14px; padding: 4px 0; }
+.phrase { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--muted); }
+.dots { display: flex; gap: 4px; }
+.dots span { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); animation: dotBounce 1.2s ease-in-out infinite; }
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dotBounce { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-  .best-tag {
-    position:absolute; top:12px; right:12px;
-    display:inline-flex; align-items:center; gap:5px;
-    padding:5px 11px; border-radius:99px;
-    background: linear-gradient(135deg, rgba(22,163,74,.16), rgba(22,163,74,.06));
-    color: var(--success-deep);
-    font-size:10.5px; font-weight:800; letter-spacing:.04em;
-    border:1px solid rgba(22,163,74,.30);
-    overflow:hidden;
-  }
-  .best-tag::after {
-    content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
-    animation: shine 3.4s ease-in-out infinite;
-    will-change: left;
-  }
+.progress-track { height: 3px; border-radius: 99px; background: var(--border); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; background: var(--accent); width: 5%; transition: width .4s var(--ease); }
 
-  .sbody { padding: 18px 18px 20px; display:flex; flex-direction:column; gap:14px; }
+.skel-card { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: var(--r-sm); background: var(--card); border: 1px solid var(--border); }
+.skel { border-radius: 8px; background: linear-gradient(90deg, var(--border) 25%, var(--card2) 50%, var(--border) 75%); background-size: 200% 100%; animation: skelSweep 1.4s linear infinite; }
+@keyframes skelSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-  .shead { display:flex; gap:14px; align-items:flex-start; }
-  .simg {
-    width: 78px; height: 78px; border-radius: 18px; flex-shrink:0;
-    background: var(--card2); border:1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden; box-shadow: 0 6px 18px rgba(17,17,17,.08);
-  }
-  .simg img { width:100%; height:100%; object-fit:cover; }
-  .smeta { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
-  .scat { font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color: var(--muted2); }
-  .stitle { font-family: Sora, Inter, sans-serif; font-size: 17px; font-weight:700; line-height:1.25; color: var(--text); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-  .srating { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color: var(--text); }
-  .srating svg { color: #F59E0B; }
-  .savail { font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:99px; }
-  .savail.in { background: rgba(22,163,74,.14); color: var(--success-deep); }
-  .savail.out { background: rgba(248,113,113,.14); color: #EF4444; }
+/* Stats */
+.stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.stat {
+  flex: 1; min-width: 72px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px; border-radius: var(--r-sm);
+  background: var(--card); border: 1px solid var(--border);
+  animation: fadeUp .3s var(--ease) both;
+}
+@keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: none; } }
+.stat-ic { color: var(--muted2); flex-shrink: 0; }
+.stat-v { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.stat-l { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted2); margin-top: 2px; }
 
-  .sprice {
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 14px 16px; border-radius: 16px;
-    background: linear-gradient(135deg, rgba(22,163,74,.08), rgba(22,163,74,.02));
-    border: 1px solid rgba(22,163,74,.18);
-  }
-  .sprice-l { display:flex; flex-direction:column; gap:2px; }
-  .sprice-label { font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color: var(--muted2); }
-  .sprice-store { font-size:13px; font-weight:700; color: var(--text); }
-  .sprice-v { font-family: Sora, sans-serif; font-size: 22px; font-weight:800; color: var(--success-deep); letter-spacing:-.02em; }
-  .sprice-was { font-size:11px; color: var(--muted2); text-decoration: line-through; }
-  .sprice-off { font-size:10.5px; font-weight:800; color: #F59E0B; margin-top:2px; }
+/* Section heading */
+.section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  margin-bottom: 12px; padding: 0 2px;
+}
+.sec-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.sec-count {
+  padding: 2px 8px; border-radius: var(--r-pill);
+  background: var(--card2); border: 1px solid var(--border);
+  font-size: 11px; font-weight: 700; color: var(--muted);
+}
+.sec-hint { font-size: 11px; font-weight: 500; color: var(--muted2); margin-left: auto; }
 
-  .sretzo { border-radius: 16px; border:1px solid var(--border); background: var(--card2); padding:14px; display:flex; flex-direction:column; gap:10px; }
-  .rz-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color: var(--success-deep); }
-  .rz-summary { font-size:13px; line-height:1.5; color: var(--text); }
-  .rz-gauges { display:flex; gap:10px; justify-content:space-between; }
-  .rz-gauge { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
-  .rz-gauge-svg { position:relative; width:54px; height:54px; }
-  .rz-gauge-svg svg { transform: rotate(-90deg); }
-  .rz-gauge-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
-  .rz-gauge-label { font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color: var(--muted2); }
+/* ============================================================
+   PRODUCT SLIDER
+============================================================ */
+.pslider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 12px;
+  padding: 4px 2px 6px;
+}
+.pslider::-webkit-scrollbar { display: none; }
 
-  .scompare-head {
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 0 2px;
-  }
-  .scompare-title { font-family: Sora, sans-serif; font-size:13px; font-weight:700; color: var(--text); display:flex; align-items:center; gap:7px; }
-  .scompare-title .dot { width:6px; height:6px; border-radius:50%; background: var(--success); }
-  .scompare-hint { font-size:10.5px; font-weight:700; color: var(--muted2); letter-spacing:.04em; }
+.pslide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  transform: scale(.96);
+  opacity: .5;
+  transition: transform var(--t) var(--ease), opacity var(--t) var(--ease);
+}
+.pslide.active { transform: scale(1); opacity: 1; }
 
-  .sslider {
-    display:flex;
-    overflow-x:auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width:none;
-    gap: 10px;
-    padding: 4px 2px 6px;
-  }
-  .sslider::-webkit-scrollbar { display:none; width:0; height:0; }
-  .sslide {
-    flex: 0 0 70%;
-    scroll-snap-align: center;
-    transform: scale(.95) translateZ(0);
-    opacity:.6;
-    transition: transform .28s var(--ease), opacity .28s var(--ease), box-shadow .28s var(--ease);
-    will-change: transform, opacity;
-    contain: layout style;
-  }
-  .sslide.active {
-    transform: scale(1) translateZ(0);
-    opacity:1;
-  }
-  .sstore {
-    position:relative;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    padding: 14px 14px;
-    display:flex; flex-direction:column; gap:10px;
-    box-shadow: 0 6px 20px rgba(17,17,17,.06);
-    transition: box-shadow .3s var(--ease), border-color .3s var(--ease);
-  }
-  .sslide.active .sstore {
-    border-color: rgba(22,163,74,.40);
-    box-shadow: 0 10px 26px rgba(22,163,74,.16), 0 2px 8px rgba(17,17,17,.06);
-  }
-  .sstore-top { display:flex; align-items:center; gap:10px; }
-  .sstore-logo {
-    width:36px; height:36px; border-radius:10px; flex-shrink:0;
-    background: var(--card2); border:1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:14px; color: var(--text);
-    overflow:hidden;
-  }
-  .sstore-logo img { width:100%; height:100%; object-fit:contain; }
-  .sstore-name { font-size:13px; font-weight:700; color: var(--text); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .sstore-price { font-family: Sora, sans-serif; font-size:18px; font-weight:800; color: var(--text); letter-spacing:-.02em; }
-  .sstore-save { font-size:10.5px; font-weight:800; color: var(--success-deep); }
-  .sstore-tags { display:flex; gap:5px; flex-wrap:wrap; }
-  .sstore-tag { font-size:9.5px; font-weight:700; padding:3px 7px; border-radius:99px; }
-  .sstore-tag.free { background: rgba(22,163,74,.12); color: var(--success-deep); }
-  .sstore-tag.out { background: rgba(248,113,113,.12); color: #EF4444; }
-  .sstore-buy {
-    display:flex; align-items:center; justify-content:center; gap:6px;
-    width:100%; padding:10px; border-radius:12px; border:0;
-    background: var(--btn-bg); color: var(--btn-fg);
-    font-size:12.5px; font-weight:800; letter-spacing:.02em;
-    cursor:pointer; text-decoration:none;
-    transition: transform .2s var(--ease), box-shadow .2s var(--ease);
-  }
-  .sstore-buy:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(22,163,74,.20); }
+/* Card */
+.scard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.pslide.active .scard {
+  border-color: var(--accent);
+  box-shadow: 0 16px 40px rgba(107,203,119,.12), var(--shadow);
+}
 
-  .sstore-count {
-    text-align:center; font-size:11.5px; font-weight:700; color: var(--muted2);
-    padding: 6px 0 2px;
-  }
+.sbody { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 
-  .indicators {
-    display:flex; justify-content:center; align-items:center; gap:7px;
-    padding: 10px 0 4px;
-  }
-  .ind {
-    width:7px; height:7px; border-radius:99px;
-    background: var(--border2);
-    transition: width .3s var(--ease), background .3s var(--ease);
-    cursor:pointer; border:0;
-  }
-  .ind.active {
-    width:22px;
-    background: var(--success);
-  }
-  .ind-row { display:flex; justify-content:center; gap:5px; padding: 4px 0 2px; }
-  .ind-row .ind { width:5px; height:5px; }
-  .ind-row .ind.active { width:14px; }
+/* Product header */
+.shead { display: flex; gap: 14px; align-items: flex-start; }
+.simg {
+  width: 80px; height: 80px; border-radius: 18px; flex-shrink: 0;
+  background: var(--card2); border: 1px solid var(--border);
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.simg img { width: 100%; height: 100%; object-fit: cover; }
+.smeta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.scat { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted2); }
+.stitle {
+  font-family: Sora, Inter, sans-serif; font-size: 16px; font-weight: 700;
+  line-height: 1.3; color: var(--text);
+  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.smeta-row { display: flex; align-items: center; gap: 8px; }
+.srating { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text); }
+.srating svg { color: var(--warn); }
+.savail { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-pill); }
+.savail.in  { background: rgba(107,203,119,.12); color: var(--accent-dk); }
+.savail.out { background: rgba(239,68,68,.10);   color: var(--err); }
 
-  .rz-skel { display:flex; flex-direction:column; gap:8px; }
-  .skel2 { background: linear-gradient(90deg, var(--border) 25%, var(--card2) 50%, var(--border) 75%); background-size: 200% 100%; animation: skelSweep 1.4s linear infinite; border-radius:8px; will-change: background-position; }
-  .rz-skel-row { display:flex; align-items:center; gap:10px; }
-  .rz-skel-circle { width:30px; height:30px; border-radius:50%; }
-  @keyframes skelSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* Wishlist button */
+.wish {
+  position: absolute; top: 14px; left: 14px; z-index: 3;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--card2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted2);
+  transition: color var(--t), border-color var(--t);
+}
+.wish:hover { border-color: var(--err); color: var(--err); }
 
-  /* TRUST */
-  .trust-section{ padding:90px 8%; text-align:center; }
-  .trust-section h2{ font-size:38px; margin-bottom:15px; }
-  .trust-section p{ color:#999; max-width:700px; margin:auto; }
-  .trust-grid{ margin-top:50px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:25px; }
-  .trust-card{ background:#111; border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:30px; transition:transform .3s var(--ease), border-color .3s var(--ease); }
-  .trust-card:hover{ transform:translateY(-6px); border-color:#F7E7C6; }
-  .trust-icon{ font-size:40px; margin-bottom:15px; }
-  .trust-card h3{ margin-bottom:10px; }
-  .trust-card p{ font-size:14px; color:#999; line-height:1.6; }
+/* Best deal tag */
+.best-tag {
+  position: absolute; top: 14px; right: 14px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  background: var(--accent-bg); border: 1px solid rgba(107,203,119,.3);
+  color: var(--accent-dk);
+  font-size: 10px; font-weight: 700; letter-spacing: .04em;
+}
 
-  /* FOOTER */
-  .footer{ margin-top:80px; background:#090909; border-top:1px solid rgba(255,255,255,.08); }
-  .footer-container{ display:flex; justify-content:space-between; padding:70px 8%; flex-wrap:wrap; gap:60px; }
-  .footer-brand{ max-width:400px; }
-  .footer-brand h2{ font-size:34px; margin-bottom:15px; color:#F7E7C6; }
-  .footer-brand p{ color:#999; line-height:1.8; }
-  .footer-links{ display:flex; gap:70px; flex-wrap:wrap; }
-  .footer-links div{ display:flex; flex-direction:column; gap:12px; }
-  .footer-links h4{ margin-bottom:8px; }
-  .footer-links a{ text-decoration:none; color:#999; transition: color .25s var(--ease), padding-left .25s var(--ease); }
-  .footer-links a:hover{ color:#F7E7C6; padding-left:6px; }
-  .footer-bottom{ padding:20px; text-align:center; border-top:1px solid rgba(255,255,255,.08); color:#888; }
-  .footer-bottom span{ color:#F7E7C6; font-weight:600; }
+/* Price block */
+.sprice {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px; border-radius: var(--r-sm);
+  background: var(--accent-bg); border: 1px solid rgba(107,203,119,.2);
+}
+.sprice-l { display: flex; flex-direction: column; gap: 3px; }
+.sprice-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted2); }
+.sprice-store { font-size: 13px; font-weight: 500; color: var(--text); }
+.sprice-was { font-size: 11px; color: var(--muted2); text-decoration: line-through; }
+.sprice-off { font-size: 11px; font-weight: 700; color: var(--warn); }
+.sprice-v { font-family: Sora, sans-serif; font-size: 26px; font-weight: 700; color: var(--accent-dk); letter-spacing: -.02em; }
+
+/* ============================================================
+   AI VERDICT CARD (clean, no gauges)
+============================================================ */
+.sretzo {
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--card2);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.rz-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rz-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  color: var(--accent-dk);
+}
+.rz-score {
+  font-family: Sora, sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--accent-dk);
+  letter-spacing: -.02em;
+}
+.rz-verdict {
+  font-size: 13px; line-height: 1.5; color: var(--text); font-weight: 400;
+}
+.rz-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.rz-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  font-size: 11px; font-weight: 600;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted);
+}
+.rz-chip.buy  { background: rgba(107,203,119,.1); border-color: rgba(107,203,119,.3); color: var(--accent-dk); }
+.rz-chip.wait { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); color: #B45309; }
+.rz-chip.conf { color: var(--muted2); }
+.rz-rec {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 10px 12px; border-radius: 12px;
+  background: var(--card); border: 1px solid var(--border);
+  font-size: 12px; line-height: 1.5; color: var(--text);
+}
+
+/* Skeletons for retzo */
+.rz-skel { display: flex; flex-direction: column; gap: 8px; }
+.skel2 {
+  background: linear-gradient(90deg, var(--border) 25%, var(--card2) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: skelSweep 1.4s linear infinite;
+  border-radius: 8px;
+}
+
+/* ============================================================
+   STORE COMPARE
+============================================================ */
+.scompare-head {
+  display: flex; align-items: center; justify-content: space-between; padding: 0 2px;
+}
+.scompare-title {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.scompare-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.scompare-hint { font-size: 11px; font-weight: 500; color: var(--muted2); display: flex; align-items: center; gap: 4px; }
+
+/* Store slider */
+.sslider {
+  display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; gap: 10px; padding: 4px 2px 6px;
+}
+.sslider::-webkit-scrollbar { display: none; }
+.sslide {
+  flex: 0 0 72%;
+  scroll-snap-align: center;
+  transform: scale(.95); opacity: .6;
+  transition: transform var(--t) var(--ease), opacity var(--t) var(--ease);
+}
+.sslide.active { transform: scale(1); opacity: 1; }
+
+.sstore {
+  border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--card); padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.sslide.active .sstore { border-color: var(--accent); box-shadow: 0 8px 20px rgba(107,203,119,.12); }
+
+.sstore-top { display: flex; align-items: center; gap: 10px; }
+.sstore-logo {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--card2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; color: var(--text); overflow: hidden;
+}
+.sstore-logo img { width: 100%; height: 100%; object-fit: contain; }
+.sstore-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sstore-price { font-family: Sora, sans-serif; font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+.sstore-save { font-size: 11px; font-weight: 600; color: var(--accent-dk); }
+.sstore-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.sstore-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: var(--r-pill); }
+.sstore-tag.free { background: rgba(107,203,119,.12); color: var(--accent-dk); }
+.sstore-tag.out  { background: rgba(239,68,68,.10); color: var(--err); }
+.sstore-buy {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; padding: 10px 14px; border-radius: 12px;
+  background: var(--card2); color: var(--accent-dk);
+  border: 1px solid rgba(107,203,119,.35);
+  font-size: 13px; font-weight: 600; letter-spacing: .01em;
+  text-decoration: none;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.sstore-buy:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.sstore-count { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted2); padding: 4px 0 0; }
+
+/* ============================================================
+   INDICATORS
+============================================================ */
+.indicators { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 0 4px; }
+.ind {
+  width: 7px; height: 7px; border-radius: var(--r-pill);
+  background: var(--border2); border: 0;
+  transition: all .3s var(--ease); cursor: pointer;
+}
+.ind.active { width: 22px; background: var(--accent); }
+.ind-row { display: flex; justify-content: center; gap: 5px; padding: 4px 0 2px; }
+.ind-row .ind { width: 5px; height: 5px; }
+.ind-row .ind.active { width: 14px; }
+
+/* ============================================================
+   STATE SCREENS (empty, error)
+============================================================ */
+.state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 24px; text-align: center; gap: 12px;
+}
+.state-ic {
+  width: 56px; height: 56px; border-radius: var(--r-sm);
+  background: var(--card2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; color: var(--muted);
+}
+.state h3 { font-size: 18px; font-weight: 600; color: var(--text); }
+.state p { font-size: 14px; color: var(--muted); max-width: 300px; }
+.err-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 32px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.err-ic { color: var(--err); }
+
+/* Buttons for error state */
+.btn {
+  padding: 10px 20px; border-radius: var(--r-pill);
+  font-size: 14px; font-weight: 600; border: 1px solid transparent;
+  transition: all var(--t) var(--ease); cursor: pointer;
+}
+.btn-primary { background: var(--btn-bg); color: var(--btn-fg); }
+.btn-primary:hover { background: var(--btn-hover); }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { background: var(--card2); }
+
+/* ============================================================
+   SIDEBAR (minimal)
+============================================================ */
+.sidebar {
+  width: 260px; flex-shrink: 0;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: none; flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar.open { display: flex; }
+@media (min-width: 900px) { .sidebar { display: flex; } .burger { display: none; } }
+.overlay { position: fixed; inset: 0; z-index: 9; background: rgba(0,0,0,.25); display: none; }
+.overlay.show { display: block; }
+
+/* ============================================================
+   TRUST SECTION
+============================================================ */
+.trust-section {
+  padding: 80px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.trust-section h2 {
+  font-family: Sora, Inter, sans-serif;
+  font-size: 28px; font-weight: 700;
+  color: var(--text); margin-bottom: 12px;
+}
+.trust-section > p {
+  font-size: 15px; color: var(--muted);
+  max-width: 540px; margin: 0 auto 48px; line-height: 1.7;
+}
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px; max-width: 800px; margin: 0 auto;
+}
+.trust-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 22px;
+  text-align: left;
+  transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.trust-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.trust-icon { font-size: 28px; margin-bottom: 14px; }
+.trust-card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.trust-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer { border-top: 1px solid var(--border); background: var(--card); }
+.footer-container {
+  display: flex; justify-content: space-between; flex-wrap: wrap;
+  padding: 56px 24px; gap: 48px;
+}
+.footer-brand { max-width: 340px; }
+.footer-brand h2 { font-family: Sora, Inter, sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.footer-links { display: flex; gap: 56px; flex-wrap: wrap; }
+.footer-links div { display: flex; flex-direction: column; gap: 10px; }
+.footer-links h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted2); margin-bottom: 4px; }
+.footer-links a { text-decoration: none; font-size: 14px; color: var(--muted); transition: color var(--t); }
+.footer-links a:hover { color: var(--text); }
+.footer-bottom {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px; color: var(--muted2);
+}
+.footer-bottom span { font-weight: 600; color: var(--accent-dk); }
+
+/* ============================================================
+   SEARCH ANIMATION (logo flip — preserved, subdued)
+============================================================ */
+#aiSearchAnimation { position: fixed; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity .35s ease; }
+#aiSearchAnimation.running { opacity: 1; }
+#aiSearchAnimation::before { content:""; position:absolute; inset:0; background: radial-gradient(140% 90% at 50% 40%, rgba(248,246,241,.2), rgba(248,246,241,.6) 70%); opacity:0; transition: opacity .4s ease; }
+#aiSearchAnimation.running::before { opacity:1; }
+.search-logo {
+  position:absolute;
+  border-radius: 14px;
+  display:flex; align-items:center; justify-content:center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  animation-name: logoFlipFloat;
+  animation-timing-function: cubic-bezier(.45,.05,.35,1);
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+.search-logo img { width: 62%; height: 62%; object-fit: contain; pointer-events: none; }
+@keyframes logoFlipFloat {
+  0%   { opacity:0; transform: translateY(22px) scale(.4); }
+  12%  { opacity:1; }
+  50%  { opacity:1; transform: translateY(-14px) scale(1); }
+  88%  { opacity:1; }
+  100% { opacity:0; transform: translateY(-36px) scale(.5); }
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+#toastArea { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .flogo, .search-logo, .dots span, .skel, .skel2 { animation: none !important; opacity: .8; }
+}
 </style>
 </head>
 <body>
-  <div class="ai-network" id="aiNetwork">
-    <div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div>
-    <div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div>
-    <div class="ai-line l1"></div><div class="ai-line l2"></div><div class="ai-line l3"></div>
-  </div>
-  <div id="toastArea" aria-live="polite"></div>
-  <div class="overlay" id="overlay"></div>
 
-  <div class="ai-search-overlay" id="aiSearchAnimation" aria-hidden="true"></div>
+<div id="toastArea" aria-live="polite"></div>
+<div class="overlay" id="overlay"></div>
+<div id="aiSearchAnimation" aria-hidden="true"></div>
 
-  <div class="ambient-glow" aria-hidden="true">
-    <div class="glow-orb o1"></div>
-    <div class="glow-orb o2"></div>
-    <div class="glow-orb o3"></div>
-  </div>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
 
-  <div class="app">
-    <aside class="sidebar" id="sidebar"></aside>
-    <div class="main">
-      <header class="top">
-        <div class="top-q">
-          <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
-          <span id="topQ">KrazyBuy</span>
-        </div>
-        <div class="status"><span class="sdot online" id="sdot"></span><span id="slabel">Ready</span></div>
-      </header>
+  <div class="main">
 
-      <div class="thread" id="thread">
-        <div class="hero" id="hero">
-          <div class="float-logos" id="floatLogos" aria-hidden="true">
-            <div class="flogo" style="top:14%;left:8%;--d:.05s;--f:6.5s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/amazon-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-            <div class="flogo" style="top:20%;right:9%;--d:.15s;--f:7.5s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/flipkart-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-            <div class="flogo" style="top:52%;left:5%;--d:.25s;--f:8s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/blinkit-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-            <div class="flogo" style="bottom:16%;right:7%;--d:.35s;--f:6.8s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/myntra-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-            <div class="flogo" style="bottom:12%;left:16%;--d:.45s;--f:7.2s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/ajio-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-            <div class="flogo" style="top:38%;right:4%;--d:.55s;--f:7.8s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/nykaa-fashion-tile.webp" alt="" loading="lazy" width="72" height="72"></div>
-          </div>
-          <div class="hero-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg> Retzo AI · Search by name or product link</div>
-          <h1>Every product, analyzed.<br><span class="grad-text">Its own verdict.</span></h1>
-          <p>Search any product — or paste a product URL from Amazon, Flipkart and more. Retzo AI compares verified retailers for each result independently, scores every deal, and tells you where to buy.</p>
-          <div class="chips" id="chips">
-            <button class="chip" data-q="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
-            <button class="chip" data-q="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
-            <button class="chip" data-q="MacBook Air M3">MacBook Air M3</button>
-            <button class="chip" data-q="Sony WH-1000XM5">Sony WH-1000XM5</button>
-            <button class="chip" data-q="iPad Pro M4">iPad Pro M4</button>
-          </div>
+    <!-- HEADER -->
+    <header class="top">
+      <div class="top-q">
+        <button class="burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <span id="topQ">KrazyBuy</span>
+      </div>
+      <div class="status">
+        <span class="sdot online" id="sdot"></span>
+        <span id="slabel">Ready</span>
+      </div>
+    </header>
+
+    <!-- THREAD -->
+    <div class="thread" id="thread">
+
+      <!-- HERO -->
+      <div class="hero" id="hero">
+        <div class="float-logos" aria-hidden="true">
+          <div class="flogo" style="top:12%;left:6%;--d:.0s;--f:6.5s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/amazon-tile.webp" alt="" loading="lazy"></div>
+          <div class="flogo" style="top:18%;right:8%;--d:.4s;--f:7s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/flipkart-tile.webp" alt="" loading="lazy"></div>
+          <div class="flogo" style="top:56%;left:4%;--d:.8s;--f:8s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/blinkit-tile.webp" alt="" loading="lazy"></div>
+          <div class="flogo" style="bottom:18%;right:6%;--d:.2s;--f:7.5s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/myntra-tile.webp" alt="" loading="lazy"></div>
+          <div class="flogo" style="bottom:14%;left:14%;--d:.6s;--f:7.2s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/ajio-tile.webp" alt="" loading="lazy"></div>
+          <div class="flogo" style="top:40%;right:3%;--d:1s;--f:7.8s"><img src="https://assets.myhubble.money/brand-assets/tile-images-wp/nykaa-fashion-tile.webp" alt="" loading="lazy"></div>
         </div>
 
-        <div class="content" id="contentArea" style="display:none">
-          <div class="msg-user" id="msgUser" style="display:none"><div class="bubble" id="bubble"></div></div>
+        <div class="hero-eyebrow">
+          <span class="dot"></span>
+          Retzo AI · Search by name or product link
+        </div>
 
-          <div class="loading-wrap" id="loadingWrap" style="display:none">
-            <div class="phrase"><span id="phraseText">Retzo AI is initializing analysis…</span><span class="dots"><span></span><span></span><span></span></span></div>
-            <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
-            <div class="skel-card"><div class="skel" style="width:56px;height:56px;border-radius:12px;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:11px;width:50%"></div><div class="skel" style="height:11px;width:78%"></div></div><div class="skel" style="height:14px;width:70px;flex-shrink:0"></div></div>
-            <div class="skel-card"><div class="skel" style="width:56px;height:56px;border-radius:12px;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:11px;width:38%"></div><div class="skel" style="height:11px;width:64%"></div></div><div class="skel" style="height:14px;width:56px;flex-shrink:0"></div></div>
+        <h1>Search once.<br><span>Know where to buy.</span></h1>
+
+        <p>Paste a product URL or search by name. Retzo AI compares verified retailers, scores every deal, and tells you exactly where to buy.</p>
+
+        <div class="chips" id="chips">
+          <button class="chip" data-q="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
+          <button class="chip" data-q="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
+          <button class="chip" data-q="MacBook Air M3">MacBook Air M3</button>
+          <button class="chip" data-q="Sony WH-1000XM5">Sony WH-1000XM5</button>
+          <button class="chip" data-q="iPad Pro M4">iPad Pro M4</button>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content" id="contentArea" style="display:none">
+
+        <div class="msg-user" id="msgUser" style="display:none">
+          <div class="bubble" id="bubble"></div>
+        </div>
+
+        <div class="loading-wrap" id="loadingWrap" style="display:none">
+          <div class="phrase">
+            <span id="phraseText">Retzo AI is scanning the market…</span>
+            <span class="dots"><span></span><span></span><span></span></span>
           </div>
-
-          <div id="resultsArea" style="display:none">
-            <div class="stats" id="stats"></div>
-            <div class="section-title"><span class="sec-dot" style="background:var(--success)"></span> Products &amp; AI Verdicts <span class="sec-count" id="productCount">0</span><span class="sec-hint">· swipe to browse</span></div>
-
-            <!-- PRODUCT SLIDER -->
-            <div class="pslider" id="plist"></div>
-
-            <!-- PRODUCT INDICATORS -->
-            <div class="indicators" id="pIndicators"></div>
-          </div>
-
-          <div id="emptyArea" style="display:none">
-            <div class="state">
-              <div class="state-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
-              <h3>No products found</h3>
-              <p id="emptyMsg">Try a different search query.</p>
+          <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+          <div class="skel-card">
+            <div class="skel" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div class="skel" style="height:10px;width:40%"></div>
+              <div class="skel" style="height:10px;width:70%"></div>
             </div>
+            <div class="skel" style="height:14px;width:60px;flex-shrink:0"></div>
           </div>
+          <div class="skel-card">
+            <div class="skel" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div class="skel" style="height:10px;width:35%"></div>
+              <div class="skel" style="height:10px;width:60%"></div>
+            </div>
+            <div class="skel" style="height:14px;width:48px;flex-shrink:0"></div>
+          </div>
+        </div>
 
-          <div id="errorArea" style="display:none">
-            <div class="state">
-              <div class="err-card">
-                <div class="err-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg></div>
-                <h3>Something went wrong</h3>
-                <p id="errMsg" style="margin:10px auto 22px">We couldn't complete this analysis.</p>
-                <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-                  <button class="btn btn-primary" id="retryBtn">Retry</button>
-                  <button class="btn btn-ghost" id="errNewBtn">New Search</button>
-                </div>
+        <div id="resultsArea" style="display:none">
+          <div class="stats" id="stats"></div>
+          <div class="section-title">
+            <span class="sec-dot" style="background:var(--accent)"></span>
+            Products &amp; AI Verdicts
+            <span class="sec-count" id="productCount">0</span>
+            <span class="sec-hint">swipe to browse →</span>
+          </div>
+          <div class="pslider" id="plist"></div>
+          <div class="indicators" id="pIndicators"></div>
+        </div>
+
+        <div id="emptyArea" style="display:none">
+          <div class="state">
+            <div class="state-ic">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            </div>
+            <h3>No products found</h3>
+            <p id="emptyMsg">Try a different search query.</p>
+          </div>
+        </div>
+
+        <div id="errorArea" style="display:none">
+          <div class="state">
+            <div class="err-card">
+              <div class="err-ic">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
+              </div>
+              <h3>Something went wrong</h3>
+              <p id="errMsg" style="max-width:260px">We couldn't complete this analysis.</p>
+              <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px">
+                <button class="btn btn-primary" id="retryBtn">Retry</button>
+                <button class="btn btn-ghost" id="errNewBtn">New Search</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="composer">
-        <form class="sform" id="sform" role="search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input class="sinput" id="sinput" type="text" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
-          <button class="mic" id="micBtn" type="button" aria-label="Voice search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
-          </button>
-          <button class="go" id="goBtn" type="submit" aria-label="Analyze">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
-          </button>
-        </form>
-        <div class="vhint" id="vhint">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
-          Listening… speak now
-        </div>
+      </div><!-- /content -->
+    </div><!-- /thread -->
+
+    <!-- COMPOSER -->
+    <div class="composer">
+      <form class="sform" id="sform" role="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="sinput" id="sinput" type="text" placeholder="Search any product or paste a product URL…" autocomplete="off" spellcheck="false">
+        <button class="mic" id="micBtn" type="button" aria-label="Voice search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
+        </button>
+        <button class="go" id="goBtn" type="submit" aria-label="Analyze">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>
+        </button>
+      </form>
+      <div class="vhint" id="vhint">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
+        Listening… speak now
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ============================================================
+     TRUST SECTION
+============================================================ -->
+<section class="trust-section">
+  <h2>Trusted by smart shoppers</h2>
+  <p>Compare prices from India's top online stores using Retzo AI before every purchase.</p>
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-icon">🤖</div>
+      <h3>AI Analysis</h3>
+      <p>Every product analyzed independently, with a clear verdict.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🛒</div>
+      <h3>50+ Stores</h3>
+      <p>Amazon, Flipkart, Croma, Myntra and many more.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">⚡</div>
+      <h3>Instant Results</h3>
+      <p>Live price comparison in seconds, not hours.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🔒</div>
+      <h3>No Sign-up</h3>
+      <p>No account or permissions required to start searching.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>KrazyBuy</h2>
+      <p>AI Price Intelligence powered by Retzo AI. Compare products across trusted online stores and find the best available price.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+      </div>
+      <div>
+        <h4>Features</h4>
+        <a href="#">Price Comparison</a>
+        <a href="#">AI Verdict</a>
+        <a href="#">Product Search</a>
+        <a href="#">Retailers</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="mailto:supportatkrazybuy@gmail.com">support@krazybuy.online</a>
+        <a href="https://krazybuy.online">krazybuy.online</a>
+        <a href="https://instagram.com/krazybuy.ai">Instagram</a>
       </div>
     </div>
   </div>
+  <div class="footer-bottom">
+    © 2026 KrazyBuy · Powered by <span>Retzo AI</span>
+  </div>
+</footer>
 
 <script src="js/common.js"></script>
 <script>
-  /* Logo directory (preserved) */
-  const logos = [
-    { name: "Amazon", logo: "https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
-    { name: "Flipkart", logo: "https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
-    { name: "Myntra", logo: "https://www.google.com/s2/favicons?domain=myntra.com&sz=256" },
-    { name: "Ajio", logo: "https://www.google.com/s2/favicons?domain=ajio.com&sz=256" },
-    { name: "Meesho", logo: "https://www.google.com/s2/favicons?domain=meesho.com&sz=256" },
-    { name: "Snapdeal", logo: "https://www.google.com/s2/favicons?domain=snapdeal.com&sz=256" },
-    { name: "Croma", logo: "https://www.google.com/s2/favicons?domain=croma.com&sz=256" },
-    { name: "Reliance Digital", logo: "https://www.google.com/s2/favicons?domain=reliancedigital.in&sz=256" },
-    { name: "Vijay Sales", logo: "https://www.google.com/s2/favicons?domain=vijaysales.com&sz=256" },
-    { name: "JioMart", logo: "https://www.google.com/s2/favicons?domain=jiomart.com&sz=256" },
-    { name: "FirstCry", logo: "https://www.google.com/s2/favicons?domain=firstcry.com&sz=256" },
-    { name: "Nykaa", logo: "https://www.google.com/s2/favicons?domain=nykaa.com&sz=256" },
-    { name: "Pepperfry", logo: "https://www.google.com/s2/favicons?domain=pepperfry.com&sz=256" },
-    { name: "IKEA", logo: "https://www.google.com/s2/favicons?domain=ikea.com&sz=256" },
-    { name: "Decathlon", logo: "https://www.google.com/s2/favicons?domain=decathlon.in&sz=256" },
-    { name: "Boat", logo: "https://www.google.com/s2/favicons?domain=boat-lifestyle.com&sz=256" },
-    { name: "Samsung", logo: "https://www.google.com/s2/favicons?domain=samsung.com&sz=256" },
-    { name: "Apple", logo: "https://www.google.com/s2/favicons?domain=apple.com&sz=256" },
-    { name: "OnePlus", logo: "https://www.google.com/s2/favicons?domain=oneplus.com&sz=256" },
-    { name: "Xiaomi", logo: "https://www.google.com/s2/favicons?domain=mi.com&sz=256" },
-    { name: "Lenovo", logo: "https://www.google.com/s2/favicons?domain=lenovo.com&sz=256" },
-    { name: "HP", logo: "https://www.google.com/s2/favicons?domain=hp.com&sz=256" },
-    { name: "Dell", logo: "https://www.google.com/s2/favicons?domain=dell.com&sz=256" },
-    { name: "Asus", logo: "https://www.google.com/s2/favicons?domain=asus.com&sz=256" },
-    { name: "Blinkit", logo: "https://www.google.com/s2/favicons?domain=blinkit.com&sz=256" },
-    { name: "Zepto", logo: "https://www.google.com/s2/favicons?domain=zeptonow.com&sz=256" },
-    { name: "BigBasket", logo: "https://www.google.com/s2/favicons?domain=bigbasket.com&sz=256" },
-    { name: "Swiggy", logo: "https://www.google.com/s2/favicons?domain=swiggy.com&sz=256" },
-    { name: "Zomato", logo: "https://www.google.com/s2/favicons?domain=zomato.com&sz=256" },
-    { name: "Dominos", logo: "https://www.google.com/s2/favicons?domain=dominos.co.in&sz=256" },
-    { name: "Pizza Hut", logo: "https://www.google.com/s2/favicons?domain=pizzahut.co.in&sz=256" },
-    { name: "KFC", logo: "https://www.google.com/s2/favicons?domain=kfc.co.in&sz=256" },
-    { name: "McDonalds", logo: "https://www.google.com/s2/favicons?domain=mcdonaldsindia.com&sz=256" },
-    { name: "PhonePe", logo: "https://www.google.com/s2/favicons?domain=phonepe.com&sz=256" },
-    { name: "Google Pay", logo: "https://www.google.com/s2/favicons?domain=pay.google.com&sz=256" },
-    { name: "Paytm", logo: "https://www.google.com/s2/favicons?domain=paytm.com&sz=256" },
-    { name: "Visa", logo: "https://www.google.com/s2/favicons?domain=visa.com&sz=256" },
-    { name: "Mastercard", logo: "https://www.google.com/s2/favicons?domain=mastercard.com&sz=256" },
-    { name: "SBI", logo: "https://www.google.com/s2/favicons?domain=sbi.co.in&sz=256" },
-    { name: "HDFC", logo: "https://www.google.com/s2/favicons?domain=hdfcbank.com&sz=256" },
-    { name: "ICICI", logo: "https://www.google.com/s2/favicons?domain=icicibank.com&sz=256" },
-    { name: "Axis", logo: "https://www.google.com/s2/favicons?domain=axisbank.com&sz=256" },
-    { name: "CashKaro", logo: "https://www.google.com/s2/favicons?domain=cashkaro.com&sz=256" },
-    { name: "Magicpin", logo: "https://www.google.com/s2/favicons?domain=magicpin.in&sz=256" },
-    { name: "CRED", logo: "https://www.google.com/s2/favicons?domain=cred.club&sz=256" },
-    { name: "Netflix", logo: "https://www.google.com/s2/favicons?domain=netflix.com&sz=256" },
-    { name: "Spotify", logo: "https://www.google.com/s2/favicons?domain=spotify.com&sz=256" },
-    { name: "YouTube", logo: "https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
-    { name: "OpenAI", logo: "https://www.google.com/s2/favicons?domain=openai.com&sz=256" },
-    { name: "Gemini", logo: "https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
-    { name: "Perplexity", logo: "https://www.google.com/s2/favicons?domain=perplexity.ai&sz=256" },
-    { name: "Anthropic", logo: "https://www.google.com/s2/favicons?domain=anthropic.com&sz=256" },
-    { name: "Meta AI", logo: "https://www.google.com/s2/favicons?domain=meta.ai&sz=256" }
-  ];
+/* ============================================================
+   Logo directory (for search animation)
+============================================================ */
+const logos = [
+  { name:"Amazon",         logo:"https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
+  { name:"Flipkart",       logo:"https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
+  { name:"Myntra",         logo:"https://www.google.com/s2/favicons?domain=myntra.com&sz=256" },
+  { name:"Ajio",           logo:"https://www.google.com/s2/favicons?domain=ajio.com&sz=256" },
+  { name:"Meesho",         logo:"https://www.google.com/s2/favicons?domain=meesho.com&sz=256" },
+  { name:"Snapdeal",       logo:"https://www.google.com/s2/favicons?domain=snapdeal.com&sz=256" },
+  { name:"Croma",          logo:"https://www.google.com/s2/favicons?domain=croma.com&sz=256" },
+  { name:"Reliance Digital",logo:"https://www.google.com/s2/favicons?domain=reliancedigital.in&sz=256" },
+  { name:"Vijay Sales",    logo:"https://www.google.com/s2/favicons?domain=vijaysales.com&sz=256" },
+  { name:"JioMart",        logo:"https://www.google.com/s2/favicons?domain=jiomart.com&sz=256" },
+  { name:"Nykaa",          logo:"https://www.google.com/s2/favicons?domain=nykaa.com&sz=256" },
+  { name:"Pepperfry",      logo:"https://www.google.com/s2/favicons?domain=pepperfry.com&sz=256" },
+  { name:"IKEA",           logo:"https://www.google.com/s2/favicons?domain=ikea.com&sz=256" },
+  { name:"Decathlon",      logo:"https://www.google.com/s2/favicons?domain=decathlon.in&sz=256" },
+  { name:"Samsung",        logo:"https://www.google.com/s2/favicons?domain=samsung.com&sz=256" },
+  { name:"Apple",          logo:"https://www.google.com/s2/favicons?domain=apple.com&sz=256" },
+  { name:"OnePlus",        logo:"https://www.google.com/s2/favicons?domain=oneplus.com&sz=256" },
+  { name:"Xiaomi",         logo:"https://www.google.com/s2/favicons?domain=mi.com&sz=256" },
+  { name:"Blinkit",        logo:"https://www.google.com/s2/favicons?domain=blinkit.com&sz=256" },
+  { name:"Zepto",          logo:"https://www.google.com/s2/favicons?domain=zeptonow.com&sz=256" },
+  { name:"BigBasket",      logo:"https://www.google.com/s2/favicons?domain=bigbasket.com&sz=256" },
+  { name:"CRED",           logo:"https://www.google.com/s2/favicons?domain=cred.club&sz=256" },
+  { name:"Perplexity",     logo:"https://www.google.com/s2/favicons?domain=perplexity.ai&sz=256" },
+];
 
-  /* ============================================================
-     BACKGROUND FX MANAGER
-     Pauses ambient glow / AI network / floating logos whenever the
-     tab is hidden or the AI search overlay is running. Frees up the
-     GPU/CPU instead of animating things nobody can see.
-  ============================================================ */
-  const FX = (() => {
-    let paused = false;
-    function set(state) {
-      if (state === paused) return;
-      paused = state;
-      document.body.classList.toggle('paused-fx', paused);
-    }
-    document.addEventListener('visibilitychange', () => set(document.hidden));
-    // Pause the ai-network specifically when it's scrolled out of view.
-    const net = document.getElementById('aiNetwork');
-    if (net && 'IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(en => net.classList.toggle('offscreen', !en.isIntersecting));
-      }, { threshold: 0 });
-      io.observe(net);
-    }
-    return { pauseForOverlay: () => set(true), resume: () => set(document.hidden) };
-  })();
+const aiSearchAnimation = document.getElementById("aiSearchAnimation");
+let aiSearchTimeout = null;
+function startAISearchAnimation() {
+  if (!aiSearchAnimation) return;
+  clearTimeout(aiSearchTimeout);
+  aiSearchAnimation.innerHTML = "";
+  const selected = [...logos].sort(() => Math.random() - .5).slice(0, 16);
+  selected.forEach(item => {
+    const logo = document.createElement("div");
+    logo.className = "search-logo";
+    logo.style.left = (Math.random() * 82 + 6) + "%";
+    logo.style.top  = (Math.random() * 66 + 12) + "%";
+    logo.style.animationDelay    = (Math.random() * 1.6) + "s";
+    logo.style.animationDuration = (2.8 + Math.random() * 2) + "s";
+    const size = 34 + Math.random() * 18;
+    logo.style.width = size + "px";
+    logo.style.height = size + "px";
+    logo.innerHTML = '<img src="' + item.logo + '" alt="' + item.name + '" loading="lazy">';
+    aiSearchAnimation.appendChild(logo);
+  });
+  aiSearchAnimation.classList.add("running");
+  aiSearchTimeout = setTimeout(stopAISearchAnimation, 6000);
+}
+function stopAISearchAnimation() {
+  if (!aiSearchAnimation) return;
+  clearTimeout(aiSearchTimeout);
+  aiSearchAnimation.classList.remove("running");
+  setTimeout(() => { aiSearchAnimation.innerHTML = ""; }, 400);
+}
 
-  /* ============================================================
-     SEARCH OVERLAY — DOM node pooling.
-     Instead of destroying/recreating 20 nodes per search, a fixed
-     pool of nodes is built once and simply repositioned/reused.
-  ============================================================ */
-  const aiSearchAnimation = document.getElementById("aiSearchAnimation");
-  const SEARCH_LOGO_COUNT = 12; // fewer simultaneous animated logos
-  let searchLogoPool = null;
-  let aiSearchTimeout = null;
-
-  function buildSearchLogoPool() {
-    const frag = document.createDocumentFragment();
-    searchLogoPool = [];
-    for (let i = 0; i < SEARCH_LOGO_COUNT; i++) {
-      const el = document.createElement('div');
-      el.className = 'search-logo';
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      el.appendChild(img);
-      frag.appendChild(el);
-      searchLogoPool.push({ el, img });
-    }
-    aiSearchAnimation.appendChild(frag);
-  }
-
-  function startAISearchAnimation() {
-    if (!aiSearchAnimation) return;
-    clearTimeout(aiSearchTimeout);
-    if (!searchLogoPool) buildSearchLogoPool();
-    const selected = [...logos].sort(() => Math.random() - 0.5).slice(0, SEARCH_LOGO_COUNT);
-    searchLogoPool.forEach((node, i) => {
-      const item = selected[i % selected.length];
-      node.el.style.left = (Math.random() * 84 + 4) + "%";
-      node.el.style.top = (Math.random() * 68 + 10) + "%";
-      node.el.style.animationDelay = (Math.random() * 1.8) + "s";
-      node.el.style.animationDuration = (2.6 + Math.random() * 2.4) + "s";
-      const size = 32 + Math.random() * 22;
-      node.el.style.width = size + "px";
-      node.el.style.height = size + "px";
-      node.el.style.setProperty("--rot", (Math.random() * 300 - 150) + "deg");
-      node.img.src = item.logo;
-      node.img.alt = item.name;
-      node.img.title = item.name;
-    });
-    aiSearchAnimation.classList.add("running");
-    FX.pauseForOverlay(); // background stays still while the overlay is the focus
-    aiSearchTimeout = setTimeout(stopAISearchAnimation, 6000);
-  }
-  function stopAISearchAnimation() {
-    if (!aiSearchAnimation) return;
-    clearTimeout(aiSearchTimeout);
-    aiSearchAnimation.classList.remove("running");
-    FX.resume();
-  }
-
+/* ============================================================
+   MAIN APP LOGIC (all backend logic preserved)
+============================================================ */
 (() => {
 'use strict';
 const { API_BASE, $, $$, esc, cssEsc, fmtPrice, toast, mountSidebar, closeSidebar, addHist, updateHist, getHist, inWL, toggleWL } = KB;
 
 const POLL_INTERVAL = 1000, MAX_RETRIES = 3;
-const state = { jobId: null, polling: false, timer: null, controller: null, retries: 0, products: [], query: '', done: false };
+const state = { jobId:null, polling:false, timer:null, controller:null, retries:0, products:[], query:'', done:false };
 let gid = 0;
 
 const ICONS = {
-  crown: '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 7.5 7 11l5-7 5 7 4.5-3.5L19.5 18h-15L2.5 7.5z"/><rect x="4.5" y="19.5" width="15" height="2" rx="1"/></svg>',
-  star: '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21l1.2-6.9-5-4.9 6.9-1z"/></svg>',
-  spark: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>',
-  heart: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>',
-  trendUp: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
-  trendDown: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/></svg>',
-  trendFlat: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h16"/><path d="M16 8l4 4-4 4"/></svg>',
-  chev: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
-  check: '<svg class="pc-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>',
-  cross: '<svg class="pc-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 16.5h.01"/><path d="M10.3 3.9 1.8 18a1.5 1.5 0 0 0 1.3 2.3h17.8a1.5 1.5 0 0 0 1.3-2.3L13.7 3.9a1.5 1.5 0 0 0-2.6 0z"/></svg>',
-  swipe: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11 3 7l4-4"/><path d="M3 7h12a6 6 0 0 1 0 12H9"/></svg>',
+  crown:    '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 7.5 7 11l5-7 5 7 4.5-3.5L19.5 18h-15L2.5 7.5z"/><rect x="4.5" y="19.5" width="15" height="2" rx="1"/></svg>',
+  star:     '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21l1.2-6.9-5-4.9 6.9-1z"/></svg>',
+  spark:    '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.6L20 9l-4 4 1 5.9L12 16l-5 2.9L8 13 4 9l5.6-1.4z"/></svg>',
+  heart:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg>',
+  trendUp:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  trendDn:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/></svg>',
+  trendFl:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12h16"/><path d="M16 8l4 4-4 4"/></svg>',
+  swipe:    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11 3 7l4-4"/><path d="M3 7h12a6 6 0 0 1 0 12H9"/></svg>',
 };
 
 function lowest(p) {
@@ -679,7 +966,6 @@ function lowest(p) {
   return prices.length ? Math.min(...prices) : 0;
 }
 function pidOf(p) { return String(p.normalized_product_id || p.url || p.title || p.name || ''); }
-
 function getProducts(data) {
   const raw = data.products ?? data.returnvalue?.products ?? data.result?.products ?? [];
   if (Array.isArray(raw)) return raw;
@@ -695,68 +981,69 @@ function renderRecents() {
   const slot = $('#sbExtra');
   if (!slot) return;
   const hist = getHist();
-  slot.innerHTML = '<div class="sb-label">Recent</div><div class="sb-list">' + (hist.length ? hist.slice(0, 15).map(h => '<div class="sb-item ' + (h.q === state.query ? 'active' : '') + '" data-q="' + esc(h.q) + '"><div class="sb-ic">' + esc((h.q.trim()[0] || 'S').toUpperCase()) + '</div><div class="sb-title">' + esc(h.q) + '</div></div>').join('') : '<div class="sb-empty">No recent searches</div>') + '</div>';
+  slot.innerHTML = '<div class="sb-label">Recent</div><div class="sb-list">' +
+    (hist.length
+      ? hist.slice(0, 15).map(h => '<div class="sb-item ' + (h.q === state.query ? 'active' : '') + '" data-q="' + esc(h.q) + '"><div class="sb-ic">' + esc((h.q.trim()[0] || 'S').toUpperCase()) + '</div><div class="sb-title">' + esc(h.q) + '</div></div>').join('')
+      : '<div class="sb-empty">No recent searches</div>')
+    + '</div>';
   $$('.sb-item', slot).forEach(el => el.addEventListener('click', () => { $('#sinput').value = el.dataset.q; closeSidebar(); search(el.dataset.q); }));
 }
 
 function setStatus(mode, label) { $('#sdot').className = 'sdot ' + mode; $('#slabel').textContent = label; }
-function showHero() { $('#hero').style.display = ''; $('#contentArea').style.display = 'none'; }
+function showHero()    { $('#hero').style.display = ''; $('#contentArea').style.display = 'none'; }
 function showContent() { $('#hero').style.display = 'none'; $('#contentArea').style.display = ''; }
-function resetViews() { ['#msgUser','#loadingWrap','#resultsArea','#emptyArea','#errorArea'].forEach(id => $(id).style.display = 'none'); $('#plist').innerHTML = ''; $('#pIndicators').innerHTML = ''; }
-function setBusy(b) { const btn = $('#goBtn'); btn.disabled = b; btn.style.opacity = b ? '.7' : '1'; btn.style.cursor = b ? 'wait' : 'pointer'; }
-function showError(msg) { $('#loadingWrap').style.display = 'none'; $('#resultsArea').style.display = 'none'; $('#emptyArea').style.display = 'none'; $('#errMsg').textContent = msg; $('#errorArea').style.display = ''; stopAISearchAnimation(); }
+function resetViews()  { ['#msgUser','#loadingWrap','#resultsArea','#emptyArea','#errorArea'].forEach(id => $(id).style.display = 'none'); $('#plist').innerHTML = ''; $('#pIndicators').innerHTML = ''; }
+function setBusy(b)    { const btn = $('#goBtn'); btn.disabled = b; btn.style.opacity = b ? '.5' : '1'; btn.style.cursor = b ? 'wait' : 'pointer'; }
+function showError(msg){ $('#loadingWrap').style.display = 'none'; $('#resultsArea').style.display = 'none'; $('#emptyArea').style.display = 'none'; $('#errMsg').textContent = msg; $('#errorArea').style.display = ''; stopAISearchAnimation(); }
 
-function gaugeColor(v) { return v >= 75 ? '#34D399' : v >= 50 ? '#FBBF24' : '#F87171'; }
-
+/* AI Verdict — clean card, no gauges */
 function retzoSkeletonHTML() {
-  return '<div class="rz-skel"><div class="rz-skel-row"><div class="skel2" style="width:28px;height:28px;border-radius:8px;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="skel2" style="height:9px;width:30%"></div><div class="skel2" style="height:8px;width:48%"></div></div></div><div class="rz-skel-row" style="justify-content:space-around;padding:4px 0"><div class="skel2 rz-skel-circle"></div><div class="skel2 rz-skel-circle"></div><div class="skel2 rz-skel-circle"></div></div></div>';
+  return '<div class="rz-skel"><div style="display:flex;gap:8px;align-items:center"><div class="skel2" style="width:24px;height:24px;border-radius:6px;flex-shrink:0"></div><div class="skel2" style="height:9px;width:35%;"></div></div><div class="skel2" style="height:8px;width:80%"></div><div class="skel2" style="height:8px;width:60%"></div></div>';
 }
-function retzoNaHTML() { return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg> AI analysis unavailable</div>'; }
-function predMeta(d) { d = (d || '').toLowerCase(); if (d.includes('incr') || d.includes('up')) return { svg: ICONS.trendUp, cls: 'up', label: d || 'Likely Increase' }; if (d.includes('decr') || d.includes('drop') || d.includes('down')) return { svg: ICONS.trendDown, cls: 'down', label: d || 'Likely Drop' }; return { svg: ICONS.trendFlat, cls: 'flat', label: d || 'Likely Stable' }; }
-
-function gaugeMiniHTML(label, value, id) {
-  const r = 22, C = 2 * Math.PI * r;
-  const col = gaugeColor(value);
-  return '<div class="rz-gauge"><div class="rz-gauge-svg"><svg width="54" height="54" viewBox="0 0 54 54"><circle cx="27" cy="27" r="' + r + '" fill="none" stroke="var(--border2)" stroke-width="4"/><circle id="' + id + '" cx="27" cy="27" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="4" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '" style="filter:drop-shadow(0 0 4px ' + col + ')"/></svg><div class="rz-gauge-num" id="' + id + '-n" style="color:' + col + '">0</div></div><div class="rz-gauge-label">' + esc(label) + '</div></div>';
+function retzoNaHTML() {
+  return '<div style="font-size:12px;color:var(--muted2);display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>AI analysis unavailable</div>';
 }
-function animateGauge(id, value) {
-  const el = document.getElementById(id), num = document.getElementById(id + '-n');
-  if (!el || !num) return;
-  const r = 22, C = 2 * Math.PI * r;
-  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.strokeDashoffset = C * (1 - Math.min(100, Math.max(0, value)) / 100); }));
-  const t0 = performance.now();
-  (function step(t) { const p = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - p, 3); num.textContent = Math.round(value * e); if (p < 1) requestAnimationFrame(step); })(t0);
+function predMeta(d) {
+  d = (d || '').toLowerCase();
+  if (d.includes('incr') || d.includes('up'))   return { svg: ICONS.trendUp, cls: 'up',   label: d || 'Price may rise' };
+  if (d.includes('decr') || d.includes('drop') || d.includes('down')) return { svg: ICONS.trendDn, cls: 'down', label: d || 'Price may drop' };
+  return { svg: ICONS.trendFl, cls: 'flat', label: d || 'Price looks stable' };
 }
 
-function retzoHTML(retzo, p) {
-  const ids = { deal: 'g' + (++gid) + '-d', trust: 'g' + gid + '-t', conf: 'g' + gid + '-c' };
+function renderRetzoInto(slot, retzo) {
   const pred = retzo.prediction ? predMeta(retzo.prediction.direction) : null;
-  return {
-    html:
-      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' +
-        '<div class="rz-badge">' + ICONS.spark + ' Retzo AI <span style="font-size:8.5px;padding:2px 6px;border-radius:6px;background:rgba(22,163,74,.12);margin-left:2px">VERDICT</span></div>' +
-        (retzo.deal_rating ? '<span style="font-size:11px;font-weight:800;color:var(--success-deep)">' + esc(retzo.deal_rating) + '</span>' : '') +
-      '</div>' +
-      (retzo.summary ? '<div class="rz-summary">' + esc(retzo.summary) + '</div>' : '') +
-      (retzo.recommendation ? '<div style="display:flex;align-items:flex-start;gap:7px;padding:9px 11px;border-radius:11px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.18)"><span style="font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:var(--success);color:#fff;flex-shrink:0">' + (retzo.buy_now === true ? 'BUY' : retzo.buy_now === false ? 'WAIT' : 'VERDICT') + '</span><span style="font-size:12px;line-height:1.45;color:var(--text)">' + esc(retzo.recommendation) + '</span></div>' : '') +
-      '<div class="rz-gauges">' + gaugeMiniHTML('Deal', Number(retzo.deal_score) || 0, ids.deal) + gaugeMiniHTML('Trust', Number(retzo.trust_score) || 0, ids.trust) + gaugeMiniHTML('Confidence', Number(retzo.confidence) || 0, ids.conf) + '</div>' +
-      (pred ? '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:11px;background:var(--card);border:1px solid var(--border)"><span style="color:' + (pred.cls==='up'?'#F87171':pred.cls==='down'?'#34D399':'#FBBF24') + '">' + pred.svg + '</span><span style="font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:' + (pred.cls==='up'?'rgba(248,113,113,.14)':pred.cls==='down'?'rgba(52,211,153,.14)':'rgba(251,191,36,.14)') + ';color:' + (pred.cls==='up'?'#EF4444':pred.cls==='down'?'#10B981':'#F59E0B') + '">' + esc(pred.label) + '</span><span style="font-size:10.5px;font-weight:700;color:var(--muted2)">' + (Number(retzo.prediction.confidence) || 0) + '%</span></div>' : ''),
-    ids
-  };
-}
-function renderRetzoInto(slot, retzo, p) {
-  const { html, ids } = retzoHTML(retzo, p);
-  slot.innerHTML = html;
+  const score = Number(retzo.deal_score) || 0;
+  const conf  = Number(retzo.confidence) || 0;
+  const isBuy = retzo.buy_now === true;
+  const isWait= retzo.buy_now === false;
+
+  slot.innerHTML =
+    '<div class="rz-header">' +
+      '<div class="rz-badge">' + ICONS.spark + ' Retzo AI</div>' +
+      (score ? '<div class="rz-score">' + score + '<span style="font-size:13px;font-weight:500;color:var(--muted2)">/100</span></div>' : '') +
+    '</div>' +
+    (retzo.summary ? '<div class="rz-verdict">' + esc(retzo.summary) + '</div>' : '') +
+    '<div class="rz-chips">' +
+      (isBuy  ? '<span class="rz-chip buy">Buy now</span>' : '') +
+      (isWait ? '<span class="rz-chip wait">Wait for a better price</span>' : '') +
+      (conf   ? '<span class="rz-chip conf">Confidence ' + conf + '%</span>' : '') +
+      (retzo.deal_rating ? '<span class="rz-chip">' + esc(retzo.deal_rating) + '</span>' : '') +
+    '</div>' +
+    (retzo.recommendation ? '<div class="rz-rec"><span style="flex-shrink:0;font-size:10px;font-weight:700;color:var(--muted2)">VERDICT</span>' + esc(retzo.recommendation) + '</div>' : '') +
+    (pred ? '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">' +
+      '<span style="color:' + (pred.cls==='up'?'var(--err)':pred.cls==='down'?'var(--accent-dk)':'var(--warn)') + '">' + pred.svg + '</span>' +
+      esc(pred.label) +
+      (Number(retzo.prediction.confidence) ? ' · ' + retzo.prediction.confidence + '%' : '') +
+    '</div>' : '');
+
   slot.dataset.state = 'done';
-  animateGauge(ids.deal, Number(retzo.deal_score) || 0);
-  animateGauge(ids.trust, Number(retzo.trust_score) || 0);
-  animateGauge(ids.conf, Number(retzo.confidence) || 0);
 }
+
 function syncRetzo(products, jobDone) {
   products.forEach(p => {
     const slot = document.querySelector('.sretzo[data-pid="' + cssEsc(pidOf(p)) + '"]');
     if (!slot) return;
-    if (p.retzo && slot.dataset.state !== 'done') renderRetzoInto(slot, p.retzo, p);
+    if (p.retzo && slot.dataset.state !== 'done') renderRetzoInto(slot, p.retzo);
     else if (!p.retzo && jobDone && slot.dataset.state === 'loading') { slot.innerHTML = retzoNaHTML(); slot.dataset.state = 'na'; }
   });
 }
@@ -767,13 +1054,18 @@ function renderStats(products, s) {
   let low = 0; products.forEach(p => { const pr = lowest(p); if (pr > 0 && (low === 0 || pr < low)) low = pr; });
   const totalSavings = Number(s.totalSavings) || products.reduce((n, p) => n + (Number(p.totalSavings) || 0), 0);
   const items = [
-    { v: products.length, l: 'Products' },
-    { v: offerCount || s.offersFound || 0, l: 'Offers' },
-    { v: stores || s.storesCompared || 0, l: 'Stores' },
+    { v: products.length,                                          l: 'Products' },
+    { v: offerCount || s.offersFound || 0,                        l: 'Offers' },
+    { v: stores || s.storesCompared || 0,                         l: 'Stores' },
     { v: low ? fmtPrice(low) : (s.lowestPrice ? fmtPrice(s.lowestPrice) : '—'), l: 'Lowest' },
-    { v: totalSavings > 0 ? fmtPrice(totalSavings) : '—', l: 'Savings' },
+    { v: totalSavings > 0 ? fmtPrice(totalSavings) : '—',        l: 'Savings' },
   ];
-  $('#stats').innerHTML = items.map((it, i) => '<div class="stat" style="animation-delay:' + (i * 60) + 'ms"><div class="stat-ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/></svg></div><div><div class="stat-v">' + it.v + '</div><div class="stat-l">' + it.l + '</div></div></div>').join('');
+  $('#stats').innerHTML = items.map((it, i) =>
+    '<div class="stat" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="stat-ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.1 12 3.5H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/></svg></div>' +
+      '<div><div class="stat-v">' + it.v + '</div><div class="stat-l">' + it.l + '</div></div>' +
+    '</div>'
+  ).join('');
 }
 
 function imgFor(p) {
@@ -781,75 +1073,79 @@ function imgFor(p) {
   if (img && img.startsWith('http')) return img;
   const name = (p.title || p.name || 'P').trim(), L = name[0].toUpperCase();
   const hue = ((name.charCodeAt(0) || 65) * 13) % 360;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="hsl(' + hue + ',42%,22%)"/><text x="60" y="80" font-family="Inter,sans-serif" font-size="52" font-weight="800" fill="#C9BADF" text-anchor="middle">' + L + '</text></svg>');
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="hsl(' + hue + ',30%,88%)"/><text x="60" y="80" font-family="Inter,sans-serif" font-size="52" font-weight="700" fill="hsl(' + hue + ',30%,45%)" text-anchor="middle">' + L + '</text></svg>'
+  );
 }
 
-/* ---------- Product slider slide builder ---------- */
+/* Build one product slide */
 function buildSlide(p, i) {
   const title = p.title || p.name || 'Unknown Product';
-  const pid = pidOf(p);
-  const cat = p.classification?.sub_category || p.category || '';
-  const rating = Number(p.rating || 0);
+  const pid   = pidOf(p);
+  const cat   = p.classification?.sub_category || p.category || '';
+  const rating= Number(p.rating || 0);
   const avail = (p.availability || 'in stock').toLowerCase().includes('out') ? 'out' : 'in';
-  const offers = Array.isArray(p.offers) ? p.offers.filter(o => Number(o.price) > 0) : [];
-  const lo = lowest(p);
-  const hi = Number(p.highestPrice || p.analytics?.highest_price || 0);
-  const disc = lo > 0 && hi > lo ? Math.round((1 - lo / hi) * 100) : 0;
-  const best = bestOfferOf(p);
+  const offers= Array.isArray(p.offers) ? p.offers.filter(o => Number(o.price) > 0) : [];
+  const lo    = lowest(p);
+  const hi    = Number(p.highestPrice || p.analytics?.highest_price || 0);
+  const disc  = lo > 0 && hi > lo ? Math.round((1 - lo / hi) * 100) : 0;
+  const best  = bestOfferOf(p);
   const bestStore = best?.store || 'Best Store';
-  const bestUrl = best?.buyUrl || best?.url || '';
+  const bestUrl   = best?.buyUrl || best?.url || '';
   const wished = inWL(pid);
 
   const slide = document.createElement('div');
   slide.className = 'pslide';
   slide.dataset.pid = pid;
-  slide.style.animationDelay = (Math.min(i, 8) * 50) + 'ms';
 
-  const storesHTML = offers.length ? offers.map((o, j) => {
-    const store = o.store || 'Store ' + (j + 1), init = (store[0] || 'S').toUpperCase();
-    const price = Number(o.price || 0);
-    const free = (o.delivery || '').toLowerCase().includes('free') || o.freeDelivery;
-    const ok = o.is_available !== false;
-    const save = price > 0 && hi > price ? hi - price : 0;
-    const link = o.buyUrl || o.url || '#';
-    return '<div class="sslide" data-store="' + esc(store) + '">' +
-      '<div class="sstore">' +
-        '<div class="sstore-top">' +
-          '<div class="sstore-logo">' + (o.logo ? '<img src="' + esc(o.logo) + '" alt="" loading="lazy" onerror="this.parentNode.textContent=\'' + init + '\'">' : init) + '</div>' +
-          '<div class="sstore-name">' + esc(store) + '</div>' +
-        '</div>' +
-        '<div style="display:flex;align-items:baseline;justify-content:space-between">' +
-          '<div class="sstore-price">' + (price > 0 ? fmtPrice(price) : '—') + '</div>' +
-          (save > 0 ? '<div class="sstore-save">Save ' + fmtPrice(save) + '</div>' : '') +
-        '</div>' +
-        '<div class="sstore-tags">' +
-          (free ? '<span class="sstore-tag free">Free delivery</span>' : '') +
-          (!ok ? '<span class="sstore-tag out">Out of stock</span>' : '') +
-        '</div>' +
-        '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer" class="sstore-buy">Buy from ' + esc(store) + '</a>' +
-      '</div>' +
-    '</div>';
-  }).join('') : '<div style="padding:14px;text-align:center;font-size:12px;color:var(--muted2)">No store offers</div>';
+  const storesHTML = offers.length
+    ? offers.map((o, j) => {
+        const store = o.store || ('Store ' + (j + 1));
+        const init  = (store[0] || 'S').toUpperCase();
+        const price = Number(o.price || 0);
+        const free  = (o.delivery || '').toLowerCase().includes('free') || o.freeDelivery;
+        const ok    = o.is_available !== false;
+        const save  = price > 0 && hi > price ? hi - price : 0;
+        const link  = o.buyUrl || o.url || '#';
+        return '<div class="sslide" data-store="' + esc(store) + '">' +
+          '<div class="sstore">' +
+            '<div class="sstore-top">' +
+              '<div class="sstore-logo">' + (o.logo ? '<img src="' + esc(o.logo) + '" alt="" loading="lazy" onerror="this.parentNode.textContent=\'' + init + '\'">' : init) + '</div>' +
+              '<div class="sstore-name">' + esc(store) + '</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:baseline;justify-content:space-between">' +
+              '<div class="sstore-price">' + (price > 0 ? fmtPrice(price) : '—') + '</div>' +
+              (save > 0 ? '<div class="sstore-save">Save ' + fmtPrice(save) + '</div>' : '') +
+            '</div>' +
+            '<div class="sstore-tags">' +
+              (free ? '<span class="sstore-tag free">Free delivery</span>' : '') +
+              (!ok  ? '<span class="sstore-tag out">Out of stock</span>'  : '') +
+            '</div>' +
+            '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer" class="sstore-buy">Buy from ' + esc(store) + '</a>' +
+          '</div>' +
+        '</div>';
+      }).join('')
+    : '<div style="padding:16px;text-align:center;font-size:12px;color:var(--muted2)">No store offers found</div>';
 
   slide.innerHTML =
-    '<div class="scard">' +
-      '<button class="wish" data-pid="' + esc(pid) + '" style="position:absolute;top:12px;left:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:' + (wished ? '#EF4444' : 'var(--muted2)') + '" aria-label="Save">' + ICONS.heart + '</button>' +
+    '<div class="scard" style="position:relative">' +
+      '<button class="wish" data-pid="' + esc(pid) + '" aria-label="Save" style="color:' + (wished ? 'var(--err)' : 'var(--muted2)') + '">' + ICONS.heart + '</button>' +
       '<div class="sbody">' +
         '<div class="shead">' +
           '<div class="simg"><img src="' + imgFor(p) + '" alt="' + esc(title) + '" loading="lazy"></div>' +
           '<div class="smeta">' +
             (cat ? '<div class="scat">' + esc(cat) + '</div>' : '') +
             '<div class="stitle">' + esc(title) + '</div>' +
-            '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div class="smeta-row">' +
               (rating > 0 ? '<div class="srating">' + ICONS.star + rating.toFixed(1) + '</div>' : '') +
-              '<span class="savail ' + avail + '">' + (avail === 'in' ? 'In Stock' : 'Out of Stock') + '</span>' +
+              '<span class="savail ' + avail + '">' + (avail === 'in' ? 'In stock' : 'Out of stock') + '</span>' +
             '</div>' +
           '</div>' +
         '</div>' +
 
         '<div class="sprice">' +
           '<div class="sprice-l">' +
-            '<div class="sprice-label">Best Price · ' + esc(bestStore) + '</div>' +
+            '<div class="sprice-label">Best price · ' + esc(bestStore) + '</div>' +
             (hi > lo && lo > 0 ? '<div class="sprice-was">' + fmtPrice(hi) + '</div>' : '') +
             (disc > 0 ? '<div class="sprice-off">' + disc + '% off</div>' : '') +
           '</div>' +
@@ -859,149 +1155,90 @@ function buildSlide(p, i) {
         '<div class="sretzo" data-pid="' + esc(pid) + '" data-state="loading">' + retzoSkeletonHTML() + '</div>' +
 
         '<div class="scompare-head">' +
-          '<div class="scompare-title"><span class="dot"></span>Compare Prices</div>' +
-          '<div class="scompare-hint">' + ICONS.swipe + ' Swipe stores</div>' +
+          '<div class="scompare-title"><span class="dot"></span>Compare prices</div>' +
+          '<div class="scompare-hint">' + ICONS.swipe + '&nbsp;Swipe</div>' +
         '</div>' +
-
         '<div class="sslider">' + storesHTML + '</div>' +
-
         '<div class="sstore-count">' + offers.length + ' store' + (offers.length !== 1 ? 's' : '') + ' available</div>' +
         '<div class="ind-row sstore-inds" data-pid="' + esc(pid) + '"></div>' +
       '</div>' +
     '</div>';
 
-  // wishlist
+  // Wishlist
   slide.querySelector('.wish').addEventListener('click', () => {
     const added = toggleWL(pid, { title, image: imgFor(p), price: lo, url: bestUrl, store: bestStore, query: state.query });
     const btn = slide.querySelector('.wish');
-    btn.style.color = added ? '#EF4444' : 'var(--muted2)';
+    btn.style.color = added ? 'var(--err)' : 'var(--muted2)';
     toast(added ? 'success' : 'info', added ? 'Saved to wishlist' : 'Removed from wishlist', title);
   });
 
   return slide;
 }
 
-/* ---------- Render products into slider + indicators ---------- */
 function renderProducts(products) {
-  const slider = $('#plist');
-  const inds = $('#pIndicators');
+  const slider = $('#plist'), inds = $('#pIndicators');
   $('#productCount').textContent = products.length;
 
-  // Add new slides (dedupe) — only diff against the DOM, never rebuild everything
-  const frag = document.createDocumentFragment();
   products.forEach((p, i) => {
     const pid = pidOf(p);
-    if (!slider.querySelector('.pslide[data-pid="' + cssEsc(pid) + '"]')) {
-      frag.appendChild(buildSlide(p, i));
-    }
+    if (!slider.querySelector('.pslide[data-pid="' + cssEsc(pid) + '"]')) slider.appendChild(buildSlide(p, i));
   });
-  if (frag.childNodes.length) slider.appendChild(frag);
 
-  // Build product indicators
   const slides = [...slider.children];
-  inds.innerHTML = slides.map((s, i) => '<button class="ind' + (i === 0 ? ' active' : '') + '" data-idx="' + i + '" aria-label="Product ' + (i+1) + '"></button>').join('');
+  inds.innerHTML = slides.map((s, i) => '<button class="ind' + (i === 0 ? ' active' : '') + '" data-idx="' + i + '" aria-label="Product ' + (i + 1) + '"></button>').join('');
 
-  // Build store indicators per slide
   slides.forEach(slide => {
-    const sInds = slide.querySelector('.sstore-inds');
-    const sSlides = slide.querySelectorAll('.sslide');
-    if (sInds && sSlides.length && !sInds.childElementCount) {
-      sInds.innerHTML = [...sSlides].map((_, j) => '<button class="ind' + (j === 0 ? ' active' : '') + '" data-sidx="' + j + '" aria-label="Store ' + (j+1) + '"></button>').join('');
-    }
+    const sInds = slide.querySelector('.sstore-inds'), sSlides = slide.querySelectorAll('.sslide');
+    if (sInds && sSlides.length) sInds.innerHTML = [...sSlides].map((_, j) => '<button class="ind' + (j === 0 ? ' active' : '') + '" data-sidx="' + j + '" aria-label="Store ' + (j + 1) + '"></button>').join('');
   });
 
-  // Mark active states
   updateActiveStates(slider, 0);
   bindSliderEvents(slider, inds);
 
-  // Best deal crown
+  // Best deal tag
   let bestId = null, bestP = Infinity;
   products.forEach(p => { const pr = lowest(p); if (pr > 0 && pr < bestP) { bestP = pr; bestId = pidOf(p); } });
   slides.forEach(c => {
     const isBest = products.length > 1 && c.dataset.pid === bestId;
     const existing = c.querySelector('.best-tag');
-    if (isBest && !existing) {
-      const tag = document.createElement('div');
-      tag.className = 'best-tag';
-      tag.innerHTML = ICONS.crown + ' Best Deal';
-      c.querySelector('.scard').appendChild(tag);
-    }
+    if (isBest && !existing) { const tag = document.createElement('div'); tag.className = 'best-tag'; tag.innerHTML = ICONS.crown + ' Best deal'; c.querySelector('.scard').appendChild(tag); }
     if (!isBest && existing) existing.remove();
   });
 }
 
 function updateActiveStates(slider, idx) {
-  const slides = [...slider.children];
-  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  [...slider.children].forEach((s, i) => s.classList.toggle('active', i === idx));
 }
 
 function bindSliderEvents(slider, inds) {
-  // Product slider
   const pIndButtons = [...inds.children];
-
   function syncProduct() {
-    const slides = [...slider.children];
-    const cw = slider.clientWidth;
-    if (!cw) return;
+    const cw = slider.clientWidth; if (!cw) return;
     const idx = Math.round(slider.scrollLeft / cw);
     updateActiveStates(slider, idx);
     pIndButtons.forEach((b, i) => b.classList.toggle('active', i === idx));
   }
+  let pt = null;
+  slider.addEventListener('scroll', () => { clearTimeout(pt); pt = setTimeout(syncProduct, 80); }, { passive: true });
+  pIndButtons.forEach((b, i) => b.addEventListener('click', () => { const s = [...slider.children]; if (s[i]) s[i].scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' }); }));
 
-  let pRaf = null;
-  slider.addEventListener('scroll', () => {
-    if (pRaf) return;
-    pRaf = requestAnimationFrame(() => { syncProduct(); pRaf = null; });
-  }, { passive: true });
-
-  pIndButtons.forEach((b, i) => b.addEventListener('click', () => {
-    const slides = [...slider.children];
-    if (slides[i]) slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }));
-
-  // Store sliders
   slider.querySelectorAll('.sslider').forEach(ss => {
     function syncStore() {
-      const sSlides = [...ss.children];
-      if (!sSlides.length) return;
-      const sw = sSlides[0].offsetWidth + 10; // gap
-      if (!sw) return;
+      const sSlides = [...ss.children]; if (!sSlides.length) return;
+      const sw = sSlides[0].offsetWidth + 10; if (!sw) return;
       const idx = Math.round(ss.scrollLeft / sw);
       sSlides.forEach((s, i) => s.classList.toggle('active', i === idx));
       const sInds = ss.parentElement.querySelector('.sstore-inds');
       if (sInds) [...sInds.children].forEach((b, i) => b.classList.toggle('active', i === idx));
     }
-    let sRaf = null;
-    ss.addEventListener('scroll', () => {
-      if (sRaf) return;
-      sRaf = requestAnimationFrame(() => { syncStore(); sRaf = null; });
-    }, { passive: true });
-
+    let st = null;
+    ss.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(syncStore, 80); }, { passive: true });
     const sInds = ss.parentElement.querySelector('.sstore-inds');
-    if (sInds) {
-      [...sInds.children].forEach((b, i) => b.addEventListener('click', () => {
-        const sSlides = [...ss.children];
-        if (sSlides[i]) sSlides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }));
-    }
-
-    // initial active
+    if (sInds) [...sInds.children].forEach((b, i) => b.addEventListener('click', () => { const sSlides = [...ss.children]; if (sSlides[i]) sSlides[i].scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' }); }));
     syncStore();
   });
-
-  // initial
   syncProduct();
 }
-
-$('#plist').addEventListener('click', async e => {
-  const copyBtn = e.target.closest('.moff-copy');
-  if (copyBtn) {
-    const code = copyBtn.dataset.code || '';
-    let ok = false;
-    try { await navigator.clipboard.writeText(code); ok = true; } catch { const ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch {} ta.remove(); }
-    if (ok) { const orig = copyBtn.textContent; copyBtn.textContent = '✓'; setTimeout(() => copyBtn.textContent = orig, 1500); toast('success', 'Coupon copied', code); }
-  }
-});
 
 async function api(path, opts = {}) {
   state.controller?.abort();
@@ -1021,10 +1258,10 @@ async function poll() {
     const pct = typeof data.progress === 'number' ? data.progress : 0;
     $('#pFill').style.width = Math.min(100, pct) + '%';
     const phrase = $('#phraseText');
-    if (pct < 20) phrase.textContent = 'Retzo AI is scanning the market…';
-    else if (pct < 50) phrase.textContent = 'Collecting live offers… ' + Math.round(pct) + '%';
-    else if (pct < 75) phrase.textContent = 'Comparing verified retailers… ' + Math.round(pct) + '%';
-    else phrase.textContent = 'Retzo AI is analyzing each product…';
+    if (pct < 20)       phrase.textContent = 'Retzo AI is scanning the market…';
+    else if (pct < 50)  phrase.textContent = 'Collecting live offers… ' + Math.round(pct) + '%';
+    else if (pct < 75)  phrase.textContent = 'Comparing verified retailers… ' + Math.round(pct) + '%';
+    else                phrase.textContent = 'Retzo AI is analyzing each product…';
 
     const products = getProducts(data);
     if (products.length) {
@@ -1075,7 +1312,7 @@ async function poll() {
 
 function normalizeProductUrl(url) {
   try {
-    const u = new URL(url); const host = u.hostname;
+    const u = new URL(url), host = u.hostname;
     if (host.includes('amazon.')) { const m = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/i); if (m) return u.protocol + '//' + host + '/dp/' + m[1]; return url; }
     if (host.includes('flipkart.')) { const pid = u.searchParams.get('pid'); return u.protocol + '//' + host + u.pathname + (pid ? '?pid=' + pid : ''); }
     ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','fbclid','gclid','ref','tag'].forEach(k => u.searchParams.delete(k));
@@ -1091,18 +1328,17 @@ async function search(query) {
   state.query = query; state.products = []; state.jobId = null; state.retries = 0; state.done = false;
   addHist({ q: query, products: 0, low: 0 });
   renderRecents();
-  resetViews(); showContent();
-  startAISearchAnimation();
+  resetViews(); showContent(); startAISearchAnimation();
   $('#bubble').textContent = query;
   $('#msgUser').style.display = 'flex';
   $('#loadingWrap').style.display = 'flex';
   $('#pFill').style.width = '5%';
-  $('#topQ').innerHTML = 'Analyzing: <span>' + esc(query) + '</span>';
+  $('#topQ').innerHTML = 'Analyzing: <span style="color:var(--accent-dk)">' + esc(query) + '</span>';
   setStatus('busy', 'Analyzing…'); setBusy(true);
   let attempt = 0;
   while (attempt < MAX_RETRIES) {
     try {
-      const data = await api('/jobs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+      const data = await api('/jobs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ query }) });
       if (!data.jobId) throw new Error(data.message || 'No jobId returned');
       state.jobId = data.jobId; state.polling = true;
       state.timer = setTimeout(poll, 600);
@@ -1110,35 +1346,33 @@ async function search(query) {
     } catch (err) {
       if (err.name === 'AbortError') return;
       attempt++;
-      if (attempt >= MAX_RETRIES) {
-        setStatus('err', 'Error'); setBusy(false);
-        showError(err.message || 'Failed to start analysis.');
-        toast('error', 'Failed to start', err.message || '');
-        return;
-      }
+      if (attempt >= MAX_RETRIES) { setStatus('err','Error'); setBusy(false); showError(err.message || 'Failed to start analysis.'); toast('error','Failed to start', err.message || ''); return; }
       await new Promise(r => setTimeout(r, 800 * attempt));
     }
   }
 }
 
+/* Voice */
 let rec = null, listening = false;
 function initVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const btn = $('#micBtn');
-  if (!SR) { btn.style.opacity = '.35'; btn.onclick = () => toast('warning', 'Voice unavailable', 'Use Chrome or Edge for voice search.'); return; }
+  if (!SR) { btn.style.opacity = '.35'; btn.onclick = () => toast('warning','Voice unavailable','Use Chrome or Edge for voice search.'); return; }
   rec = new SR(); rec.lang = 'en-IN'; rec.interimResults = true;
-  rec.onstart = () => { listening = true; btn.classList.add('on'); $('#vhint').classList.add('show'); };
+  rec.onstart  = () => { listening = true; btn.classList.add('on'); $('#vhint').classList.add('show'); };
   rec.onresult = e => { let t = ''; for (const r of e.results) t += r[0].transcript; $('#sinput').value = t; if (e.results[e.results.length - 1].isFinal) { stopVoice(); if (t.trim()) search(t.trim()); } };
-  rec.onerror = e => { stopVoice(); if (e.error === 'not-allowed') toast('error', 'Microphone blocked', 'Allow mic access in browser settings.'); };
-  rec.onend = stopVoice;
-  btn.onclick = () => { if (listening) { rec.stop(); return; } try { rec.start(); } catch {} };
+  rec.onerror  = e => { stopVoice(); if (e.error === 'not-allowed') toast('error','Microphone blocked','Allow mic access in browser settings.'); };
+  rec.onend    = stopVoice;
+  btn.onclick  = () => { if (listening) { rec.stop(); return; } try { rec.start(); } catch {} };
 }
 function stopVoice() { listening = false; $('#micBtn').classList.remove('on'); $('#vhint').classList.remove('show'); }
 
+/* Events */
 $('#sform').addEventListener('submit', e => { e.preventDefault(); search($('#sinput').value); });
 $('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; $('#sinput').value = c.dataset.q; search(c.dataset.q); });
-$('#sinput').addEventListener('paste', e => { const text = (e.clipboardData || window.clipboardData).getData('text') || ''; if (text.trim().startsWith('http')) toast('info', 'Product link detected', 'Hit Analyze — Retzo AI will identify the product and compare prices.'); });
-const goHome = () => { stopPolling(); stopAISearchAnimation(); setBusy(false); setStatus('online', 'Ready'); showHero(); state.query = ''; $('#topQ').textContent = 'KrazyBuy'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
+$('#sinput').addEventListener('paste', e => { const t = (e.clipboardData || window.clipboardData).getData('text') || ''; if (t.trim().startsWith('http')) toast('info','Product link detected','Hit Analyze — Retzo AI will identify the product and compare prices.'); });
+
+const goHome = () => { stopPolling(); stopAISearchAnimation(); setBusy(false); setStatus('online','Ready'); showHero(); state.query = ''; $('#topQ').textContent = 'KrazyBuy'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
 $('#errNewBtn').addEventListener('click', goHome);
 $('#retryBtn').addEventListener('click', () => state.query ? search(state.query) : goHome());
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); $('#sinput').focus(); } });
@@ -1153,118 +1387,5 @@ const dq = new URLSearchParams(location.search).get('q');
 if (dq) { $('#sinput').value = dq; search(dq); }
 })();
 </script>
-<!-- ===========================
-     TRUST SECTION
-============================ -->
-
-<section class="trust-section">
-
-    <h2>Trusted by Smart Shoppers</h2>
-
-    <p>
-        Compare prices from India's top online stores using
-        Retzo AI before making your purchase.
-    </p>
-
-    <div class="trust-grid">
-
-        <div class="trust-card">
-            <div class="trust-icon">🤖</div>
-            <h3>AI Analysis</h3>
-            <p>Every product is analyzed independently.</p>
-        </div>
-
-        <div class="trust-card">
-            <div class="trust-icon">🛒</div>
-            <h3>50+ Stores</h3>
-            <p>Amazon, Flipkart, Croma and many more.</p>
-        </div>
-
-        <div class="trust-card">
-            <div class="trust-icon">⚡</div>
-            <h3>Fast Comparison</h3>
-            <p>Compare prices instantly.</p>
-        </div>
-
-        <div class="trust-card">
-            <div class="trust-icon">🔒</div>
-            <h3>Secure</h3>
-            <p>No unnecessary permissions required.</p>
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<footer class="footer">
-
-<div class="footer-container">
-
-<div class="footer-brand">
-
-<h2>KrazyBuy</h2>
-
-<p>
-AI Price Intelligence powered by Retzo AI.
-Compare products across trusted online stores and discover the best available price.
-</p>
-
-</div>
-
-<div class="footer-links">
-
-<div>
-
-<h4>Company</h4>
-
-<a href="about.html">About</a>
-
-<a href="contact.html">Contact</a>
-
-<a href="privacy.html">Privacy Policy</a>
-
-<a href="terms.html">Terms & Conditions</a>
-
-</div>
-
-<div>
-
-<h4>Features</h4>
-
-<a href="#">Price Comparison</a>
-
-<a href="#">AI Verdict</a>
-
-<a href="#">Product Search</a>
-
-<a href="#">Retailers</a>
-
-</div>
-
-<div>
-
-<h4>Support</h4>
-
-<a href="mailto:supportatkrazybuy@gmail.com">support@krazybuy.online</a>
-
-<a href="https://krazybuy.online">krazybuy.online</a>
-
-<a href="https://instagram.com/krazybuy.ai">Instagram</a>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="footer-bottom">
-
-© 2026 KrazyBuy • Powered by <span>Retzo AI</span>
-
-</div>
-
-</footer>
 </body>
 </html>
