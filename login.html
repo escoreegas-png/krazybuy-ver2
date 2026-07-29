@@ -9,69 +9,43 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
 <link rel="shortcut icon" href="https://www.krazybuy.online/images/logo.png">
 <link rel="apple-touch-icon" href="https://www.krazybuy.online/images/logo.png">
 <link rel="icon" sizes="192x192" href="https://www.krazybuy.online/images/logo.png">
 
 <style>
-  /* ============================================================
-     TOKENS — identical to the KrazyBuy porcelain design system
-     (light theme only, exactly as used on index.html)
-  ============================================================ */
   :root{
     color-scheme: light;
-    --bg:#FAF7F2;
-    --card:#FFFFFF;
-    --card2:#F5F2EC;
-    --card3:#EFEBE2;
-    --glass: rgba(250,247,242,.86);
-    --border:#E7E5E4;
-    --border2:#D6D3D1;
-    --border-strong:#111111;
-    --text:#111111;
-    --text-soft:#292524;
-    --muted:#6B7280;
-    --muted2:#9CA3AF;
-    --btn-bg:#111111;
-    --btn-fg:#FFFFFF;
-    --btn-hover:#000000;
-    --success:#16A34A;
-    --success-deep:#15803D;
+    --bg:#FAF7F2; --card:#FFFFFF; --card2:#F5F2EC; --card3:#EFEBE2;
+    --glass: rgba(250,247,242,.86); --border:#E7E5E4; --border2:#D6D3D1;
+    --border-strong:#111111; --text:#111111; --text-soft:#292524;
+    --muted:#6B7280; --muted2:#9CA3AF;
+    --btn-bg:#111111; --btn-fg:#FFFFFF; --btn-hover:#000000;
+    --success:#16A34A; --success-deep:#15803D;
     --success-bg: rgba(22,163,74,.08);
-    --danger:#DC2626;
-    --danger-bg: rgba(220,38,38,.07);
-    --warning:#F59E0B;
-    --warning-bg: rgba(245,158,11,.09);
+    --danger:#DC2626; --danger-bg: rgba(220,38,38,.07);
+    --warning:#F59E0B; --warning-bg: rgba(245,158,11,.09);
     --r-sm:10px; --r-md:16px; --r-lg:20px; --r-pill:999px;
     --shadow-sm: 0 1px 2px rgba(17,17,17,.04), 0 4px 12px rgba(17,17,17,.04);
     --shadow: 0 2px 6px rgba(17,17,17,.05), 0 16px 40px rgba(17,17,17,.08);
     --shadow-lift: 0 4px 10px rgba(17,17,17,.06), 0 24px 54px rgba(17,17,17,.10);
     --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-7:32px; --s-8:40px; --s-9:56px;
     --fs-xs:12px; --fs-sm:14px; --fs-md:16px; --fs-lg:18px; --fs-xl:24px; --fs-2xl:32px;
-    --t:.2s;
-    --ease: cubic-bezier(.22,1,.36,1);
-    --sat: env(safe-area-inset-top, 0px);
-    --sab: env(safe-area-inset-bottom, 0px);
+    --t:.2s; --ease: cubic-bezier(.22,1,.36,1);
+    --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
   }
-
   *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
   * { min-width:0; }
   html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
   body{
     min-height:100vh; min-height:100dvh;
-    overflow-x:hidden;
-    background: var(--bg);
-    color: var(--text);
+    overflow-x:hidden; background: var(--bg); color: var(--text);
     font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    font-size: var(--fs-md);
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+    font-size: var(--fs-md); line-height:1.6;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     display:flex; align-items:center; justify-content:center;
-    padding: var(--s-6);
-    position:relative;
+    padding: var(--s-6); position:relative;
   }
   a{ color:inherit; text-decoration:none; }
   button{ font:inherit; border:0; cursor:pointer; background:none; color:inherit; }
@@ -85,19 +59,12 @@
     animation: shimmerText 4s linear infinite;
   }
 
-  /* ============================================================
-     AMBIENT GLOW (same soft orbs as index.html)
-  ============================================================ */
   .ambient-glow{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
   .glow-orb{ position:absolute; border-radius:50%; filter:blur(80px); opacity:.35; animation: orbDrift 18s ease-in-out infinite; will-change:transform; }
   .glow-orb.o1{ width:480px; height:480px; background: radial-gradient(circle, rgba(22,163,74,.18), transparent 70%); top:-120px; left:-120px; }
   .glow-orb.o2{ width:540px; height:540px; background: radial-gradient(circle, rgba(17,17,17,.10), transparent 70%); bottom:-160px; right:-140px; animation-delay:-6s; animation-duration:22s; }
   .glow-orb.o3{ width:360px; height:360px; background: radial-gradient(circle, rgba(245,158,11,.12), transparent 70%); top:40%; left:55%; animation-delay:-10s; animation-duration:26s; }
 
-  /* ============================================================
-     AI NEURAL NETWORK (identical to index.html, light-theme
-     "black glass" neurons)
-  ============================================================ */
   .ai-network{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; isolation:isolate; }
   .ai-network::before{
     content:""; position:absolute; inset:-25%;
@@ -105,16 +72,13 @@
       radial-gradient(circle at 20% 20%, rgba(0,0,0,.08), transparent 30%),
       radial-gradient(circle at 80% 40%, rgba(0,0,0,.06), transparent 28%),
       radial-gradient(circle at 50% 80%, rgba(0,0,0,.08), transparent 32%);
-    filter: blur(80px);
-    animation: networkFog 18s linear infinite;
+    filter: blur(80px); animation: networkFog 18s linear infinite;
   }
   .ai-network{ animation: networkBreath 12s ease-in-out infinite; }
   .ai-node{
     position:absolute; width:10px; height:10px; border-radius:50%;
-    background: rgba(15,15,15,.82);
-    border:1px solid rgba(255,255,255,.18);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(15,15,15,.82); border:1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 10px 30px rgba(0,0,0,.22), inset 0 1px 1px rgba(255,255,255,.2);
     animation: nodePulse 2.8s ease-in-out infinite, nodeMove 14s ease-in-out infinite;
   }
@@ -130,48 +94,22 @@
   .ai-node:nth-child(8){top:34%;left:86%;animation-delay:3.9s;}
   .ai-node:nth-child(9){top:58%;left:66%;animation-delay:4.3s;}
   .ai-node:nth-child(10){top:14%;left:88%;animation-delay:4.9s;}
-  .ai-line{
-    position:absolute; height:1px; transform-origin:left center; overflow:hidden;
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,.65), transparent);
-    opacity:.8;
-    animation: linePulse 3.5s ease-in-out infinite, scanTravel 5s linear infinite;
-  }
-  .ai-line::before{
-    content:""; position:absolute; left:-25%; top:0; width:35%; height:100%;
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,.45), transparent);
-    filter: blur(3px);
-    animation: dataFlow 3s linear infinite;
-  }
-  .l1{ top:18%; left:18%; width:260px; transform:rotate(18deg); }
-  .l2{ top:44%; left:22%; width:300px; transform:rotate(-12deg); }
-  .l3{ top:70%; left:20%; width:340px; transform:rotate(8deg); }
-  .l4{ top:28%; left:50%; width:220px; transform:rotate(36deg); }
-  .l5{ top:56%; left:48%; width:280px; transform:rotate(-24deg); }
 
   @keyframes nodePulse{ 0%,100%{ transform:scale(1); opacity:.6; } 50%{ transform:scale(2); opacity:1; } }
   @keyframes nodeMove{ 0%,100%{ transform:translate(0,0); } 25%{ transform:translate(10px,-8px); } 50%{ transform:translate(-8px,10px); } 75%{ transform:translate(6px,-5px); } }
-  @keyframes linePulse{ 0%,100%{ opacity:.25; } 50%{ opacity:1; } }
-  @keyframes dataFlow{ 0%{ left:-40%; opacity:0; } 10%{ opacity:1; } 90%{ opacity:1; } 100%{ left:120%; opacity:0; } }
-  @keyframes scanTravel{ 0%{ filter:brightness(1); } 50%{ filter:brightness(2.5); } 100%{ filter:brightness(1); } }
   @keyframes networkFog{ 0%{ transform:translateX(0) translateY(0); } 25%{ transform:translateX(40px) translateY(-20px); } 50%{ transform:translateX(-30px) translateY(30px); } 75%{ transform:translateX(20px) translateY(-15px); } 100%{ transform:translateX(0) translateY(0); } }
   @keyframes ringExpand{ 0%{ transform:scale(1); opacity:.8; } 100%{ transform:scale(2.4); opacity:0; } }
   @keyframes networkBreath{ 0%{ transform:scale(1); } 50%{ transform:scale(1.02); } 100%{ transform:scale(1); } }
   @keyframes orbDrift{ 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.08); } 66%{ transform:translate(-30px,40px) scale(.95); } }
   @keyframes shimmerText{ 0%{ background-position:200% center; } 100%{ background-position:-200% center; } }
 
-  /* ============================================================
-     FLOATING STORE LOGOS (identical mechanism to index.html hero)
-  ============================================================ */
   .float-logos{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
   .flogo{
     position:absolute;
     width: clamp(42px, 5vw, 72px); height: clamp(42px, 5vw, 72px);
-    border-radius: var(--r-md);
-    background: var(--card);
-    border:1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0;
+    border-radius: var(--r-md); background: var(--card);
+    border:1px solid var(--border); box-shadow: var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; opacity:0;
     animation: flogoIn .6s var(--ease) forwards, floaty var(--f,7s) ease-in-out infinite;
     animation-delay: var(--d,0s), calc(var(--d,0s) + .6s);
     will-change: transform;
@@ -179,131 +117,21 @@
   .flogo img{ width:68%; height:68%; object-fit:contain; }
   @keyframes flogoIn{ from{ opacity:0; transform:translateY(14px) scale(.85); } to{ opacity:.9; transform:translateY(0) scale(1); } }
   @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-16px) rotate(2deg); } }
+  @media (max-width:600px){ .flogo{ width:36px; height:36px; border-radius:var(--r-sm); opacity:.18; } .flogo img{ width:60%; height:60%; } .flogo:nth-child(n + 7){ display:none; } }
 
-  @media (max-width:600px){
-    .flogo{ width:36px; height:36px; border-radius:var(--r-sm); opacity:.18; }
-    .flogo img{ width:60%; height:60%; }
-    .flogo:nth-child(n + 7){ display:none; }
-  }
-
-  /* ============================================================
-     AUTH CARD (same structure/tokens as index.html's auth page)
-  ============================================================ */
   .auth-wrap{ position:relative; z-index:2; width:100%; display:flex; align-items:center; justify-content:center; }
-
   .auth-card{
-    width:100%; max-width:420px;
-    background: var(--card);
-    border:1px solid var(--border);
-    border-radius: var(--r-lg);
+    width:100%; max-width:420px; background: var(--card);
+    border:1px solid var(--border); border-radius: var(--r-lg);
     padding: var(--s-8) var(--s-8);
     box-shadow: var(--shadow-lift), 0 0 80px rgba(22,163,74,.06);
     animation: scaleIn .35s var(--ease) both;
   }
-  @media (max-width:768px){
-
-body{
-    padding:20px;
-}
-
-.auth-card{
-    padding:28px 20px;
-}
-
-.logo-mark{
-    width:48px;
-    height:48px;
-}
-
-.logo-name{
-    font-size:22px;
-}
-
-.auth-sub{
-    font-size:14px;
-}
-
-.auth-foot{
-    font-size:12px;
-}
-
-.gbtn-wrap{
-    padding:12px;
-}
-
-}
-
-@media (max-width:480px){
-
-body{
-    padding:16px;
-}
-
-.auth-card{
-    border-radius:18px;
-    padding:24px 18px;
-}
-
-.logo-mark{
-    width:42px;
-    height:42px;
-}
-
-.logo-name{
-    font-size:20px;
-}
-
-.logo-sub{
-    font-size:10px;
-}
-
-.auth-sub{
-    font-size:13px;
-    line-height:1.6;
-}
-
-.gbtn-wrap{
-    min-height:48px;
-}
-
-.auth-guest{
-    min-height:48px;
-}
-
-#toastArea{
-    left:12px;
-    right:12px;
-    width:auto;
-}
-
-.flogo{
-    width:34px;
-    height:34px;
-}
-}
+  @keyframes scaleIn{ from{ opacity:0; transform:translateY(24px) scale(.96); } to{ opacity:1; transform:none; } }
 
   .auth-logo{ display:flex; align-items:center; gap: var(--s-3); justify-content:center; margin-bottom: var(--s-3); }
-.logo-mark{
-    width:54px;
-    height:54px;
-    border-radius:16px;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#fff;
-    border:1px solid var(--border);
-    box-shadow:var(--shadow);
-    flex-shrink:0;
-}
-
-.logo-mark img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    display:block;
-}
-  @keyframes logoPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); box-shadow:0 0 24px rgba(22,163,74,.28); } }
+  .logo-mark{ width:54px; height:54px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow); flex-shrink:0; }
+  .logo-mark img{ width:100%; height:100%; object-fit:contain; display:block; }
   .logo-name{ font-size: var(--fs-lg); font-weight:700; letter-spacing:-.03em; white-space:nowrap; }
   .logo-sub{ font-size: var(--fs-xs); color: var(--muted2); font-weight:600; letter-spacing:.09em; text-transform:uppercase; margin-top:-1px; }
 
@@ -311,13 +139,25 @@ body{
 
   .gbtn-wrap{
     display:flex; width:100%; min-height:52px; align-items:center; justify-content:center;
-    padding: var(--s-4);
-    border-radius: var(--r-md);
-    background: var(--card2);
-    border:1px solid var(--border);
+    padding: var(--s-4); border-radius: var(--r-md);
+    background: var(--card2); border:1px solid var(--border);
   }
   .gbtn-loading{ display:flex; align-items:center; gap: var(--s-2); color: var(--muted); font-size: var(--fs-sm); }
   @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .native-google-btn{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; min-height:48px; padding:0 16px;
+    background:#fff; color:#1f1f1f; border:1px solid #dadce0;
+    border-radius: var(--r-pill);
+    font-weight:600; font-size:15px; cursor:pointer;
+    transition: background .15s, box-shadow .15s, transform .1s;
+    box-shadow: 0 1px 2px rgba(60,64,67,.08);
+  }
+  .native-google-btn:hover{ background:#f8f9fa; box-shadow: 0 1px 3px rgba(60,64,67,.16); }
+  .native-google-btn:active{ transform: scale(.99); }
+  .native-google-btn:disabled{ opacity:.6; cursor: not-allowed; }
+  .native-google-btn svg{ width:20px; height:20px; flex-shrink:0; }
 
   .auth-divider{
     display:flex; align-items:center; gap: var(--s-3);
@@ -329,43 +169,30 @@ body{
 
   .auth-guest{
     display:grid; place-items:center; min-height:44px;
-    margin-top: var(--s-3);
-    border-radius: var(--r-md);
-    font-size: var(--fs-sm); font-weight:600;
-    color: var(--text);
-    border:1px solid var(--border);
-    transition: all var(--t);
+    margin-top: var(--s-3); border-radius: var(--r-md);
+    font-size: var(--fs-sm); font-weight:600; color: var(--text);
+    border:1px solid var(--border); transition: all var(--t);
   }
   .auth-guest:hover{ background: var(--card2); border-color: var(--border2); }
 
   .auth-foot{ text-align:center; font-size: var(--fs-sm); color: var(--muted2); margin-top: var(--s-5); }
 
-  @keyframes scaleIn{ from{ opacity:0; transform:translateY(24px) scale(.96); } to{ opacity:1; transform:none; } }
-
-  /* ============================================================
-     TOASTS
-  ============================================================ */
   #toastArea{
     position:fixed; top: calc(var(--s-5) + var(--sat)); right: var(--s-5);
     z-index:9999; display:flex; flex-direction:column; gap: var(--s-2);
-    width:min(340px, calc(100vw - 36px));
-    pointer-events:none;
+    width:min(340px, calc(100vw - 36px)); pointer-events:none;
   }
   .toast{
     display:flex; gap: var(--s-3); align-items:flex-start;
-    padding: var(--s-3) var(--s-4);
-    border-radius: var(--r-md);
-    background: var(--card);
-    border:1px solid var(--border);
-    box-shadow: var(--shadow);
-    animation: toastIn var(--t) var(--ease) both;
-    pointer-events:all;
+    padding: var(--s-3) var(--s-4); border-radius: var(--r-md);
+    background: var(--card); border:1px solid var(--border); box-shadow: var(--shadow);
+    animation: toastIn var(--t) var(--ease) both; pointer-events:all;
   }
   .toast.out{ animation: toastOut var(--t) var(--ease) forwards; }
   .toast-icon{ width:17px; height:17px; flex-shrink:0; margin-top:1px; }
   .toast-title{ font-size: var(--fs-sm); font-weight:700; }
   .toast-msg{ font-size: var(--fs-xs); color: var(--muted); margin-top:2px; }
-  .toast-close{ color: var(--muted2); flex-shrink:0; margin-left:auto; padding:2px; border-radius:6px; transition: color var(--t); }
+  .toast-close{ color: var(--muted2); flex-shrink:0; margin-left:auto; padding:2px; border-radius:6px; transition: color var(--t); cursor:pointer; }
   .toast-close:hover{ color: var(--text); }
   .toast.success .toast-icon{ color: var(--success); }
   .toast.error .toast-icon{ color: var(--danger); }
@@ -376,7 +203,22 @@ body{
 
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-    .flogo{ animation:flogoIn .01ms forwards; opacity:.85; }
+  }
+
+  @media (max-width:768px){
+    body{ padding:20px; }
+    .auth-card{ padding:28px 22px; max-width:100%; border-radius:20px; }
+    .auth-logo{ flex-direction:column; gap:12px; text-align:center; }
+    .logo-mark{ width:60px; height:60px; }
+    .logo-name{ font-size:24px; }
+    #toastArea{ left:16px; right:16px; width:auto; top:16px; }
+  }
+  @media (max-width:480px){
+    body{ padding:16px; }
+    .auth-card{ padding:24px 18px; border-radius:18px; }
+    .logo-mark{ width:52px; height:52px; }
+    .logo-name{ font-size:22px; }
+    .auth-sub{ font-size:13px; }
   }
 </style>
 </head>
@@ -385,7 +227,6 @@ body{
 <div class="ai-network" aria-hidden="true">
   <div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div>
   <div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div><div class="ai-node"></div>
-  <div class="ai-line l1"></div><div class="ai-line l2"></div><div class="ai-line l3"></div><div class="ai-line l4"></div><div class="ai-line l5"></div>
 </div>
 
 <div class="ambient-glow" aria-hidden="true">
@@ -395,16 +236,14 @@ body{
 </div>
 
 <div class="float-logos" id="floatLogos" aria-hidden="true"></div>
-
 <div id="toastArea" aria-live="polite"></div>
 
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="logo-mark">
-    <img src="https://www.krazybuy.online/images/logo.png"
-         alt="KrazyBuy Logo">
-</div>
+        <img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy Logo">
+      </div>
       <div>
         <div class="logo-name">Krazy<span class="grad-text">Buy</span></div>
         <div class="logo-sub">Price Intelligence</div>
@@ -412,37 +251,56 @@ body{
     </div>
     <p class="auth-sub">Sign in with Google to sync your wishlist,<br>favorites &amp; search history across devices</p>
 
-    <div class="gbtn-wrap">
+    <div class="gbtn-wrap" id="gBtnWrap">
+      <!-- Web mode: Google Identity Services button renders here -->
       <div id="gBtn"></div>
+      <!-- Native mode: custom button renders here -->
+      <button class="native-google-btn" id="nativeGoogleBtn" style="display:none;">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>Continue with Google</span>
+      </button>
       <div class="gbtn-loading" id="gLoading">
         <svg style="animation:spin .8s linear infinite" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-        Loading Google Sign-In…
+        <span>Loading…</span>
       </div>
     </div>
 
     <div class="auth-divider"><span>secure · one tap · no passwords</span></div>
-
     <a class="auth-guest" href="index.html">Continue as guest →</a>
     <div class="auth-foot">Powered by <b>Retzo AI</b> · Verified Marketplace Comparison</div>
   </div>
 </div>
 
+<!-- Capacitor runtime (only loaded in Android build, harmless on web) -->
+<script src="capacitor.js"></script>
+
 <script>
 (() => {
 'use strict';
 
-/* ============================================================
-   Tiny self-contained helpers (no external common.js needed)
-============================================================ */
 const $ = (s, c) => (c || document).querySelector(s);
+const API_BASE = 'https://gateway.viscocompare.online';
+const GOOGLE_CLIENT_ID = '4535953854-p934prv6asm01piqq681fgqsb6pqlmtv.apps.googleusercontent.com';
+const next = new URLSearchParams(location.search).get('next') || 'index.html';
 
-const API_BASE = 'https://gateway.viscocompare.online'; // ← point this at your backend
+/* ─────────── Storage helpers ─────────── */
+const store = {
+  get user() { try { return JSON.parse(localStorage.getItem('kb_user') || 'null'); } catch { return null; } },
+  set user(v) { localStorage.setItem('kb_user', JSON.stringify(v)); },
+  get token() { return localStorage.getItem('kb_token'); },
+  set token(v) { v ? localStorage.setItem('kb_token', v) : localStorage.removeItem('kb_token'); },
+  get refresh() { return localStorage.getItem('kb_refresh'); },
+  set refresh(v) { v ? localStorage.setItem('kb_refresh', v) : localStorage.removeItem('kb_refresh'); },
+  get deviceId() { return localStorage.getItem('kb_device_id'); },
+  set deviceId(v) { localStorage.setItem('kb_device_id', v); },
+  clear() {
+    localStorage.removeItem('kb_token');
+    localStorage.removeItem('kb_refresh');
+    localStorage.removeItem('kb_user');
+  }
+};
 
-function getUser() {
-  try { return JSON.parse(localStorage.getItem('kb_user') || 'null'); } catch { return null; }
-}
-function setUser(u) { localStorage.setItem('kb_user', JSON.stringify(u)); }
-
+/* ─────────── Toast ─────────── */
 const TOAST_ICONS = {
   success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>',
   error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>',
@@ -464,9 +322,7 @@ function toast(type, title, msg) {
   setTimeout(remove, 4200);
 }
 
-/* ============================================================
-   Floating store logos (same brand set + layout as index.html)
-============================================================ */
+/* ─────────── Floating store logos ─────────── */
 const FLOAT_LOGOS = [
   { src:'https://assets.myhubble.money/brand-assets/tile-images-wp/amazon-tile.webp', top:'14%', left:'8%',  d:'.05s', f:'6.5s' },
   { src:'https://assets.myhubble.money/brand-assets/tile-images-wp/flipkart-tile.webp', top:'20%', right:'9%', d:'.15s', f:'7.5s' },
@@ -489,53 +345,281 @@ FLOAT_LOGOS.forEach(l => {
   fl.appendChild(el);
 });
 
-/* ============================================================
-   Google Sign-In
-============================================================ */
-const GOOGLE_CLIENT_ID = '4535953854-p934prv6asm01piqq681fgqsb6pqlmtv.apps.googleusercontent.com';
-const next = new URLSearchParams(location.search).get('next') || 'index.html';
+/* ─────────── Platform detection ─────────── */
+function isCapacitorNative() {
+    return !!window.Capacitor && window.Capacitor.isNativePlatform();
+}
 
-if (getUser() && localStorage.getItem('kb_token')) location.replace(next);
+/* ─────────── Device info collection ─────────── */
+async function collectDeviceInfo() {
+  let deviceId = store.deviceId;
+  if (!deviceId) {
+    deviceId = 'kb-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    store.deviceId = deviceId;
+  }
 
-async function handleCredential(resp) {
+  // Try Capacitor Device plugin if present
+  let platform = 'web', manufacturer = null, model = null, osVersion = null, appVersion = '1.0.0';
   try {
-    $('#gLoading').style.display = 'flex';
-    $('#gLoading').lastChild.textContent = 'Signing you in…';
+    const Cap = window.Capacitor;
+    if (Cap?.isNative?.()) {
+      const Device = Cap.Plugins?.Device;
+      if (Device) {
+        const info = await Device.getInfo();
+        platform = info.platform || 'android';
+        manufacturer = info.manufacturer || null;
+        model = info.model || null;
+        osVersion = info.osVersion || null;
+      }
+      const App = Cap.Plugins?.App;
+      if (App) {
+        const info = await App.getInfo();
+        appVersion = info.version || '1.0.0';
+      }
+    } else {
+      platform = /android/i.test(navigator.userAgent) ? 'android-web'
+               : /iphone|ipad/i.test(navigator.userAgent) ? 'ios-web'
+               : 'web';
+    }
+  } catch (_) {}
 
-    const r = await fetch(API_BASE + '/auth/google', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential: resp.credential }),
+  return { deviceId, platform, manufacturer, model, osVersion, appVersion };
+}
+
+/* ─────────── FCM registration (Capacitor only) ─────────── */
+async function registerFcm() {
+  try {
+    const Cap = window.Capacitor;
+    if (!Cap?.isNative?.()) return null;
+
+    const Push = Cap.Plugins?.PushNotifications;
+    if (!Push) return null;
+
+    let perm = await Push.checkPermissions?.();
+    if (perm?.receive === 'prompt') {
+      perm = await Push.requestPermissions();
+    }
+    if (perm?.receive !== 'granted') {
+      toast('warning', 'Notifications disabled', 'You can enable them later in Settings.');
+      return null;
+    }
+
+    await Push.register();
+    const token = await new Promise((resolve) => {
+      let done = false;
+      const handler = (evt) => {
+        if (evt?.value && !done) {
+          done = true;
+          Push.removeListener('registration', handler);
+          resolve(evt.value);
+        }
+      };
+      Push.addListener('registration', handler);
+      // Safety timeout — don't block login forever
+      setTimeout(() => { if (!done) { done = true; resolve(null); } }, 8000);
     });
 
-    const data = await r.json();
-    if (!r.ok || !data.token) throw new Error(data.error || 'Login failed');
-
-    localStorage.setItem('kb_token', data.token);
-    setUser(data.user);
-    toast('success', 'Welcome, ' + data.user.name.split(' ')[0] + '!', 'Signed in with Google.');
-    setTimeout(() => location.href = next, 600);
+    return token;
   } catch (err) {
-    $('#gLoading').style.display = 'none';
+    toast('warning', 'FCM registration failed', err.message);
+    return null;
+  }
+}
+
+/* ─────────── Backend calls ─────────── */
+async function exchangeGoogleToken(credential, device) {
+  const r = await fetch(API_BASE + '/auth/google', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ credential, device }),
+  });
+  const data = await r.json();
+  if (!r.ok || !data.token) throw new Error(data.error || 'Login failed');
+  return data;
+}
+
+async function registerDeviceOnBackend(device, token) {
+  try {
+    await fetch(API_BASE + '/user/register-device', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify(device),
+    });
+  } catch (_) {}
+}
+
+async function updateFcmOnBackend(fcmToken, deviceId, token) {
+  if (!fcmToken) return;
+  try {
+    await fetch(API_BASE + '/user/update-fcm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify({ fcmToken, deviceId }),
+    });
+  } catch (_) {}
+}
+
+async function sendWelcomeNotification(token, deviceId, jwt, name) {
+  try {
+    await fetch(API_BASE + '/notifications/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwt,
+      },
+      body: JSON.stringify({ token, deviceId, name }),
+    });
+  } catch (_) {}
+}
+
+/* ─────────── Login completion (shared by web + native) ─────────── */
+async function completeLogin(credential) {
+  const gLoading = $('#gLoading');
+  gLoading.style.display = 'flex';
+  gLoading.querySelector('span').textContent = 'Signing you in…';
+
+  try {
+    const device = await collectDeviceInfo();
+    const session = await exchangeGoogleToken(credential, device);
+
+    store.token = session.token;
+    store.refresh = session.refreshToken;
+    store.user = session.user;
+
+    // Register device + FCM in parallel
+    const fcmToken = await registerFcm();
+    if (fcmToken) {
+      device.fcmToken = fcmToken;
+    }
+    await registerDeviceOnBackend(device, session.token);
+    if (fcmToken) {
+      await updateFcmOnBackend(fcmToken, device.deviceId, session.token);
+      // Best-effort welcome notification (fire and forget)
+      sendWelcomeNotification(fcmToken, device.deviceId, session.token, session.user.name);
+    }
+
+    toast('success', 'Welcome, ' + (session.user.name || 'there').split(' ')[0] + '!', 'Signed in with Google.');
+    setTimeout(() => location.href = next, 700);
+  } catch (err) {
+    gLoading.style.display = 'none';
     toast('error', 'Sign in failed', err.message);
   }
 }
 
-function initGoogle() {
-  if (!window.google?.accounts?.id) { setTimeout(initGoogle, 200); return; }
+/* ─────────── Native Google Sign-In via Capacitor plugin ─────────── */
+async function nativeGoogleSignIn() {
+  const Cap = window.Capacitor;
+  const GoogleAuth = Cap?.Plugins?.GoogleAuth;
+  if (!GoogleAuth) {
+    toast('error', 'Native Google Auth unavailable', 'The plugin is not registered in this build.');
+    return;
+  }
+
+  const btn = $('#nativeGoogleBtn');
+  btn.disabled = true;
+  try {
+    const result = await GoogleAuth.signIn({ clientId: GOOGLE_CLIENT_ID });
+    if (!result?.idToken) throw new Error('No ID token returned');
+    await completeLogin(result.idToken);
+  } catch (err) {
+    toast('error', 'Google Sign-In failed', err.message || String(err));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ─────────── Web Google Identity Services ─────────── */
+function initWebGoogle() {
+  if (!window.google?.accounts?.id) { setTimeout(initWebGoogle, 200); return; }
   $('#gLoading').style.display = 'none';
+
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
-    callback: handleCredential,
+    callback: (resp) => {
+      if (resp?.credential) completeLogin(resp.credential);
+      else toast('error', 'Google returned no credential');
+    },
     auto_select: false,
   });
-  google.accounts.id.renderButton($('#gBtn'), {
-    theme: 'outline',
-    size: 'large', shape: 'pill', width: 300, text: 'continue_with', logo_alignment: 'left',
+
+  const renderOpts = {
+    theme: 'outline', size: 'large', shape: 'pill',
+    text: 'continue_with', logo_alignment: 'left',
+    width: Math.min(window.innerWidth - 60, 340),
+  };
+  google.accounts.id.renderButton($('#gBtn'), renderOpts);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      $('#gBtn').innerHTML = '';
+      google.accounts.id.renderButton($('#gBtn'), {
+        ...renderOpts,
+        width: Math.min(window.innerWidth - 60, 340),
+      });
+    }, 150);
   });
+
   google.accounts.id.prompt();
 }
-initGoogle();
+
+/* ─────────── Bootstrap ─────────── */
+async function init() {
+  // Auto-login: if we already have a valid token, jump to home
+  if (store.token && store.user) {
+    try {
+      const r = await fetch(API_BASE + '/session/validate', {
+        headers: { 'Authorization': 'Bearer ' + store.token },
+      });
+      if (r.ok) { location.replace(next); return; }
+    } catch {}
+  }
+
+  // Try to silently refresh
+  if (store.refresh) {
+    try {
+      const r = await fetch(API_BASE + '/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: store.refresh, deviceId: store.deviceId }),
+      });
+      const data = await r.json();
+      if (r.ok && data.token) {
+        store.token = data.token;
+        store.refresh = data.refreshToken;
+        store.user = data.user;
+        location.replace(next);
+        return;
+      }
+    } catch {}
+    // refresh failed — clear stale state
+    store.clear();
+  }
+
+  // Show the right UI for the platform
+  if (isCapacitorNative()) {
+    $('#gBtn').style.display = 'none';
+    $('#gLoading').style.display = 'none';
+    $('#nativeGoogleBtn').style.display = 'flex';
+    $('#nativeGoogleBtn').addEventListener('click', nativeGoogleSignIn);
+  } else {
+    // Web — load Google Identity Services
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true; s.defer = true;
+    s.onload = initWebGoogle;
+    document.head.appendChild(s);
+  }
+}
+
+init();
 })();
 </script>
 </body>
