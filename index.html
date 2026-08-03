@@ -6,16 +6,16 @@
 <meta name="theme-color" content="#FAF7F2">
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
-<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
-<link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap)" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/png" href="[krazybuy.online](https://www.krazybuy.online/images/logo.png)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="images/logo.png">
 
 <style>
 /* ============================================================
-   KRAZYBUY — PORCELAIN LIGHT (single theme, premium)
+   KRAZYBUY — PORCELAIN LIGHT
    Cream · White · Ink · Emerald-for-savings · soft aurora
+   (KrazyBuy's own palette — not SAVE8's)
 ============================================================ */
 :root {
   color-scheme: light;
@@ -83,6 +83,9 @@
   --t: .22s;
   --ease: cubic-bezier(.22, 1, .36, 1);
 
+  /* Sidebar */
+  --sb-w: 268px;
+
   /* Safe areas */
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
@@ -140,8 +143,99 @@ body {
 }
 @media (hover: none), (pointer: coarse) { .cursor-glow { display: none; } }
 
-/* ============ LAYOUT ============ */
+/* ============ APP SHELL ============ */
 .app { display: flex; min-height: 100dvh; }
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  width: var(--sb-w); flex-shrink: 0;
+  height: 100dvh; position: sticky; top: 0; z-index: 80;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transition: width var(--t) var(--ease), transform var(--t) var(--ease), opacity var(--t);
+}
+.app.sb-collapsed .sidebar { width: 0; opacity: 0; pointer-events: none; border-right-color: transparent; }
+
+.sb-header {
+  display: flex; align-items: center; gap: var(--s-2);
+  min-height: 62px; padding: 0 var(--s-4);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sb-brand { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.sb-mark {
+  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+  background: var(--btn-bg); color: var(--btn-fg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Sora", sans-serif; font-weight: 800; font-size: 14px;
+}
+.sb-name { font-family: "Sora", sans-serif; font-weight: 800; font-size: 16px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-icbtn {
+  width: 34px; height: 34px; border-radius: var(--r-sm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; color: var(--muted);
+  transition: background var(--t), color var(--t);
+}
+.sb-icbtn:hover { background: var(--card2); color: var(--text); }
+
+.sb-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: var(--s-3) 0 var(--s-4); }
+
+.sb-nav { display: flex; flex-direction: column; padding: 0 var(--s-3); gap: 2px; }
+.sb-action {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: var(--r-sm);
+  font-size: var(--fs-sm); font-weight: 700; color: var(--text-soft);
+  transition: background var(--t);
+}
+.sb-action:hover { background: var(--card2); }
+.sb-action .ic { width: 18px; height: 18px; flex-shrink: 0; color: var(--text); display: flex; }
+.sb-action .badge {
+  margin-left: auto; font-size: 10px; font-weight: 800;
+  padding: 2px 7px; border-radius: var(--r-pill);
+  background: var(--success-bg); color: var(--success-deep);
+  min-width: 18px; text-align: center;
+}
+.sb-action .badge:empty { display: none; }
+
+.sb-label { padding: var(--s-6) var(--s-4) var(--s-2); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted2); }
+.sb-list { display: flex; flex-direction: column; padding: 0 var(--s-3); gap: 2px; }
+.sb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--r-sm);
+  cursor: pointer; transition: background var(--t);
+}
+.sb-item:hover, .sb-item.active { background: var(--card2); }
+.sb-ic {
+  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+  background: var(--card3); color: var(--muted);
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.sb-title { font-size: 13px; font-weight: 600; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-empty { padding: var(--s-2) 10px; font-size: 12px; color: var(--muted2); font-weight: 600; }
+
+.sb-footer { flex-shrink: 0; border-top: 1px solid var(--border); padding: var(--s-4); }
+.sb-footer-brand { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.sb-footer-brand b { color: var(--text-soft); }
+.sb-footer-links { display: flex; gap: 10px; margin-top: 10px; }
+.sb-footer-links a { font-size: 11px; font-weight: 700; color: var(--muted); transition: color var(--t); }
+.sb-footer-links a:hover { color: var(--text); }
+
+/* Mobile drawer */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; z-index: 300;
+    width: min(300px, 84vw);
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lift);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .app.sb-collapsed .sidebar { width: min(300px, 84vw); opacity: 1; pointer-events: auto; }
+}
+.sb-overlay { position: fixed; inset: 0; z-index: 290; background: rgba(17,17,17,.32); backdrop-filter: blur(3px); display: none; }
+.sb-overlay.show { display: block; animation: fadeIn var(--t) both; }
+
+/* ============ MAIN ============ */
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 100dvh; position: relative; }
 .thread { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); }
 
@@ -156,6 +250,7 @@ body {
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   position: sticky; top: 0; z-index: 50;
 }
+.top-left { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
 .top-q {
   font-size: var(--fs-sm); font-weight: 600; color: var(--muted);
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
@@ -174,15 +269,14 @@ body {
 .sdot.busy    { background: var(--warning); animation: pulse 1.3s infinite; }
 .sdot.err     { background: var(--danger); }
 .burger {
-  display: none; width: 40px; height: 40px;
+  display: flex; width: 38px; height: 38px;
   flex-direction: column; gap: 4px;
   align-items: center; justify-content: center;
   border-radius: var(--r-sm); flex-shrink: 0;
+  transition: background var(--t);
 }
+.burger:hover { background: var(--card2); }
 .burger span { width: 18px; height: 1.5px; background: var(--text); border-radius: 2px; }
-
-.overlay { position: fixed; inset: 0; z-index: 299; background: rgba(17,17,17,.32); backdrop-filter: blur(3px); display: none; }
-.overlay.show { display: block; animation: fadeIn var(--t) both; }
 
 /* ============ HERO ============ */
 .hero {
@@ -194,25 +288,12 @@ body {
 }
 .hero > *:not(.float-logos):not(.hero-aurora) { position: relative; z-index: 2; }
 
-/* Aurora — soft, performant, paused when reduced motion */
 .hero-aurora {
   position: absolute; inset: -20% -10% auto -10%; height: 130%;
   z-index: 0; pointer-events: none; filter: blur(40px);
 }
-.hero-aurora::before, .hero-aurora::after, .aurora-blob {
-  content: ""; position: absolute; border-radius: 50%; opacity: .9;
-}
-.hero-aurora::before {
-  width: 50vw; height: 50vw; left: 8%; top: 12%;
-  background: radial-gradient(circle, var(--aurora-1), transparent 65%);
-  animation: drift 16s ease-in-out infinite;
-}
-.hero-aurora::after {
-  width: 46vw; height: 46vw; right: 6%; top: 22%;
-  background: radial-gradient(circle, var(--aurora-2), transparent 65%);
-  animation: drift 19s ease-in-out -3s infinite reverse;
-}
 .aurora-blob {
+  content: ""; position: absolute; border-radius: 50%; opacity: .9;
   width: 40vw; height: 40vw; left: 30%; bottom: 6%;
   background: radial-gradient(circle, var(--aurora-3), transparent 65%);
   animation: drift 22s ease-in-out -6s infinite;
@@ -222,12 +303,15 @@ body {
   background: radial-gradient(circle, var(--aurora-4), transparent 65%);
   animation: drift 25s ease-in-out -9s infinite reverse;
 }
-.hero-aurora::after { opacity: 0; } /* keep first two for performance */
+.aurora-blob.b3 {
+  width: 46vw; height: 46vw; right: 6%; top: 8%; left: auto; bottom: auto;
+  background: radial-gradient(circle, var(--aurora-1), transparent 65%);
+  animation: drift 19s ease-in-out -3s infinite;
+}
 
-/* Subtle grain overlay */
 .hero::after {
   content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .035 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   mix-blend-mode: multiply; opacity: .6;
 }
 
@@ -267,7 +351,6 @@ body {
   animation: fadeUp .6s .12s var(--ease) both;
 }
 
-/* Floating store logos — refined */
 .float-logos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
 .flogo {
   position: absolute;
@@ -277,13 +360,16 @@ body {
   box-shadow: var(--shadow-sm);
   display: flex; align-items: center; justify-content: center;
   opacity: 0;
-  animation: flogoIn .7s var(--ease) forwards, floaty var(--f, 8s) ease-in-out infinite;
+  animation-name: flogoIn, floaty;
+  animation-timing-function: var(--ease), ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards, none;
+  animation-duration: .7s, var(--f, 8s);
   animation-delay: var(--d, 0s), calc(var(--d, 0s) + .7s);
   will-change: transform;
 }
 .flogo img { width: 64%; height: 64%; object-fit: contain; }
 
-/* Chips */
 .chips {
   display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center;
   max-width: 720px;
@@ -298,7 +384,7 @@ body {
 }
 .chip:hover { border-color: var(--border-strong); transform: translateY(-2px); color: var(--text); }
 
-/* ============ COMPOSER / SEARCH ============ */
+/* ============ COMPOSER ============ */
 .composer {
   padding: var(--s-3) var(--s-4) calc(var(--s-3) + var(--sab));
   border-top: 1px solid var(--border);
@@ -451,6 +537,7 @@ body {
   box-shadow: var(--shadow-sm); transition: all var(--t);
 }
 .wish:hover { color: var(--danger); border-color: var(--danger); transform: scale(1.06); }
+.wish.active { color: var(--danger); }
 
 .best-tag {
   position: absolute; top: 14px; left: 14px; z-index: 2;
@@ -507,7 +594,6 @@ body {
   font-size: 12px; line-height: 1.55; color: var(--text-soft); position: relative;
 }
 .rz-skel { display: flex; flex-direction: column; gap: 8px; }
-.skel2 { background: linear-gradient(90deg, var(--card2) 25%, var(--card3) 40%, var(--card2) 60%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border-radius: 8px; }
 
 /* Store compare */
 .scompare-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px; }
@@ -636,6 +722,28 @@ body {
 }
 .footer-bottom span { font-weight: 800; color: var(--success-deep); }
 
+/* ============ WISHLIST DRAWER ============ */
+.wl-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 320;
+  width: min(380px, 92vw);
+  background: var(--card); border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lift);
+  transform: translateX(100%); transition: transform var(--t) var(--ease);
+  display: flex; flex-direction: column;
+}
+.wl-drawer.open { transform: translateX(0); }
+.wl-head { display: flex; align-items: center; justify-content: space-between; padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.wl-head h3 { font-family: "Sora", sans-serif; font-size: 16px; font-weight: 800; }
+.wl-body { flex: 1; overflow-y: auto; padding: var(--s-4) var(--s-5); display: flex; flex-direction: column; gap: 10px; }
+.wl-item { display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--card2); }
+.wl-img { width: 46px; height: 46px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--card3); }
+.wl-img img { width: 100%; height: 100%; object-fit: cover; }
+.wl-meta { flex: 1; min-width: 0; }
+.wl-name { font-size: 12.5px; font-weight: 700; color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.wl-price { font-size: 12px; font-weight: 800; color: var(--success-deep); margin-top: 2px; }
+.wl-remove { width: 28px; height: 28px; border-radius: 50%; color: var(--muted2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: color var(--t), background var(--t); }
+.wl-remove:hover { color: var(--danger); background: var(--danger-bg); }
+
 /* ============ SEARCH ANIMATION ============ */
 #aiSearchAnimation { position: fixed; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity .35s ease; }
 #aiSearchAnimation.running { opacity: 1; }
@@ -661,6 +769,20 @@ body {
 
 /* ============ TOAST ============ */
 #toastArea { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--r-md);
+  background: var(--text); color: #fff;
+  font-size: 13px; font-weight: 600; box-shadow: var(--shadow-lift);
+  max-width: 320px; animation: fadeUp .25s var(--ease) both;
+}
+.toast .t-ic { flex-shrink: 0; display: flex; }
+.toast.success .t-ic { color: #4ADE80; }
+.toast.error .t-ic { color: #F87171; }
+.toast.warning .t-ic { color: #FBBF24; }
+.toast.info .t-ic { color: #93C5FD; }
+.toast .t-body b { display: block; font-weight: 800; }
+.toast .t-body span { display: block; opacity: .8; font-weight: 500; font-size: 12px; margin-top: 1px; }
 
 /* ============ KEYFRAMES ============ */
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -680,9 +802,6 @@ body {
 
 /* ============ RESPONSIVE — TABLET ============ */
 @media (max-width: 900px) {
-  .sidebar { position: fixed; top:0; left:0; bottom:0; z-index:300; transform: translateX(-100%); transition: transform .25s var(--ease); width: min(284px, 84vw); box-shadow: var(--shadow-lift); }
-  .sidebar.open { transform: translateX(0); }
-  .burger { display: flex; }
   .stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 
@@ -716,7 +835,7 @@ body {
 
 /* Touch targets */
 @media (pointer: coarse) {
-  .chip, .sb-item, .nav-item { min-height: 44px; }
+  .chip, .sb-item, .sb-action { min-height: 44px; }
 }
 
 /* ============ REDUCED MOTION ============ */
@@ -729,7 +848,7 @@ body {
     animation-iteration-count: 1 !important;
   }
   .flogo { animation: flogoIn .01ms forwards; opacity: .85; }
-  .hero-aurora::before, .hero-aurora::after, .aurora-blob { animation: none !important; }
+  .aurora-blob { animation: none !important; }
 }
 </style>
 </head>
@@ -737,21 +856,69 @@ body {
 
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 <div id="toastArea" aria-live="polite"></div>
-<div class="overlay" id="overlay"></div>
+<div class="sb-overlay" id="overlay"></div>
 <div id="aiSearchAnimation" aria-hidden="true"></div>
+<div class="wl-drawer" id="wlDrawer">
+  <div class="wl-head">
+    <h3>Your Wishlist</h3>
+    <button class="sb-icbtn" id="wlClose" aria-label="Close wishlist">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="wl-body" id="wlBody"></div>
+</div>
 
-<div class="app">
-  <aside class="sidebar" id="sidebar"></aside>
+<div class="app" id="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <div class="sb-header">
+      <div class="sb-brand">
+        <div class="sb-mark">K</div>
+        <div class="sb-name">KrazyBuy</div>
+      </div>
+      <button class="sb-icbtn" id="sbCollapse" aria-label="Collapse sidebar" title="Collapse sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>
+      </button>
+      <button class="sb-icbtn" id="sbClose" aria-label="Close menu" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="sb-scroll">
+      <nav class="sb-nav" aria-label="Sidebar actions">
+        <button type="button" class="sb-action" id="sbNewSearch">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg></span>
+          New search
+        </button>
+        <button type="button" class="sb-action" id="sbWishlist">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.7-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z"/></svg></span>
+          Wishlist
+          <span class="badge" id="wlCount"></span>
+        </button>
+      </nav>
+
+      <div id="sbExtra"></div>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-footer-brand"><b>KrazyBuy</b> compares prices across 50+ stores with Retzo AI verdicts on every product.</div>
+      <div class="sb-footer-links">
+        <a href="mailto:support@krazybuy.online">Support</a>
+        <a href="https://instagram.com/krazybuy.ai" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </aside>
 
   <div class="main">
 
     <!-- HEADER -->
     <header class="top">
-      <div class="top-q">
+      <div class="top-left">
         <button class="burger" id="burger" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
-        <span id="topQ">KrazyBuy</span>
+        <div class="top-q"><span id="topQ">KrazyBuy</span></div>
       </div>
       <div class="status">
         <span class="sdot online" id="sdot"></span>
@@ -767,6 +934,7 @@ body {
         <div class="hero-aurora" aria-hidden="true">
           <div class="aurora-blob"></div>
           <div class="aurora-blob b2"></div>
+          <div class="aurora-blob b3"></div>
         </div>
 
         <div class="float-logos" aria-hidden="true">
@@ -947,11 +1115,11 @@ body {
         <a href="#">Price Comparison</a>
         <a href="#">AI Verdict</a>
         <a href="#">Product Search</a>
-        <a href="#">Retailers</a>
+        <a href="#">Wishlist</a>
       </div>
       <div>
         <h4>Support</h4>
-        <a href="mailto:supportatkrazybuy@gmail.com">support@krazybuy.online</a>
+        <a href="mailto:support@krazybuy.online">support@krazybuy.online</a>
         <a href="https://krazybuy.online">krazybuy.online</a>
         <a href="https://instagram.com/krazybuy.ai">Instagram</a>
       </div>
@@ -962,96 +1130,118 @@ body {
   </div>
 </footer>
 
-<script src="js/common.js"></script>
 <script>
 /* ============================================================
-   Logo directory (for search animation)
+   NOTE: This file is fully self-contained (no external
+   js/common.js or css/style.css needed). If your production
+   site already has its own backend job-queue API, change
+   API_BASE below to point at it.
 ============================================================ */
-const logos = [
-  { name:"Amazon",         logo:"https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
-  { name:"Flipkart",       logo:"https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
-  { name:"Myntra",         logo:"https://www.google.com/s2/favicons?domain=myntra.com&sz=256" },
-  { name:"Ajio",           logo:"https://www.google.com/s2/favicons?domain=ajio.com&sz=256" },
-  { name:"Meesho",         logo:"https://www.google.com/s2/favicons?domain=meesho.com&sz=256" },
-  { name:"Snapdeal",       logo:"https://www.google.com/s2/favicons?domain=snapdeal.com&sz=256" },
-  { name:"Croma",          logo:"https://www.google.com/s2/favicons?domain=croma.com&sz=256" },
-  { name:"Reliance Digital",logo:"https://www.google.com/s2/favicons?domain=reliancedigital.in&sz=256" },
-  { name:"Vijay Sales",    logo:"https://www.google.com/s2/favicons?domain=vijaysales.com&sz=256" },
-  { name:"JioMart",        logo:"https://www.google.com/s2/favicons?domain=jiomart.com&sz=256" },
-  { name:"Nykaa",          logo:"https://www.google.com/s2/favicons?domain=nykaa.com&sz=256" },
-  { name:"Pepperfry",      logo:"https://www.google.com/s2/favicons?domain=pepperfry.com&sz=256" },
-  { name:"IKEA",           logo:"https://www.google.com/s2/favicons?domain=ikea.com&sz=256" },
-  { name:"Decathlon",      logo:"https://www.google.com/s2/favicons?domain=decathlon.in&sz=256" },
-  { name:"Samsung",        logo:"https://www.google.com/s2/favicons?domain=samsung.com&sz=256" },
-  { name:"Apple",          logo:"https://www.google.com/s2/favicons?domain=apple.com&sz=256" },
-  { name:"OnePlus",        logo:"https://www.google.com/s2/favicons?domain=oneplus.com&sz=256" },
-  { name:"Xiaomi",         logo:"https://www.google.com/s2/favicons?domain=mi.com&sz=256" },
-  { name:"Blinkit",        logo:"https://www.google.com/s2/favicons?domain=blinkit.com&sz=256" },
-  { name:"Zepto",          logo:"https://www.google.com/s2/favicons?domain=zeptonow.com&sz=256" },
-  { name:"BigBasket",      logo:"https://www.google.com/s2/favicons?domain=bigbasket.com&sz=256" },
-  { name:"CRED",           logo:"https://www.google.com/s2/favicons?domain=cred.club&sz=256" },
-  { name:"Perplexity",     logo:"https://www.google.com/s2/favicons?domain=perplexity.ai&sz=256" },
-];
-
-const aiSearchAnimation = document.getElementById("aiSearchAnimation");
-let aiSearchTimeout = null;
-function startAISearchAnimation() {
-  if (!aiSearchAnimation) return;
-  clearTimeout(aiSearchTimeout);
-  aiSearchAnimation.innerHTML = "";
-  const selected = [...logos].sort(() => Math.random() - .5).slice(0, 16);
-  selected.forEach(item => {
-    const logo = document.createElement("div");
-    logo.className = "search-logo";
-    logo.style.left = (Math.random() * 82 + 6) + "%";
-    logo.style.top  = (Math.random() * 66 + 12) + "%";
-    logo.style.animationDelay    = (Math.random() * 1.6) + "s";
-    logo.style.animationDuration = (2.8 + Math.random() * 2) + "s";
-    const size = 34 + Math.random() * 18;
-    logo.style.width = size + "px";
-    logo.style.height = size + "px";
-    logo.innerHTML = '<img src="' + item.logo + '" alt="' + item.name + '" loading="lazy">';
-    aiSearchAnimation.appendChild(logo);
-  });
-  aiSearchAnimation.classList.add("running");
-  aiSearchTimeout = setTimeout(stopAISearchAnimation, 6000);
-}
-function stopAISearchAnimation() {
-  if (!aiSearchAnimation) return;
-  clearTimeout(aiSearchTimeout);
-  aiSearchAnimation.classList.remove("running");
-  setTimeout(() => { aiSearchAnimation.innerHTML = ""; }, 400);
-}
+const API_BASE = "https://api.krazybuy.online"; // TODO: point this at your real backend
 
 /* ============================================================
-   Cursor glow (desktop, pointer:fine only) — rAF-throttled
+   Tiny helper library (replaces the old external KB module)
 ============================================================ */
-(() => {
-  const glow = document.getElementById("cursorGlow");
-  if (!glow) return;
-  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  if (!fine) return;
-  let raf = null, tx = 0, ty = 0;
-  window.addEventListener("pointermove", (e) => {
-    tx = e.clientX; ty = e.clientY;
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      glow.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-      raf = null;
-    });
-  }, { passive: true });
-})();
+const $  = (sel, ctx) => (ctx || document).querySelector(sel);
+const $$ = (sel, ctx) => [...(ctx || document).querySelectorAll(sel)];
+function esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function cssEsc(str) {
+  return window.CSS && CSS.escape ? CSS.escape(String(str)) : String(str).replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+}
+const inrFmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+function fmtPrice(n) { n = Number(n) || 0; return inrFmt.format(n); }
+
+/* Toasts */
+const TOAST_ICONS = {
+  success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>',
+  error:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>',
+  warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>',
+  info:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>',
+};
+function toast(type, title, msg) {
+  const area = $('#toastArea');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'info');
+  el.innerHTML = '<span class="t-ic">' + (TOAST_ICONS[type] || TOAST_ICONS.info) + '</span>' +
+    '<span class="t-body"><b>' + esc(title || '') + '</b>' + (msg ? '<span>' + esc(msg) + '</span>' : '') + '</span>';
+  area.appendChild(el);
+  setTimeout(() => { el.style.transition = 'opacity .25s ease'; el.style.opacity = '0'; setTimeout(() => el.remove(), 260); }, 3400);
+}
+
+/* Recent searches (localStorage) */
+const HIST_KEY = 'kb_history_v1';
+function getHist() { try { return JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch { return []; } }
+function saveHist(list) { try { localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0, 30))); } catch {} }
+function addHist(item) {
+  const list = getHist().filter(h => h.q.toLowerCase() !== item.q.toLowerCase());
+  list.unshift({ ...item, ts: Date.now() });
+  saveHist(list);
+}
+function updateHist(q, patch) {
+  const list = getHist();
+  const row = list.find(h => h.q.toLowerCase() === q.toLowerCase());
+  if (row) Object.assign(row, patch);
+  saveHist(list);
+}
+
+/* Wishlist (localStorage) */
+const WL_KEY = 'kb_wishlist_v1';
+function getWL() { try { return JSON.parse(localStorage.getItem(WL_KEY)) || {}; } catch { return {}; } }
+function saveWL(obj) { try { localStorage.setItem(WL_KEY, JSON.stringify(obj)); } catch {} }
+function inWL(pid) { return !!getWL()[pid]; }
+function toggleWL(pid, data) {
+  const wl = getWL();
+  let added;
+  if (wl[pid]) { delete wl[pid]; added = false; }
+  else { wl[pid] = { ...data, pid, ts: Date.now() }; added = true; }
+  saveWL(wl);
+  renderWishlistCount();
+  return added;
+}
+function removeWL(pid) { const wl = getWL(); delete wl[pid]; saveWL(wl); renderWishlistCount(); renderWishlistDrawer(); }
+
+function renderWishlistCount() {
+  const n = Object.keys(getWL()).length;
+  $('#wlCount').textContent = n > 0 ? n : '';
+}
+function renderWishlistDrawer() {
+  const wl = Object.values(getWL()).sort((a, b) => b.ts - a.ts);
+  const body = $('#wlBody');
+  if (!wl.length) { body.innerHTML = '<div class="sb-empty" style="padding:20px 4px">Nothing saved yet. Tap the heart on any product to save it here.</div>'; return; }
+  body.innerHTML = wl.map(item =>
+    '<div class="wl-item" data-pid="' + esc(item.pid) + '">' +
+      '<div class="wl-img"><img src="' + esc(item.image || '') + '" alt="" loading="lazy"></div>' +
+      '<div class="wl-meta"><div class="wl-name">' + esc(item.title || 'Product') + '</div>' +
+        '<div class="wl-price">' + (item.price ? fmtPrice(item.price) : '—') + (item.store ? ' · ' + esc(item.store) : '') + '</div></div>' +
+      '<button class="wl-remove" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>' +
+    '</div>'
+  ).join('');
+  $$('.wl-remove', body).forEach(btn => btn.addEventListener('click', () => {
+    const pid = btn.closest('.wl-item').dataset.pid;
+    removeWL(pid);
+    const card = document.querySelector('.wish[data-pid="' + cssEsc(pid) + '"]');
+    if (card) card.classList.remove('active');
+    toast('info', 'Removed from wishlist');
+  }));
+}
+function openWishlist() { renderWishlistDrawer(); $('#wlDrawer').classList.add('open'); $('#overlay').classList.add('show'); }
+function closeWishlist() { $('#wlDrawer').classList.remove('open'); $('#overlay').classList.remove('show'); }
+
+/* Sidebar open/close (mobile drawer) + collapse (desktop) */
+function openSidebar() { $('#sidebar').classList.add('open'); $('#overlay').classList.add('show'); }
+function closeSidebar() { $('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show'); closeWishlist(); }
+function toggleCollapse() { $('#app').classList.toggle('sb-collapsed'); }
 
 /* ============================================================
-   MAIN APP LOGIC (unchanged — backend calling preserved)
+   MAIN APP LOGIC
 ============================================================ */
 (() => {
 'use strict';
-const { API_BASE, $, $$, esc, cssEsc, fmtPrice, toast, mountSidebar, closeSidebar, addHist, updateHist, getHist, inWL, toggleWL } = KB;
 
 const POLL_INTERVAL = 1000, MAX_RETRIES = 3;
 const state = { jobId:null, polling:false, timer:null, controller:null, retries:0, products:[], query:'', done:false };
-let gid = 0;
 
 const ICONS = {
   crown:    '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 7.5 7 11l5-7 5 7 4.5-3.5L19.5 18h-15L2.5 7.5z"/><rect x="4.5" y="19.5" width="15" height="2" rx="1"/></svg>',
@@ -1091,7 +1281,7 @@ function renderRecents() {
   slot.innerHTML = '<div class="sb-label">Recent</div><div class="sb-list">' +
     (hist.length
       ? hist.slice(0, 15).map(h => '<div class="sb-item ' + (h.q === state.query ? 'active' : '') + '" data-q="' + esc(h.q) + '"><div class="sb-ic">' + esc((h.q.trim()[0] || 'S').toUpperCase()) + '</div><div class="sb-title">' + esc(h.q) + '</div></div>').join('')
-      : '<div class="sb-empty">No recent searches</div>')
+      : '<div class="sb-empty">No recent searches yet</div>')
     + '</div>';
   $$('.sb-item', slot).forEach(el => el.addEventListener('click', () => { $('#sinput').value = el.dataset.q; closeSidebar(); search(el.dataset.q); }));
 }
@@ -1235,7 +1425,7 @@ function buildSlide(p, i) {
 
   slide.innerHTML =
     '<div class="scard" style="position:relative">' +
-      '<button class="wish" data-pid="' + esc(pid) + '" aria-label="Save" style="color:' + (wished ? 'var(--danger)' : 'var(--muted2)') + '">' + ICONS.heart + '</button>' +
+      '<button class="wish' + (wished ? ' active' : '') + '" data-pid="' + esc(pid) + '" aria-label="Save">' + ICONS.heart + '</button>' +
       '<div class="sbody">' +
         '<div class="shead">' +
           '<div class="simg"><img src="' + imgFor(p) + '" alt="' + esc(title) + '" loading="lazy"></div>' +
@@ -1273,7 +1463,7 @@ function buildSlide(p, i) {
   slide.querySelector('.wish').addEventListener('click', () => {
     const added = toggleWL(pid, { title, image: imgFor(p), price: lo, url: bestUrl, store: bestStore, query: state.query });
     const btn = slide.querySelector('.wish');
-    btn.style.color = added ? 'var(--danger)' : 'var(--muted2)';
+    btn.classList.toggle('active', added);
     toast(added ? 'success' : 'info', added ? 'Saved to wishlist' : 'Removed from wishlist', title);
   });
 
@@ -1392,6 +1582,7 @@ async function poll() {
         $('#resultsArea').style.display = '';
         let low = 0; finalProducts.forEach(p => { const pr = lowest(p); if (pr > 0 && (low === 0 || pr < low)) low = pr; });
         updateHist(state.query, { products: finalProducts.length, low });
+        renderRecents();
         toast('success', 'Analysis complete', finalProducts.length + ' products compared.');
       } else {
         $('#emptyArea').style.display = '';
@@ -1481,14 +1672,112 @@ $('#errNewBtn').addEventListener('click', goHome);
 $('#retryBtn').addEventListener('click', () => state.query ? search(state.query) : goHome());
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); $('#sinput').focus(); } });
 
-mountSidebar('home');
+/* Sidebar / drawer wiring */
+$('#burger').addEventListener('click', openSidebar);
+$('#sbClose').addEventListener('click', closeSidebar);
+$('#overlay').addEventListener('click', closeSidebar);
+$('#sbCollapse').addEventListener('click', toggleCollapse);
+$('#sbNewSearch').addEventListener('click', () => { closeSidebar(); goHome(); });
+$('#sbWishlist').addEventListener('click', openWishlist);
+$('#wlClose').addEventListener('click', closeWishlist);
+
+/* show the mobile-only close button once we know we're narrow */
+function syncSidebarButtons() {
+  const mobile = window.innerWidth <= 900;
+  $('#sbClose').style.display = mobile ? '' : 'none';
+  $('#sbCollapse').style.display = mobile ? 'none' : '';
+}
+window.addEventListener('resize', syncSidebarButtons);
+syncSidebarButtons();
+
+/* Init */
 renderRecents();
+renderWishlistCount();
 setStatus('online', 'Ready');
 showHero();
 initVoice();
 
 const dq = new URLSearchParams(location.search).get('q');
 if (dq) { $('#sinput').value = dq; search(dq); }
+
+/* expose search/goHome for the animation helpers below */
+window.__kb_search = search;
+})();
+
+/* ============================================================
+   Logo directory (for the full-screen search animation)
+============================================================ */
+const logos = [
+  { name:"Amazon",         logo:"https://www.google.com/s2/favicons?domain=amazon.in&sz=256" },
+  { name:"Flipkart",       logo:"https://www.google.com/s2/favicons?domain=flipkart.com&sz=256" },
+  { name:"Myntra",         logo:"https://www.google.com/s2/favicons?domain=myntra.com&sz=256" },
+  { name:"Ajio",           logo:"https://www.google.com/s2/favicons?domain=ajio.com&sz=256" },
+  { name:"Meesho",         logo:"https://www.google.com/s2/favicons?domain=meesho.com&sz=256" },
+  { name:"Snapdeal",       logo:"https://www.google.com/s2/favicons?domain=snapdeal.com&sz=256" },
+  { name:"Croma",          logo:"https://www.google.com/s2/favicons?domain=croma.com&sz=256" },
+  { name:"Reliance Digital",logo:"https://www.google.com/s2/favicons?domain=reliancedigital.in&sz=256" },
+  { name:"Vijay Sales",    logo:"https://www.google.com/s2/favicons?domain=vijaysales.com&sz=256" },
+  { name:"JioMart",        logo:"https://www.google.com/s2/favicons?domain=jiomart.com&sz=256" },
+  { name:"Nykaa",          logo:"https://www.google.com/s2/favicons?domain=nykaa.com&sz=256" },
+  { name:"Pepperfry",      logo:"https://www.google.com/s2/favicons?domain=pepperfry.com&sz=256" },
+  { name:"IKEA",           logo:"https://www.google.com/s2/favicons?domain=ikea.com&sz=256" },
+  { name:"Decathlon",      logo:"https://www.google.com/s2/favicons?domain=decathlon.in&sz=256" },
+  { name:"Samsung",        logo:"https://www.google.com/s2/favicons?domain=samsung.com&sz=256" },
+  { name:"Apple",          logo:"https://www.google.com/s2/favicons?domain=apple.com&sz=256" },
+  { name:"OnePlus",        logo:"https://www.google.com/s2/favicons?domain=oneplus.com&sz=256" },
+  { name:"Xiaomi",         logo:"https://www.google.com/s2/favicons?domain=mi.com&sz=256" },
+  { name:"Blinkit",        logo:"https://www.google.com/s2/favicons?domain=blinkit.com&sz=256" },
+  { name:"Zepto",          logo:"https://www.google.com/s2/favicons?domain=zeptonow.com&sz=256" },
+  { name:"BigBasket",      logo:"https://www.google.com/s2/favicons?domain=bigbasket.com&sz=256" },
+];
+
+const aiSearchAnimation = document.getElementById("aiSearchAnimation");
+let aiSearchTimeout = null;
+function startAISearchAnimation() {
+  if (!aiSearchAnimation) return;
+  clearTimeout(aiSearchTimeout);
+  aiSearchAnimation.innerHTML = "";
+  const selected = [...logos].sort(() => Math.random() - .5).slice(0, 16);
+  selected.forEach(item => {
+    const logo = document.createElement("div");
+    logo.className = "search-logo";
+    logo.style.left = (Math.random() * 82 + 6) + "%";
+    logo.style.top  = (Math.random() * 66 + 12) + "%";
+    logo.style.animationDelay    = (Math.random() * 1.6) + "s";
+    logo.style.animationDuration = (2.8 + Math.random() * 2) + "s";
+    const size = 34 + Math.random() * 18;
+    logo.style.width = size + "px";
+    logo.style.height = size + "px";
+    logo.innerHTML = '<img src="' + item.logo + '" alt="' + item.name + '" loading="lazy">';
+    aiSearchAnimation.appendChild(logo);
+  });
+  aiSearchAnimation.classList.add("running");
+  aiSearchTimeout = setTimeout(stopAISearchAnimation, 6000);
+}
+function stopAISearchAnimation() {
+  if (!aiSearchAnimation) return;
+  clearTimeout(aiSearchTimeout);
+  aiSearchAnimation.classList.remove("running");
+  setTimeout(() => { aiSearchAnimation.innerHTML = ""; }, 400);
+}
+
+/* ============================================================
+   Cursor glow (desktop, pointer:fine only) — rAF-throttled
+============================================================ */
+(() => {
+  const glow = document.getElementById("cursorGlow");
+  if (!glow) return;
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (!fine) return;
+  let raf = null, tx = 0, ty = 0;
+  window.addEventListener("pointermove", (e) => {
+    tx = e.clientX; ty = e.clientY;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      glow.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+      raf = null;
+    });
+  }, { passive: true });
 })();
 </script>
 </body>
