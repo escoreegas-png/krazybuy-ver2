@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F8FAFC">
+<meta name="theme-color" content="#FAF8F3">
 <title>KrazyBuy — AI Price Intelligence · Retzo AI</title>
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,39 +14,42 @@
 <style>
 /* ============================================================
    KRAZYBUY — PREMIUM LIGHT
-   Warm off-white surface, ink-black text, gold + violet accents.
+   Warm cream surface, ink text, warm gold + skin-tone accents.
    Display type: Sora (rounded-geometric, confident, friendly).
 ============================================================ */
 :root {
   color-scheme: light;
 
   /* Surfaces */
-  --bg:      #F8FAFC;
-  --bg-2:    #F1F4F9;
+  --bg:      #FAF8F3;
+  --bg-2:    #F7F3EC;
   --card:    #FFFFFF;
-  --card2:   #F6F7FB;
-  --card3:   #EFF1F7;
-  --glass:   rgba(248, 250, 252, .78);
+  --card2:   #F7F3EC;
+  --card3:   #F1EAE0;
+  --glass:   rgba(250, 248, 243, .78);
 
   /* Borders */
-  --border:        #E5E7EB;
-  --border2:       #D9DCE3;
-  --border-strong: #111827;
+  --border:        #ECE7DF;
+  --border2:       #DDD4C7;
+  --border-strong: #1F2937;
 
   /* Ink */
-  --text:      #111827;
+  --text:      #1F2937;
   --text-soft: #1F2937;
   --muted:     #6B7280;
   --muted2:    #9CA3AF;
 
   /* Brand */
-  --primary:      #FFC107;
-  --primary-ink:  #7A5200;
-  --accent:       #7C3AED;
-  --accent-soft:  rgba(124, 58, 237, .10);
-  --btn-bg:    #111827;
-  --btn-fg:    #FFFFFF;
-  --btn-hover: #27314A;
+  --primary:      #E8C7A1;
+  --primary-hover:#DDB98C;
+  --primary-active:#CFA676;
+  --primary-ink:  #6B4A28;
+  --accent:       #CFA676;
+  --accent-soft:  rgba(207, 166, 118, .18);
+  --btn-bg:    #E8C7A1;
+  --btn-fg:    #1F2937;
+  --btn-hover: #DDB98C;
+  --btn-active: #CFA676;
 
   /* Semantic */
   --success:      #22C55E;
@@ -54,14 +57,14 @@
   --success-bg:   rgba(34, 197, 94, .12);
   --danger:       #EF4444;
   --danger-bg:    rgba(239, 68, 68, .10);
-  --warning:      #FFC107;
-  --warning-bg:   rgba(255, 193, 7, .16);
+  --warning:      #E8C7A1;
+  --warning-bg:   rgba(232, 199, 161, .22);
 
   /* Aurora tints (hero + orb only) */
-  --aurora-1: rgba(124, 58, 237, .16);
-  --aurora-2: rgba(255, 193, 7, .22);
+  --aurora-1: rgba(232, 199, 161, .28);
+  --aurora-2: rgba(221, 185, 140, .30);
   --aurora-3: rgba(34, 197, 94, .12);
-  --aurora-4: rgba(124, 58, 237, .10);
+  --aurora-4: rgba(232, 199, 161, .16);
 
   /* Radius */
   --r-sm:   12px;
@@ -73,8 +76,8 @@
   --shadow-sm: 0 1px 2px rgba(17,24,39,.04), 0 4px 10px rgba(17,24,39,.05);
   --shadow:    0 4px 12px rgba(17,24,39,.06), 0 18px 40px rgba(17,24,39,.08);
   --shadow-lift: 0 10px 24px rgba(17,24,39,.08), 0 30px 64px rgba(17,24,39,.12);
-  --shadow-gold: 0 10px 30px rgba(255,193,7,.25);
-  --shadow-violet: 0 10px 30px rgba(124,58,237,.22);
+  --shadow-gold: 0 10px 30px rgba(232,199,161,.25);
+  --shadow-violet: 0 10px 30px rgba(232,199,161,.25);
 
   /* Spacing */
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
@@ -136,7 +139,7 @@ body {
   width: 480px; height: 480px;
   margin-left: -240px; margin-top: -240px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,58,237,.08), rgba(124,58,237,0) 60%);
+  background: radial-gradient(circle, rgba(232,199,161,.16), rgba(232,199,161,0) 60%);
   pointer-events: none; z-index: 1;
   transform: translate3d(0,0,0);
   mix-blend-mode: multiply;
@@ -181,7 +184,7 @@ body {
 .sb-brand { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
 .sb-mark {
   width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--primary), #FFDE7A);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   color: var(--text);
   display: flex; align-items: center; justify-content: center;
   font-family: "Sora", sans-serif; font-weight: 800; font-size: 15px;
@@ -347,7 +350,7 @@ body {
   margin-bottom: var(--s-5);
   animation: fadeUp .6s .05s var(--ease) both;
 }
-.hero h1 span { position: relative; background: linear-gradient(100deg, var(--accent), #A855F7 45%, var(--primary-ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 span { position: relative; background: linear-gradient(100deg, var(--primary), var(--primary-hover) 45%, var(--primary-ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
 .hero p {
   font-size: clamp(var(--fs-sm), 1.6vw, var(--fs-lg));
@@ -433,6 +436,7 @@ body {
   position: relative; overflow: hidden;
 }
 .go:hover:not(:disabled) { background: var(--btn-hover); transform: translateY(-1px) rotate(-6deg); }
+.go:active:not(:disabled) { background: var(--btn-active); }
 .go:disabled { opacity: .45; cursor: not-allowed; }
 .go svg { transition: transform var(--t) var(--ease); }
 .vhint {
@@ -493,7 +497,7 @@ body {
 .orb-core {
   width: 108px; height: 108px; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--primary) 38%, var(--accent) 100%);
-  box-shadow: 0 0 0 8px rgba(124,58,237,.08), 0 20px 50px rgba(124,58,237,.30), inset 0 -8px 16px rgba(0,0,0,.12);
+  box-shadow: 0 0 0 8px rgba(232,199,161,.14), 0 20px 50px rgba(232,199,161,.35), inset 0 -8px 16px rgba(0,0,0,.12);
   animation: orbBreathe 3.2s ease-in-out infinite;
   display: flex; align-items: center; justify-content: center;
   position: relative; z-index: 2;
@@ -516,7 +520,7 @@ body {
 /* --- Premium glass skeleton placeholders --- */
 .skel-row { display: flex; flex-direction: column; gap: var(--s-3); width: 100%; max-width: 560px; }
 .skel-card {
-  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(246,247,251,.75));
+  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(247,243,236,.8));
   border: 1px solid var(--border); backdrop-filter: blur(6px);
   border-radius: var(--r-lg); padding: var(--s-5);
   display: flex; gap: var(--s-3); align-items: center; box-shadow: var(--shadow-sm);
@@ -525,7 +529,7 @@ body {
 .skel-card:nth-child(2) { animation-delay: .3s; }
 .skel, .skel2 {
   position: relative; overflow: hidden; border-radius: var(--r-sm);
-  background: linear-gradient(90deg, #ECEFF5 25%, #F8FAFC 45%, #ECEFF5 65%);
+  background: linear-gradient(90deg, #F1EAE0 25%, #FAF8F3 45%, #F1EAE0 65%);
   background-size: 600px 100%; animation: shimmer 1.6s linear infinite;
 }
 @keyframes cardFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
@@ -660,13 +664,13 @@ body {
   position: absolute; top: 14px; left: 14px; z-index: 2;
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 12px; border-radius: var(--r-pill);
-  background: linear-gradient(120deg, var(--success), var(--success-deep));
-  color: #fff;
+  background: linear-gradient(120deg, var(--primary), var(--primary-active));
+  color: var(--primary-ink);
   font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
-  box-shadow: 0 4px 14px rgba(22,163,74,.35);
+  box-shadow: 0 4px 14px rgba(232,199,161,.45);
   animation: bestGlow 2.4s ease-in-out infinite;
 }
-@keyframes bestGlow { 0%,100% { box-shadow: 0 4px 14px rgba(22,163,74,.35); } 50% { box-shadow: 0 4px 22px rgba(22,163,74,.6); } }
+@keyframes bestGlow { 0%,100% { box-shadow: 0 4px 14px rgba(232,199,161,.45); } 50% { box-shadow: 0 4px 22px rgba(232,199,161,.7); } }
 
 /* Price block */
 .sprice {
@@ -684,7 +688,7 @@ body {
 /* Retzo AI verdict card */
 .sretzo {
   border-radius: var(--r-md); border: 1px solid var(--border);
-  background: linear-gradient(160deg, #FBF9FF, #F6F7FB); padding: 16px;
+  background: linear-gradient(160deg, #FBF7EE, #F7F3EC); padding: 16px;
   display: flex; flex-direction: column; gap: 12px;
   position: relative; overflow: hidden;
 }
@@ -762,6 +766,7 @@ body {
   transition: background var(--t), transform var(--t), box-shadow var(--t);
 }
 .sstore-buy:hover { background: var(--btn-hover); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.sstore-buy:active { background: var(--btn-active); }
 .sstore-count { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted2); padding: 4px 0 0; }
 
 /* Indicators */
@@ -782,6 +787,7 @@ body {
 .btn { padding: 11px 24px; border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: 700; border: 1px solid transparent; transition: all var(--t) var(--ease); cursor: pointer; position: relative; overflow: hidden; }
 .btn-primary { background: var(--btn-bg); color: var(--btn-fg); }
 .btn-primary:hover { background: var(--btn-hover); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-primary:active { background: var(--btn-active); }
 .btn-ghost { background: transparent; border-color: var(--border2); color: var(--text); }
 .btn-ghost:hover { background: var(--card2); border-color: var(--accent); color: var(--accent); }
 
@@ -813,7 +819,7 @@ body {
 .trust-card:hover::before { opacity: 1; }
 .trust-icon {
   width: 44px; height: 44px; border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-soft), rgba(255,193,7,.16));
+  background: linear-gradient(135deg, var(--accent-soft), rgba(232,199,161,.20));
   border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   color: var(--accent); margin-bottom: 16px;
@@ -865,7 +871,7 @@ body {
 /* ============ SEARCH ANIMATION ============ */
 #aiSearchAnimation { position: fixed; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity .35s ease; }
 #aiSearchAnimation.running { opacity: 1; }
-#aiSearchAnimation::before { content:""; position:absolute; inset:0; background: radial-gradient(140% 90% at 50% 40%, rgba(248,250,252,.3), rgba(248,250,252,.75) 70%); opacity:0; transition: opacity .4s ease; }
+#aiSearchAnimation::before { content:""; position:absolute; inset:0; background: radial-gradient(140% 90% at 50% 40%, rgba(250,248,243,.3), rgba(250,248,243,.8) 70%); opacity:0; transition: opacity .4s ease; }
 #aiSearchAnimation.running::before { opacity:1; }
 .search-logo {
   position:absolute; border-radius: 14px;
@@ -898,7 +904,7 @@ body {
 .toast.success .t-ic { color: #4ADE80; }
 .toast.error .t-ic { color: #F87171; }
 .toast.warning .t-ic { color: var(--primary); }
-.toast.info .t-ic { color: #A78BFA; }
+.toast.info .t-ic { color: #E8C7A1; }
 .toast .t-body b { display: block; font-weight: 800; color: #fff; }
 .toast .t-body span { display: block; opacity: .75; font-weight: 500; font-size: 12px; margin-top: 1px; }
 
@@ -909,7 +915,7 @@ body {
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
 @keyframes dots { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
 @keyframes shimmer { from { background-position: -600px 0; } to { background-position: 600px 0; } }
-@keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(124,58,237,.25); } 100% { box-shadow: 0 0 0 14px transparent; } }
+@keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(232,199,161,.35); } 100% { box-shadow: 0 0 0 14px transparent; } }
 @keyframes flogoIn { from { opacity:0; transform: translateY(14px) scale(.85); } to { opacity:.9; transform: translateY(0) scale(1); } }
 @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-16px) rotate(2deg); } }
 @keyframes drift {
@@ -2145,7 +2151,7 @@ function stopLoadingExtras() {
   let particles = [], raf = null;
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   window.addEventListener('resize', resize); resize();
-  const colors = ['#FFC107', '#7C3AED', '#22C55E', '#111827', '#A78BFA'];
+  const colors = ['#E8C7A1', '#CFA676', '#22C55E', '#1F2937', '#DDB98C'];
   function frame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
