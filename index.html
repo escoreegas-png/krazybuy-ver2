@@ -8,7 +8,7 @@
 <meta name="description" content="KrazyBuy — AI-powered price comparison, powered by Retzo AI. Search by name or paste any product URL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&family=Barlow+Condensed:ital,wght@1,700;1,800;1,900&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="https://www.krazybuy.online/images/logo.png">
 
 <style>
@@ -182,21 +182,53 @@ body {
   flex-shrink: 0;
 }
 .sb-brand { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-.sb-mark {
-  width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
-  background: var(--card3);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-.sb-name { display: flex; align-items: center; flex: 1; min-width: 0; overflow: hidden; }
+/* sb-mark replaced by kb-logomark inline SVG */
+.sb-mark { display: none; }
+.sb-name { display: none; }
 .sb-icbtn {
   width: 34px; height: 34px; border-radius: var(--r-sm); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; color: var(--muted);
   transition: background var(--t), color var(--t), transform var(--t);
 }
 .sb-icbtn:hover { background: var(--card2); color: var(--text); transform: scale(1.05); }
+/* ============ KRAZYBUY BRAND LOGO WORDMARK ============ */
+.kb-brand-wrap {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0px; flex: 1; min-width: 0; overflow: hidden;
+}
+.kb-logomark {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.kb-logomark svg { display: block; }
+.kb-wordmark {
+  font-family: "Barlow Condensed", "Oswald", "Sora", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 17px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  /* lightning bolt accent via pseudo — pure CSS */
+  position: relative;
+}
+/* Top bar larger wordmark */
+.kb-topbar-brand {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.kb-topbar-brand .kb-wordmark {
+  font-size: 20px;
+  letter-spacing: .07em;
+}
+/* Sidebar brand: icon left, wordmark right */
+.sb-brand-inner {
+  display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; overflow: hidden;
+}
+
+
 
 .sb-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: var(--s-3) 0 var(--s-4); }
 
@@ -276,6 +308,7 @@ body {
   display: flex; align-items: center; gap: var(--s-3); min-width: 0;
 }
 .top-q span { color: var(--text); }
+.top-q #topQ { display: inline; }
 .status {
   display: flex; align-items: center; gap: var(--s-2);
   padding: 6px var(--s-3); border-radius: var(--r-pill);
@@ -1007,8 +1040,25 @@ body {
   <aside class="sidebar" id="sidebar" aria-label="Sidebar">
     <div class="sb-header">
       <div class="sb-brand">
-        <div class="sb-mark"><img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy" style="width:24px;height:24px;object-fit:contain;display:block;"></div>
-        <div class="sb-name"><img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy" style="height:22px;width:auto;object-fit:contain;display:block;"></div>
+        <div class="sb-brand-inner">
+          <div class="kb-logomark"><svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="14" fill="#1A1A1A"/>
+  <!-- Shopping bag handle -->
+  <path d="M36 34 Q36 22 50 22 Q64 22 64 34" stroke="#F0E8DA" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- K shape merged with bag body -->
+  <path d="M28 34 H72 Q78 34 78 40 L78 78 Q78 84 72 84 H28 Q22 84 22 78 L22 40 Q22 34 28 34Z" fill="#F0E8DA"/>
+  <!-- K letter cutout (the dark K shape inside the cream bag) -->
+  <!-- Left vertical bar of K -->
+  <rect x="32" y="44" width="10" height="32" fill="#1A1A1A" rx="1"/>
+  <!-- Upper arm of K -->
+  <path d="M42 60 L62 44 L68 44 L48 60Z" fill="#1A1A1A"/>
+  <!-- Lower arm of K with lightning notch -->
+  <path d="M42 60 L55 76 L63 76 L50 60Z" fill="#1A1A1A"/>
+  <!-- Lightning bolt notch -->
+  <path d="M49 63 L53 58 L56 62 L52 67Z" fill="#F0E8DA"/>
+</svg></div>
+          <div class="kb-wordmark">KrazyBuy</div>
+        </div>
       </div>
       <button class="sb-icbtn" id="sbCollapse" aria-label="Collapse sidebar" title="Collapse sidebar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>
@@ -1051,7 +1101,21 @@ body {
         <button class="burger" id="burger" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
-        <div class="top-q"><img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy" id="topLogo" style="height:26px;width:auto;object-fit:contain;display:block;flex-shrink:0;"><span id="topQ" style="display:none"></span></div>
+        <div class="top-q" id="topBrandArea">
+          <div class="kb-topbar-brand" id="topLogo">
+            <svg width="26" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="14" fill="#1A1A1A"/>
+  <path d="M36 34 Q36 22 50 22 Q64 22 64 34" stroke="#F0E8DA" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M28 34 H72 Q78 34 78 40 L78 78 Q78 84 72 84 H28 Q22 84 22 78 L22 40 Q22 34 28 34Z" fill="#F0E8DA"/>
+  <rect x="32" y="44" width="10" height="32" fill="#1A1A1A" rx="1"/>
+  <path d="M42 60 L62 44 L68 44 L48 60Z" fill="#1A1A1A"/>
+  <path d="M42 60 L55 76 L63 76 L50 60Z" fill="#1A1A1A"/>
+  <path d="M49 63 L53 58 L56 62 L52 67Z" fill="#F0E8DA"/>
+</svg>
+            <span class="kb-wordmark">KrazyBuy</span>
+          </div>
+          <span id="topQ" style="display:none"></span>
+        </div>
       </div>
       <div class="status">
         <span class="sdot online" id="sdot"></span>
@@ -1256,7 +1320,25 @@ body {
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-brand">
-      <div style="margin-bottom:16px"><img src="https://www.krazybuy.online/images/logo.png" alt="KrazyBuy" style="height:40px;width:auto;object-fit:contain;display:block;"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="14" fill="#1A1A1A"/>
+  <!-- Shopping bag handle -->
+  <path d="M36 34 Q36 22 50 22 Q64 22 64 34" stroke="#F0E8DA" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- K shape merged with bag body -->
+  <path d="M28 34 H72 Q78 34 78 40 L78 78 Q78 84 72 84 H28 Q22 84 22 78 L22 40 Q22 34 28 34Z" fill="#F0E8DA"/>
+  <!-- K letter cutout (the dark K shape inside the cream bag) -->
+  <!-- Left vertical bar of K -->
+  <rect x="32" y="44" width="10" height="32" fill="#1A1A1A" rx="1"/>
+  <!-- Upper arm of K -->
+  <path d="M42 60 L62 44 L68 44 L48 60Z" fill="#1A1A1A"/>
+  <!-- Lower arm of K with lightning notch -->
+  <path d="M42 60 L55 76 L63 76 L50 60Z" fill="#1A1A1A"/>
+  <!-- Lightning bolt notch -->
+  <path d="M49 63 L53 58 L56 62 L52 67Z" fill="#F0E8DA"/>
+</svg>
+        <span style="font-family:'Barlow Condensed',Oswald,Sora,sans-serif;font-weight:900;font-style:italic;font-size:28px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);line-height:1">KrazyBuy</span>
+      </div>
       <p>AI Price Intelligence powered by Retzo AI. Compare products across trusted online stores and find the best available price.</p>
     </div>
     <div class="footer-links">
@@ -1806,7 +1888,7 @@ async function search(query) {
   lw.classList.remove('leaving');
   lw.classList.add('entering');
   $('#pFill').style.width = '5%';
-  const tl=document.getElementById('topLogo'); if(tl) tl.style.display='none'; $('#topQ').style.display=''; $('#topQ').innerHTML = 'Analyzing: <span style="color:var(--text)">' + esc(query) + '</span>';
+  const tl=document.getElementById('topLogo'); if(tl) tl.style.display='none'; $('#topQ').style.display='inline'; $('#topQ').innerHTML = 'Analyzing: <span style="color:var(--text)">' + esc(query) + '</span>';
   setStatus('busy', 'Analyzing…'); setBusy(true);
   startLoadingExtras();
   let attempt = 0;
@@ -1846,7 +1928,7 @@ $('#sform').addEventListener('submit', e => { e.preventDefault(); search($('#sin
 $('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; $('#sinput').value = c.dataset.q; search(c.dataset.q); });
 $('#sinput').addEventListener('paste', e => { const t = (e.clipboardData || window.clipboardData).getData('text') || ''; if (t.trim().startsWith('http')) toast('info','Product link detected','Hit Analyze — Retzo AI will identify the product and compare prices.'); });
 
-const goHome = () => { stopPolling(); stopAISearchAnimation(); stopLoadingExtras(); setBusy(false); setStatus('online','Ready'); showHero(); state.query = ''; $('#topQ').textContent = ''; $('#topQ').style.display='none'; const tl=document.getElementById('topLogo'); if(tl) tl.style.display='block'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
+const goHome = () => { stopPolling(); stopAISearchAnimation(); stopLoadingExtras(); setBusy(false); setStatus('online','Ready'); showHero(); state.query = ''; $('#topQ').textContent = ''; $('#topQ').style.display='none'; const tl=document.getElementById('topLogo'); if(tl) tl.style.display='flex'; closeSidebar(); $('#sinput').value = ''; $('#sinput').focus(); };
 $('#errNewBtn').addEventListener('click', goHome);
 $('#retryBtn').addEventListener('click', () => state.query ? search(state.query) : goHome());
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); $('#sinput').focus(); } });
