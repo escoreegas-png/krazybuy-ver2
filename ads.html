@@ -1,938 +1,891 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEKZIKO — Business Website Ad</title>
 
-  <title>TEKZIKO — Business Website Ad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+<style>
+/* ============================================================
+   TEKZIKO — PREMIUM BUSINESS WEBSITE AD
+   BLACK × IVORY × ORANGE
+   ============================================================ */
 
-  <!-- Premium typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+:root {
+  --black: #080807;
+  --black-2: #10100e;
+  --black-3: #171613;
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
+  --ivory: #f3ecdf;
+  --ivory-soft: #d8cdbb;
+  --muted: #9d9282;
+
+  --orange: #ff6b35;
+  --orange-soft: #ff9a73;
+
+  --white: #ffffff;
+
+  --line: rgba(243, 236, 223, 0.10);
+  --line-strong: rgba(243, 236, 223, 0.18);
+
+  --glass: rgba(18, 17, 15, 0.72);
+
+  --ease: cubic-bezier(.16, .84, .28, 1);
+  --ease-soft: cubic-bezier(.22, .61, .36, 1);
+
+  --font: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--ivory);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { user-select: none; -webkit-user-select: none; }
+
+#ad {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: calc(100vh * 9 / 16);
+  max-height: calc(100vw * 16 / 9);
+  margin: auto;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 107, 53, 0.045), transparent 42%),
+    var(--black);
+  isolation: isolate;
+  box-shadow: 0 0 0 100vmax #000;
+}
+
+.ambient { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.14; will-change: transform; }
+.ambient-one { width: 65%; height: 65%; left: -30%; top: -25%; background: radial-gradient(circle, rgba(255, 107, 53, 0.65), transparent 68%); animation: ambientOne 24s ease-in-out infinite; }
+.ambient-two { width: 58%; height: 58%; right: -28%; bottom: -25%; background: radial-gradient(circle, rgba(255, 107, 53, 0.42), transparent 68%); animation: ambientTwo 30s ease-in-out infinite; }
+
+@keyframes ambientOne { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(10%,8%,0) scale(1.12); } }
+@keyframes ambientTwo { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-9%,-8%,0) scale(1.1); } }
+
+.noise {
+  position: absolute; inset: -50%; z-index: 2; pointer-events: none; opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  animation: noiseMove 0.25s steps(2) infinite;
+}
+@keyframes noiseMove {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(2%,-1%); }
+  50% { transform: translate(-1%,2%); }
+  75% { transform: translate(1%,1%); }
+  100% { transform: translate(-2%,-1%); }
+}
+
+.progress { position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 100; background: rgba(255,255,255,0.06); }
+/* FIX: removed the 0.1s width transition — it was fighting the rAF-driven
+   per-frame width updates and made the bar visibly lag behind real time. */
+#progressFill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange-soft));
+  box-shadow: 0 0 12px rgba(255, 107, 53, 0.55);
+}
+
+.brand { position: absolute; top: 25px; left: 27px; z-index: 50; display: flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 800; letter-spacing: 0.22em; color: var(--ivory); opacity: 0.92; }
+.brand-symbol { position: relative; width: 15px; height: 15px; display: block; }
+.brand-symbol::before, .brand-symbol::after { content: ""; position: absolute; border-radius: 50%; }
+.brand-symbol::before { width: 11px; height: 11px; top: 0; left: 0; border: 2px solid var(--orange); }
+.brand-symbol::after { width: 5px; height: 5px; right: 0; bottom: 0; background: var(--ivory); }
+
+.scene {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 10vh 8vw; text-align: center;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: scale(1.015);
+  transition: opacity 0.7s var(--ease), transform 0.9s var(--ease), visibility 0.7s;
+}
+.scene.active { opacity: 1; visibility: visible; pointer-events: auto; transform: scale(1); }
+
+.scene h1, .scene h2, .scene h3 { letter-spacing: -0.045em; }
+.scene span, .scene strong { font-weight: inherit; }
+.scene strong { color: var(--ivory); }
+.scene em { font-style: normal; color: var(--orange); }
+
+/* SCENE 1 */
+.scene-1 { justify-content: center; }
+.scene-1 .eyebrow { position: relative; margin-bottom: 18px; font-size: 10px; font-weight: 800; letter-spacing: 0.28em; color: var(--orange); opacity: 0; transform: translateY(15px); }
+.scene-1 .eyebrow::before { content: ""; display: inline-block; width: 22px; height: 1px; margin-right: 10px; vertical-align: middle; background: var(--orange); }
+.scene-1.active .eyebrow { animation: fadeUp 0.6s var(--ease) 0.1s forwards; }
+.scene-1 h1 { max-width: 720px; font-size: clamp(38px, 10vw, 72px); font-weight: 800; line-height: 0.96; color: var(--ivory); opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(8px); }
+.scene-1.active h1 { animation: cinematicIn 0.9s var(--ease) 0.3s forwards; }
+.scene-1 h1 span { display: block; margin-top: 7px; color: var(--orange); }
+.scene-1 p { margin-top: 25px; font-size: clamp(14px, 3.5vw, 18px); color: var(--muted); letter-spacing: 0.01em; opacity: 0; transform: translateY(12px); }
+.scene-1.active p { animation: fadeUp 0.6s var(--ease) 1s forwards; }
+.floating-word { position: absolute; bottom: 13vh; font-size: 10px; font-weight: 800; letter-spacing: 0.35em; color: rgba(243, 236, 223, 0.28); opacity: 0; }
+.scene-1.active .floating-word { animation: fadeOnly 0.8s ease 1.4s forwards; }
+
+/* SCENE 2 */
+.scene-2 { flex-direction: row; gap: 8vw; padding-left: 7vw; padding-right: 7vw; text-align: left; }
+.phone {
+  position: relative; width: min(44vw, 190px); aspect-ratio: 9 / 17.5; flex-shrink: 0;
+  border-radius: 28px; padding: 10px;
+  background: linear-gradient(145deg, #1d1b18, #090908);
+  border: 1px solid rgba(243, 236, 223, 0.16);
+  box-shadow: 0 35px 80px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.025);
+  opacity: 0; transform: translateX(-25px) scale(0.94);
+  overflow: hidden; /* FIX: clip inner content so nothing spills past the rounded phone frame */
+}
+.scene-2.active .phone { animation: phoneReveal 0.8s var(--ease) 0.1s forwards; }
+.phone::before { content: ""; position: absolute; top: 8px; left: 50%; width: 30%; height: 5px; transform: translateX(-50%); border-radius: 20px; background: #000; z-index: 5; }
+.phone-top { height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 8px; color: var(--muted); }
+.profile { display: flex; align-items: center; gap: 9px; padding: 13px 5px 9px; }
+.profile-avatar {
+  width: 31px; height: 31px; border-radius: 50%; overflow: hidden; /* FIX: clip avatar image to circle */
+  background: linear-gradient(135deg, var(--orange), #7e2c14);
+  box-shadow: 0 0 18px rgba(255, 107, 53, 0.15);
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.profile strong { display: block; font-size: 10px; color: var(--ivory); }
+.profile small { display: block; margin-top: 3px; font-size: 7px; color: var(--muted); }
+.profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 7px 4px 12px; border-bottom: 1px solid var(--line); }
+.profile-stats div { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.profile-stats strong { font-size: 10px; }
+.profile-stats span { font-size: 7px; color: var(--muted); }
+.fake-posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 5px; }
+.fake-posts div {
+  aspect-ratio: 1; overflow: hidden; /* FIX: clip post thumbnails to their tile */
+  background: linear-gradient(145deg, #25221e, #12110f);
+  opacity: 0; transform: scale(0.8);
+}
+.fake-posts div img { width: 100%; height: 100%; object-fit: cover; display: block; } /* FIX: was unstyled — image rendered at natural size and overflowed the grid */
+.scene-2.active .fake-posts div { animation: tileReveal 0.45s var(--ease) forwards; }
+.scene-2.active .fake-posts div:nth-child(1) { animation-delay: 0.4s; }
+.scene-2.active .fake-posts div:nth-child(2) { animation-delay: 0.48s; }
+.scene-2.active .fake-posts div:nth-child(3) { animation-delay: 0.56s; }
+.scene-2.active .fake-posts div:nth-child(4) { animation-delay: 0.64s; }
+.scene-2.active .fake-posts div:nth-child(5) { animation-delay: 0.72s; }
+.scene-2.active .fake-posts div:nth-child(6) { animation-delay: 0.80s; }
+.scene-copy { max-width: 260px; }
+.scene-copy > span { display: block; margin-bottom: 12px; font-size: 9px; font-weight: 800; letter-spacing: 0.22em; color: var(--orange); opacity: 0; transform: translateY(12px); }
+.scene-2.active .scene-copy > span { animation: fadeUp 0.5s var(--ease) 0.55s forwards; }
+.scene-copy h2 { font-size: clamp(28px, 7vw, 46px); line-height: 0.98; font-weight: 750; color: var(--ivory); opacity: 0; transform: translateY(20px); filter: blur(5px); }
+.scene-2.active .scene-copy h2 { animation: cinematicIn 0.7s var(--ease) 0.75s forwards; }
+.scene-copy em { display: block; margin-top: 5px; }
+
+/* SCENE 3 */
+.scene-3 { align-items: flex-start; text-align: left; padding-left: 9vw; padding-right: 9vw; }
+.question { max-width: 600px; margin-bottom: 40px; }
+.question > span { display: block; margin-bottom: 15px; font-size: 9px; font-weight: 800; letter-spacing: 0.25em; color: var(--orange); opacity: 0; transform: translateY(12px); }
+.scene-3.active .question > span { animation: fadeUp 0.5s var(--ease) 0.1s forwards; }
+.question h2 { font-size: clamp(30px, 8vw, 54px); line-height: 0.98; font-weight: 750; opacity: 0; transform: translateY(20px); filter: blur(5px); }
+.scene-3.active .question h2 { animation: cinematicIn 0.8s var(--ease) 0.3s forwards; }
+.question strong { display: block; margin-top: 7px; color: var(--orange); }
+.problem-stack { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 11px; }
+.problem { display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid transparent; opacity: 0; transform: translateX(-18px); }
+.scene-3.active .problem { animation: problemIn 0.6s var(--ease) forwards; }
+.scene-3.active .problem:nth-child(1) { animation-delay: 0.8s; }
+.scene-3.active .problem:nth-child(2) { animation-delay: 1s; }
+.scene-3.active .problem:nth-child(3) { animation-delay: 1.2s; }
+.problem-icon { width: 27px; height: 27px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 107, 53, 0.35); border-radius: 50%; color: var(--orange); font-size: 15px; }
+.problem strong { display: block; font-size: 12px; font-weight: 750; color: var(--ivory); }
+.problem small { display: block; margin-top: 4px; font-size: 9px; color: var(--muted); }
+
+/* SCENE 4 */
+.scene-4 { padding: 6vh 5vw; overflow: hidden; }
+.transition-text { position: absolute; top: 11vh; z-index: 8; text-align: center; }
+.transition-text > span { display: block; margin-bottom: 10px; font-size: 9px; font-weight: 800; letter-spacing: 0.25em; color: var(--orange); }
+.transition-text h2 { font-size: clamp(27px, 7vw, 42px); line-height: 0.98; font-weight: 800; }
+.transition-text strong { display: block; color: var(--orange); }
+.browser {
+  position: relative; width: min(88vw, 430px); margin-top: 11vh; border-radius: 15px; overflow: hidden;
+  background: #10100e; border: 1px solid var(--line-strong);
+  box-shadow: 0 45px 100px rgba(0,0,0,0.72), 0 0 0 rgba(255,107,53,0);
+  opacity: 0; transform: translateY(40px) scale(0.88);
+}
+.scene-4.active .browser { animation: browserReveal 1s var(--ease) 0.35s forwards, browserGlow 2s ease 1s forwards; }
+.browser-bar { height: 30px; display: flex; align-items: center; gap: 9px; padding: 0 10px; background: #12110f; border-bottom: 1px solid var(--line); }
+.browser-dots { display: flex; gap: 4px; }
+.browser-dots i { width: 6px; height: 6px; display: block; border-radius: 50%; background: #6d655b; }
+.browser-address { flex: 1; padding: 4px 10px; border-radius: 5px; background: #090908; font-size: 7px; color: var(--muted); text-align: left; }
+.website { min-height: 260px; background: linear-gradient(145deg, #1a1815, #0d0d0c); }
+.website nav { height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--line); }
+.website nav strong { font-size: 8px; letter-spacing: 0.16em; }
+.website nav button { border: 0; padding: 7px 11px; border-radius: 5px; background: var(--orange); color: #160a05; font-size: 7px; font-weight: 800; }
+.website-hero { min-height: 218px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 25px 18px; }
+.website-copy { width: 52%; text-align: left; }
+.website-copy small { font-size: 7px; font-weight: 800; letter-spacing: 0.18em; color: var(--orange); }
+.website-copy h3 { margin-top: 9px; font-size: clamp(21px, 5vw, 29px); line-height: 0.96; font-weight: 800; }
+.website-copy h3 span { display: block; color: var(--orange); }
+.website-copy button { margin-top: 15px; padding: 9px 14px; border: 0; border-radius: 6px; background: var(--ivory); color: #11100e; font-size: 8px; font-weight: 800; }
+.hero-visual { position: relative; width: 42%; height: 150px; }
+.visual-card {
+  position: absolute; border-radius: 8px; overflow: hidden; /* FIX: clip rotated images to card bounds */
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(145deg, #373128, #171512);
+  box-shadow: 0 20px 35px rgba(0,0,0,0.35);
+}
+.visual-card img { width: 100%; height: 100%; object-fit: cover; display: block; } /* FIX: unstyled images were overflowing their (rotated) cards */
+.card-a { width: 76%; height: 76%; top: 0; right: 0; transform: rotate(5deg); }
+.card-b { width: 70%; height: 70%; bottom: 0; left: 0; transform: rotate(-7deg); background: linear-gradient(145deg, #25211c, #0e0e0d); }
+.card-c { width: 52%; height: 52%; top: 23%; left: 23%; transform: rotate(1deg); border-color: rgba(255,107,53,0.35); background: linear-gradient(145deg, var(--orange), #8d3218); }
+
+/* SCENE 5 */
+.scene-5 { justify-content: flex-start; padding-top: 13vh; }
+.section-label { display: block; margin-bottom: 14px; font-size: 9px; font-weight: 800; letter-spacing: 0.25em; color: var(--orange); opacity: 0; transform: translateY(12px); }
+.scene-5.active .section-label { animation: fadeUp 0.5s var(--ease) 0.1s forwards; }
+.scene-5 h2 { max-width: 520px; font-size: clamp(30px, 8vw, 50px); line-height: 0.98; font-weight: 800; opacity: 0; transform: translateY(20px); filter: blur(5px); }
+.scene-5.active h2 { animation: cinematicIn 0.7s var(--ease) 0.3s forwards; }
+.scene-5 h2 span { display: block; color: var(--orange); }
+.feature-grid { width: 100%; max-width: 520px; margin-top: 34px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
+.feature { min-height: 92px; padding: 16px 12px; border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(15px); }
+.feature:nth-child(odd) { border-right: 1px solid var(--line); }
+.scene-5.active .feature { animation: featureIn 0.55s var(--ease) forwards; }
+.scene-5.active .feature:nth-child(1) { animation-delay: 0.7s; }
+.scene-5.active .feature:nth-child(2) { animation-delay: 0.82s; }
+.scene-5.active .feature:nth-child(3) { animation-delay: 0.94s; }
+.scene-5.active .feature:nth-child(4) { animation-delay: 1.06s; }
+.scene-5.active .feature:nth-child(5) { animation-delay: 1.18s; }
+.scene-5.active .feature:nth-child(6) { animation-delay: 1.30s; }
+.feature-icon { margin-bottom: 9px; font-size: 16px; color: var(--orange); }
+.feature strong { display: block; font-size: 11px; font-weight: 750; }
+.feature small { display: block; margin-top: 4px; font-size: 8px; color: var(--muted); }
+
+/* SCENE 6 */
+.scene-6 { overflow: hidden; }
+.device-area { position: relative; width: 100%; height: 50vh; display: flex; align-items: center; justify-content: center; }
+.desktop-device {
+  position: absolute; width: min(70vw, 330px); height: 190px; padding: 7px; border-radius: 10px; overflow: hidden; /* FIX: clip preview boxes */
+  background: #151411; border: 1px solid var(--line-strong);
+  box-shadow: 0 35px 70px rgba(0,0,0,0.6);
+  opacity: 0; transform: translateY(-20px) scale(0.9);
+}
+.device-header { height: 13px; border-bottom: 1px solid var(--line); background: #0d0d0c; }
+.device-content { padding: 17px; }
+.line { width: 75%; height: 7px; margin-bottom: 7px; border-radius: 5px; background: #343029; }
+.line.big { width: 52%; height: 13px; background: var(--ivory); }
+.line.short { width: 45%; }
+.device-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
+.device-boxes div { height: 60px; border-radius: 6px; overflow: hidden; background: linear-gradient(145deg, #2a261f, #141310); } /* FIX: clip thumbnail images */
+.device-boxes div img { width: 100%; height: 100%; object-fit: cover; display: block; } /* FIX: unstyled images were overflowing */
+.phone-device {
+  position: absolute; width: 112px; height: 210px; padding: 8px; border-radius: 23px; overflow: hidden; /* FIX: clip to phone shape */
+  background: #12110f; border: 2px solid #35312b;
+  box-shadow: 0 35px 75px rgba(0,0,0,0.75); z-index: 5;
+  opacity: 0; transform: translateY(45px) scale(0.75);
+}
+.phone-speaker { position: absolute; top: 7px; left: 50%; width: 32px; height: 4px; transform: translateX(-50%); border-radius: 10px; background: #000; z-index: 3; }
+.mobile-content { height: 100%; padding: 22px 9px 9px; border-radius: 16px; background: linear-gradient(145deg, #27231d, #0f0f0e); }
+.mobile-brand { width: 30px; height: 5px; border-radius: 4px; background: var(--ivory); }
+.mobile-image { height: 75px; margin-top: 18px; border-radius: 7px; overflow: hidden; background: linear-gradient(145deg, var(--orange), #472015); } /* FIX: clip image */
+.mobile-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mobile-line { width: 80%; height: 5px; margin-top: 12px; border-radius: 5px; background: var(--ivory); }
+.mobile-line.short { width: 55%; margin-top: 6px; background: #6e665b; }
+.mobile-content button { width: 100%; margin-top: 17px; padding: 8px; border: 0; border-radius: 6px; background: var(--orange); color: #170b06; font-size: 8px; font-weight: 800; }
+.scene-6.active .desktop-device { animation: deviceDesktopIn 0.8s var(--ease) 0.1s forwards; }
+.scene-6.active .phone-device { animation: devicePhoneIn 0.8s var(--ease) 0.55s forwards; }
+.responsive-copy { position: absolute; bottom: 12vh; text-align: center; }
+.responsive-copy > span { display: block; margin-bottom: 12px; font-size: 9px; font-weight: 800; letter-spacing: 0.25em; color: var(--orange); opacity: 0; transform: translateY(10px); }
+.responsive-copy h2 { font-size: clamp(27px, 7vw, 42px); line-height: 0.98; font-weight: 800; opacity: 0; transform: translateY(18px); }
+.responsive-copy strong { display: block; color: var(--orange); }
+.scene-6.active .responsive-copy > span { animation: fadeUp 0.5s var(--ease) 1.1s forwards; }
+.scene-6.active .responsive-copy h2 { animation: fadeUp 0.65s var(--ease) 1.3s forwards; }
+
+/* SCENE 7 */
+.scene-7 { justify-content: center; }
+.big-message { text-align: center; }
+.big-message span { display: block; margin-bottom: 12px; font-size: 9px; font-weight: 800; letter-spacing: 0.27em; color: var(--muted); opacity: 0; }
+.scene-7.active .big-message span { animation: fadeUp 0.5s var(--ease) 0.1s forwards; }
+.big-message h2 { font-size: clamp(39px, 10vw, 67px); line-height: 0.88; font-weight: 850; letter-spacing: -0.055em; opacity: 0; transform: translateY(25px); filter: blur(7px); }
+.scene-7.active .big-message h2 { animation: cinematicIn 0.8s var(--ease) 0.3s forwards; }
+.big-message strong { display: block; margin-top: 5px; font-size: clamp(39px, 10vw, 67px); line-height: 0.9; letter-spacing: -0.055em; color: var(--orange); opacity: 0; transform: translateY(20px); }
+.scene-7.active .big-message strong { animation: cinematicIn 0.8s var(--ease) 0.6s forwards; }
+.action-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 35px; }
+.action-pills span { padding: 8px 13px; border: 1px solid var(--line-strong); border-radius: 100px; color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: 0.13em; opacity: 0; transform: translateY(10px); }
+.scene-7.active .action-pills span { animation: pillIn 0.45s var(--ease) forwards; }
+.scene-7.active .action-pills span:nth-child(1) { animation-delay: 1.1s; }
+.scene-7.active .action-pills span:nth-child(2) { animation-delay: 1.25s; }
+.scene-7.active .action-pills span:nth-child(3) { animation-delay: 1.4s; }
+
+/* SCENE 8 */
+.scene-8 { justify-content: center; padding-left: 7vw; padding-right: 7vw; }
+.final-logo { display: flex; flex-direction: column; align-items: center; opacity: 0; transform: translateY(18px); }
+.scene-8.active .final-logo { animation: finalLogoIn 0.8s var(--ease) 0.1s forwards; }
+.logo-symbol { position: relative; width: 48px; height: 48px; margin-bottom: 16px; }
+.logo-symbol span:first-child { position: absolute; width: 34px; height: 34px; top: 0; left: 0; border: 3px solid var(--orange); border-radius: 50%; }
+.logo-symbol span:last-child { position: absolute; width: 20px; height: 20px; right: 0; bottom: 0; background: var(--ivory); border-radius: 50%; }
+.final-logo h2 { font-size: clamp(35px, 9vw, 58px); font-weight: 850; letter-spacing: 0.08em; }
+.final-tag { margin-top: 13px; font-size: 12px; color: var(--muted); text-align: center; opacity: 0; transform: translateY(10px); }
+.scene-8.active .final-tag { animation: fadeUp 0.5s var(--ease) 0.75s forwards; }
+.final-divider { width: 0; height: 1px; margin: 28px 0; background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+.scene-8.active .final-divider { animation: dividerReveal 0.7s var(--ease) 1.05s forwards; }
+.scene-8 h1 { max-width: 600px; font-size: clamp(26px, 7vw, 43px); line-height: 0.96; font-weight: 800; text-align: center; opacity: 0; transform: translateY(20px); filter: blur(5px); }
+.scene-8.active h1 { animation: cinematicIn 0.75s var(--ease) 1.25s forwards; }
+.scene-8 h1 span { display: block; margin-top: 5px; color: var(--orange); }
+.dm-button {
+  display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 27px; min-width: 190px;
+  padding: 15px 21px; border: 0; border-radius: 100px;
+  background: linear-gradient(100deg, var(--orange), var(--orange-soft));
+  color: #170b06; font-size: 11px; font-weight: 850; letter-spacing: 0.08em; cursor: pointer;
+  box-shadow: 0 18px 45px rgba(255, 107, 53, 0.22);
+  opacity: 0; transform: translateY(15px) scale(0.94);
+}
+.scene-8.active .dm-button { animation: buttonReveal 0.65s var(--ease) 1.8s forwards, buttonPulse 2s ease-in-out 2.7s infinite; }
+.dm-button b { font-size: 17px; font-weight: 400; line-height: 0; }
+.final-small { position: absolute; bottom: 7vh; max-width: 80%; font-size: 8px; font-weight: 700; letter-spacing: 0.08em; color: rgba(157,146,130,0.7); text-align: center; opacity: 0; }
+.scene-8.active .final-small { animation: fadeOnly 0.6s ease 2.25s forwards; }
+
+/* CONTROLS */
+.controls { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 7px; }
+.controls button {
+  height: 34px; min-width: 34px; padding: 0 9px; display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: 1px solid rgba(243,236,223,0.12); background: rgba(243,236,223,0.045);
+  backdrop-filter: blur(12px); color: var(--ivory); font-size: 12px; cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.controls button:hover { background: rgba(243,236,223,0.10); border-color: rgba(243,236,223,0.22); transform: translateY(-1px); }
+#record { padding-left: 12px; padding-right: 12px; font-size: 8px; font-weight: 800; letter-spacing: 0.12em; color: var(--orange); }
+
+/* FIX: JS was toggling class "recording" on <body>, but this rule only
+   matched "recording-mode" — so the controls bar never actually hid when
+   you clicked REC MODE. JS below now toggles "recording-mode" to match. */
+body.recording-mode .controls { display: none; }
+body.recording-mode #ad { box-shadow: none; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeOnly { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cinematicIn { from { opacity: 0; transform: translateY(25px) scale(0.96); filter: blur(8px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+@keyframes phoneReveal { from { opacity: 0; transform: translateX(-35px) scale(0.9); filter: blur(7px); } to { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); } }
+@keyframes tileReveal { from { opacity: 0; transform: scale(0.82) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes problemIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes browserReveal { 0% { opacity: 0; transform: translateY(50px) scale(0.82) rotateX(8deg); filter: blur(10px); } 65% { opacity: 1; filter: blur(0); } 100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); } }
+@keyframes browserGlow { 0% { box-shadow: 0 45px 100px rgba(0,0,0,0.72), 0 0 0 rgba(255,107,53,0); } 35% { box-shadow: 0 45px 100px rgba(0,0,0,0.72), 0 0 55px rgba(255,107,53,0.25); } 100% { box-shadow: 0 45px 100px rgba(0,0,0,0.72), 0 0 20px rgba(255,107,53,0.04); } }
+@keyframes featureIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes deviceDesktopIn { from { opacity: 0; transform: translateY(-30px) scale(0.86); } to { opacity: 1; transform: translateY(-20px) scale(1); } }
+@keyframes devicePhoneIn { from { opacity: 0; transform: translateY(55px) scale(0.72); } to { opacity: 1; transform: translateY(35px) scale(1); } }
+@keyframes pillIn { from { opacity: 0; transform: translateY(10px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes finalLogoIn { from { opacity: 0; transform: translateY(20px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes dividerReveal { from { width: 0; } to { width: 80px; } }
+@keyframes buttonReveal { from { opacity: 0; transform: translateY(15px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes buttonPulse { 0%, 100% { box-shadow: 0 18px 45px rgba(255,107,53,0.22); } 50% { box-shadow: 0 20px 55px rgba(255,107,53,0.38); } }
+
+@media (max-width: 380px) {
+  .brand { top: 20px; left: 20px; }
+  .scene { padding-left: 7vw; padding-right: 7vw; }
+  .scene-2 { gap: 5vw; }
+  .phone { width: 40vw; }
+  .scene-copy h2 { font-size: 27px; }
+  .feature { min-height: 84px; padding: 13px 10px; }
+  .feature-icon { margin-bottom: 6px; }
+  .desktop-device { width: 74vw; height: 170px; }
+  .phone-device { width: 102px; height: 195px; }
+}
+
+@media (min-width: 700px) {
+  .brand { top: 30px; left: 32px; font-size: 12px; }
+  .scene-1 h1 { font-size: 68px; }
+  .scene-2 { gap: 50px; }
+  .phone { width: 180px; }
+  .scene-copy h2 { font-size: 43px; }
+  .question h2 { font-size: 50px; }
+  .browser { width: 420px; }
+  .scene-5 h2 { font-size: 48px; }
+  .big-message h2, .big-message strong { font-size: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div id="ad">
 
-  <!-- =====================================================
-       PREMIUM BACKGROUND
-  ====================================================== -->
-
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
-
   <div class="noise"></div>
 
-
-  <!-- =====================================================
-       TOP PROGRESS
-  ====================================================== -->
-
-  <div class="progress">
-    <div id="progressFill"></div>
-  </div>
-
-
-  <!-- =====================================================
-       BRAND
-  ====================================================== -->
+  <div class="progress"><div id="progressFill"></div></div>
 
   <div class="brand">
-
-    <span class="brand-symbol">
-      <span></span>
-      <span></span>
-    </span>
-
+    <span class="brand-symbol"><span></span><span></span></span>
     <span>TEKZIKO</span>
-
   </div>
 
-
-  <!-- =====================================================
-       SCENE 1 — HOOK
-  ====================================================== -->
-
+  <!-- SCENE 1 — HOOK -->
   <section class="scene scene-1 active">
-
-    <div class="eyebrow">
-      FOR BUSINESS OWNERS
-    </div>
-
-
-    <h1>
-
-      YOUR BUSINESS
-
-      <span>
-        DESERVES MORE.
-      </span>
-
-    </h1>
-
-
-    <p>
-      Not just another Instagram page.
-    </p>
-
-
-    <div class="floating-word">
-      WEBSITE
-    </div>
-
+    <div class="eyebrow">FOR BUSINESS OWNERS</div>
+    <h1>YOUR BUSINESS <span>DESERVES MORE.</span></h1>
+    <p>Not just another Instagram page.</p>
+    <div class="floating-word">WEBSITE</div>
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 2 — ATTENTION
-  ====================================================== -->
-
+  <!-- SCENE 2 — ATTENTION -->
   <section class="scene scene-2">
-
-
     <div class="phone">
-
-      <!-- Phone top -->
-
-      <div class="phone-top">
-
-        <span>
-          9:41
-        </span>
-
-        <span>
-          ● ● ●
-        </span>
-
-      </div>
-
-
-      <!-- Profile -->
-
+      <div class="phone-top"><span>9:41</span><span>● ● ●</span></div>
       <div class="profile">
-
         <div class="profile-avatar">
-
-          <img
-            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=200&q=80"
-            alt="Business"
-          >
-
+          <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=200&q=80" alt="Business">
         </div>
-
-
         <div>
-
-          <strong>
-            yourbusiness
-          </strong>
-
-          <small>
-            Beauty • Fashion • Local Business
-          </small>
-
+          <strong>yourbusiness</strong>
+          <small>Beauty • Fashion • Local Business</small>
         </div>
-
       </div>
-
-
-      <!-- Stats -->
-
       <div class="profile-stats">
-
-        <div>
-
-          <strong>
-            128
-          </strong>
-
-          <span>
-            Posts
-          </span>
-
-        </div>
-
-
-        <div>
-
-          <strong>
-            2.4K
-          </strong>
-
-          <span>
-            Followers
-          </span>
-
-        </div>
-
-
-        <div>
-
-          <strong>
-            312
-          </strong>
-
-          <span>
-            Following
-          </span>
-
-        </div>
-
+        <div><strong>128</strong><span>Posts</span></div>
+        <div><strong>2.4K</strong><span>Followers</span></div>
+        <div><strong>312</strong><span>Following</span></div>
       </div>
-
-
-      <!-- Premium image grid -->
-
       <div class="fake-posts">
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=500&q=80"
-            alt="Boutique"
-          >
-        </div>
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=80"
-            alt="Beauty"
-          >
-        </div>
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80"
-            alt="Business"
-          >
-        </div>
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=500&q=80"
-            alt="Office"
-          >
-        </div>
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=500&q=80"
-            alt="Workspace"
-          >
-        </div>
-
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=500&q=80"
-            alt="Team"
-          >
-        </div>
-
+        <div><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=500&q=80" alt="Boutique"></div>
+        <div><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=80" alt="Beauty"></div>
+        <div><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80" alt="Business"></div>
+        <div><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=500&q=80" alt="Office"></div>
+        <div><img src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=500&q=80" alt="Workspace"></div>
+        <div><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=500&q=80" alt="Team"></div>
       </div>
-
     </div>
-
-
-    <!-- Scene copy -->
-
     <div class="scene-copy">
-
-      <span>
-        INSTAGRAM IS GREAT
-      </span>
-
-
-      <h2>
-
-        But attention
-
-        <em>
-          isn't enough.
-        </em>
-
-      </h2>
-
+      <span>INSTAGRAM IS GREAT</span>
+      <h2>But attention <em>isn't enough.</em></h2>
     </div>
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 3 — THE PROBLEM
-  ====================================================== -->
-
+  <!-- SCENE 3 — THE PROBLEM -->
   <section class="scene scene-3">
-
-
     <div class="question">
-
-      <span>
-        THE REAL QUESTION
-      </span>
-
-
-      <h2>
-
-        Where does your
-
-        <strong>
-          customer go next?
-        </strong>
-
-      </h2>
-
+      <span>THE REAL QUESTION</span>
+      <h2>Where does your <strong>customer go next?</strong></h2>
     </div>
-
-
     <div class="problem-stack">
-
-
       <div class="problem">
-
-        <span class="problem-icon">
-          ×
-        </span>
-
-        <div>
-
-          <strong>
-            No clear services
-          </strong>
-
-          <small>
-            Customers have to search for information.
-          </small>
-
-        </div>
-
+        <span class="problem-icon">×</span>
+        <div><strong>No clear services</strong><small>Customers have to search for information.</small></div>
       </div>
-
-
       <div class="problem">
-
-        <span class="problem-icon">
-          ×
-        </span>
-
-        <div>
-
-          <strong>
-            No central place to convert
-          </strong>
-
-          <small>
-            Your social feed isn't your storefront.
-          </small>
-
-        </div>
-
+        <span class="problem-icon">×</span>
+        <div><strong>No central place to convert</strong><small>Your social feed isn't your storefront.</small></div>
       </div>
-
-
       <div class="problem">
-
-        <span class="problem-icon">
-          ×
-        </span>
-
-        <div>
-
-          <strong>
-            Missed enquiries
-          </strong>
-
-          <small>
-            Potential customers can simply move on.
-          </small>
-
-        </div>
-
+        <span class="problem-icon">×</span>
+        <div><strong>Missed enquiries</strong><small>Potential customers can simply move on.</small></div>
       </div>
-
-
     </div>
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 4 — WEBSITE TRANSFORMATION
-  ====================================================== -->
-
+  <!-- SCENE 4 — WEBSITE TRANSFORMATION -->
   <section class="scene scene-4">
-
-
     <div class="transition-text">
-
-      <span>
-        SO WE BUILD
-      </span>
-
-
-      <h2>
-
-        A WEBSITE
-
-        <strong>
-          THAT WORKS.
-        </strong>
-
-      </h2>
-
+      <span>SO WE BUILD</span>
+      <h2>A WEBSITE <strong>THAT WORKS.</strong></h2>
     </div>
-
-
-    <!-- Browser -->
-
     <div class="browser">
-
-
       <div class="browser-bar">
-
-
-        <div class="browser-dots">
-
-          <i></i>
-          <i></i>
-          <i></i>
-
-        </div>
-
-
-        <div class="browser-address">
-
-          yourbusiness.com
-
-        </div>
-
+        <div class="browser-dots"><i></i><i></i><i></i></div>
+        <div class="browser-address">yourbusiness.com</div>
       </div>
-
-
-      <!-- Website preview -->
-
       <div class="website">
-
-
-        <nav>
-
-          <strong>
-            YOUR BRAND
-          </strong>
-
-
-          <button>
-            Book Now
-          </button>
-
-        </nav>
-
-
+        <nav><strong>YOUR BRAND</strong><button>Book Now</button></nav>
         <div class="website-hero">
-
-
           <div class="website-copy">
-
-
-            <small>
-              YOUR BUSINESS • ONLINE
-            </small>
-
-
-            <h3>
-
-              Make your
-
-              <br>
-
-              business
-
-              <br>
-
-              <span>
-                stand out.
-              </span>
-
-            </h3>
-
-
-            <button>
-              Get Started
-            </button>
-
+            <small>YOUR BUSINESS • ONLINE</small>
+            <h3>Make your<br>business<br><span>stand out.</span></h3>
+            <button>Get Started</button>
           </div>
-
-
-          <!-- REAL PREMIUM VISUAL -->
-
           <div class="hero-visual">
-
-
             <div class="visual-card card-a">
-
-              <img
-                src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85"
-                alt="Premium business"
-              >
-
+              <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85" alt="Premium business">
             </div>
-
-
             <div class="visual-card card-b">
-
-              <img
-                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85"
-                alt="Luxury store"
-              >
-
+              <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85" alt="Luxury store">
             </div>
-
-
             <div class="visual-card card-c">
-
-              <img
-                src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85"
-                alt="Modern workspace"
-              >
-
+              <img src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85" alt="Modern workspace">
             </div>
-
-
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 5 — FEATURES
-  ====================================================== -->
-
+  <!-- SCENE 5 — FEATURES -->
   <section class="scene scene-5">
-
-
-    <span class="section-label">
-      BUILT FOR YOUR BUSINESS
-    </span>
-
-
-    <h2>
-
-      Everything your
-
-      <span>
-        customer needs.
-      </span>
-
-    </h2>
-
-
+    <span class="section-label">BUILT FOR YOUR BUSINESS</span>
+    <h2>Everything your <span>customer needs.</span></h2>
     <div class="feature-grid">
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ✦
-        </div>
-
-        <strong>
-          Modern Design
-        </strong>
-
-        <small>
-          Built around your brand.
-        </small>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ⌁
-        </div>
-
-        <strong>
-          Mobile First
-        </strong>
-
-        <small>
-          Beautiful on every screen.
-        </small>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ↗
-        </div>
-
-        <strong>
-          Google Ready
-        </strong>
-
-        <small>
-          Designed for visibility.
-        </small>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ◉
-        </div>
-
-        <strong>
-          WhatsApp
-        </strong>
-
-        <small>
-          Turn visitors into chats.
-        </small>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          □
-        </div>
-
-        <strong>
-          Bookings
-        </strong>
-
-        <small>
-          Make enquiries easier.
-        </small>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ⚡
-        </div>
-
-        <strong>
-          Fast
-        </strong>
-
-        <small>
-          Quick and lightweight.
-        </small>
-
-      </div>
-
-
+      <div class="feature"><div class="feature-icon">✦</div><strong>Modern Design</strong><small>Built around your brand.</small></div>
+      <div class="feature"><div class="feature-icon">⌁</div><strong>Mobile First</strong><small>Beautiful on every screen.</small></div>
+      <div class="feature"><div class="feature-icon">↗</div><strong>Google Ready</strong><small>Designed for visibility.</small></div>
+      <div class="feature"><div class="feature-icon">◉</div><strong>WhatsApp</strong><small>Turn visitors into chats.</small></div>
+      <div class="feature"><div class="feature-icon">□</div><strong>Bookings</strong><small>Make enquiries easier.</small></div>
+      <div class="feature"><div class="feature-icon">⚡</div><strong>Fast</strong><small>Quick and lightweight.</small></div>
     </div>
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 6 — EVERY SCREEN
-  ====================================================== -->
-
+  <!-- SCENE 6 — EVERY SCREEN -->
   <section class="scene scene-6">
-
-
     <div class="device-area">
-
-
-      <!-- Desktop -->
-
       <div class="desktop-device">
-
-
         <div class="device-header"></div>
-
-
         <div class="device-content">
-
-
           <div class="line big"></div>
-
           <div class="line"></div>
-
           <div class="line short"></div>
-
-
           <div class="device-boxes">
-
-            <div>
-
-              <img
-                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80"
-                alt="Business"
-              >
-
-            </div>
-
-            <div>
-
-              <img
-                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80"
-                alt="Store"
-              >
-
-            </div>
-
-            <div>
-
-              <img
-                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=600&q=80"
-                alt="Team"
-              >
-
-            </div>
-
+            <div><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80" alt="Business"></div>
+            <div><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80" alt="Store"></div>
+            <div><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=600&q=80" alt="Team"></div>
           </div>
-
         </div>
-
       </div>
-
-
-
-      <!-- Phone -->
-
       <div class="phone-device">
-
-
         <div class="phone-speaker"></div>
-
-
         <div class="mobile-content">
-
-
           <div class="mobile-brand"></div>
-
-
           <div class="mobile-image">
-
-            <img
-              src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=700&q=80"
-              alt="Business website"
-            >
-
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=700&q=80" alt="Business website">
           </div>
-
-
           <div class="mobile-line"></div>
-
           <div class="mobile-line short"></div>
-
-
-          <button>
-            Book Now
-          </button>
-
-
+          <button>Book Now</button>
         </div>
-
       </div>
-
-
     </div>
-
-
     <div class="responsive-copy">
-
-      <span>
-        ONE WEBSITE
-      </span>
-
-
-      <h2>
-
-        Every screen.
-
-        <strong>
-          Every customer.
-        </strong>
-
-      </h2>
-
+      <span>ONE WEBSITE</span>
+      <h2>Every screen. <strong>Every customer.</strong></h2>
     </div>
-
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 7 — CONVERSION
-  ====================================================== -->
-
+  <!-- SCENE 7 — CONVERSION -->
   <section class="scene scene-7">
-
-
     <div class="big-message">
-
-
-      <span>
-        DON'T JUST GET
-      </span>
-
-
-      <h2>
-        ATTENTION.
-      </h2>
-
-
-      <strong>
-        GET ACTION.
-      </strong>
-
-
+      <span>DON'T JUST GET</span>
+      <h2>ATTENTION.</h2>
+      <strong>GET ACTION.</strong>
     </div>
-
-
     <div class="action-pills">
-
-      <span>
-        ENQUIRIES
-      </span>
-
-      <span>
-        BOOKINGS
-      </span>
-
-      <span>
-        ORDERS
-      </span>
-
+      <span>ENQUIRIES</span>
+      <span>BOOKINGS</span>
+      <span>ORDERS</span>
     </div>
-
-
   </section>
 
-
-
-  <!-- =====================================================
-       SCENE 8 — FINAL BRAND
-  ====================================================== -->
-
+  <!-- SCENE 8 — FINAL BRAND -->
   <section class="scene scene-8">
-
-
     <div class="final-logo">
-
-
-      <div class="logo-symbol">
-
-        <span></span>
-
-        <span></span>
-
-      </div>
-
-
-      <h2>
-        TEKZIKO
-      </h2>
-
+      <div class="logo-symbol"><span></span><span></span></div>
+      <h2>TEKZIKO</h2>
     </div>
-
-
-    <p class="final-tag">
-
-      Modern websites for ambitious businesses.
-
-    </p>
-
-
+    <p class="final-tag">Modern websites for ambitious businesses.</p>
     <div class="final-divider"></div>
-
-
-    <h1>
-
-      READY TO TAKE
-
-      <span>
-        YOUR BUSINESS ONLINE?
-      </span>
-
-    </h1>
-
-
-    <button class="dm-button">
-
-      <span>
-        DM “WEBSITE”
-      </span>
-
-      <b>
-        →
-      </b>
-
-    </button>
-
-
-    <p class="final-small">
-
-      Restaurants • Salons • Gyms • Boutiques • Local Businesses
-
-    </p>
-
-
+    <h1>READY TO TAKE <span>YOUR BUSINESS ONLINE?</span></h1>
+    <button class="dm-button"><span>DM "WEBSITE"</span><b>→</b></button>
+    <p class="final-small">Restaurants • Salons • Gyms • Boutiques • Local Businesses</p>
   </section>
-
-
-
-  <!-- =====================================================
-       CONTROLS
-  ====================================================== -->
 
   <div class="controls">
-
-    <button id="restart">
-      ↻
-    </button>
-
-    <button id="mute">
-      🔊
-    </button>
-
-    <button id="record">
-      REC MODE
-    </button>
-
+    <button id="restart">↻</button>
+    <button id="mute">🔊</button>
+    <button id="record">REC MODE</button>
   </div>
-
 
 </div>
 
+<script>
+"use strict";
 
-<!-- =====================================================
-     SCRIPT
-====================================================== -->
+/* =========================================================
+   TEKZIKO — Instagram SaaS Ad Controller
+========================================================= */
 
-<script src="script.js"></script>
+const TOTAL_DURATION = 30000;
+
+const scenes = [
+  { id: 1, start: 0, end: 3500 },
+  { id: 2, start: 3500, end: 7000 },
+  { id: 3, start: 7000, end: 10500 },
+  { id: 4, start: 10500, end: 14500 },
+  { id: 5, start: 14500, end: 19000 },
+  { id: 6, start: 19000, end: 22500 },
+  { id: 7, start: 22500, end: 26000 },
+  { id: 8, start: 26000, end: 30000 }
+];
+
+const ad = document.getElementById("ad");
+const progressFill = document.getElementById("progressFill");
+const restartButton = document.getElementById("restart");
+const muteButton = document.getElementById("mute");
+const recordButton = document.getElementById("record");
+
+let startTime = null;
+let animationFrame = null;
+let currentScene = null;
+let muted = false;
+let recordingMode = false;
+let audioContext = null;
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+function initAudio() {
+  if (!audioContext) {
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (error) {
+      audioContext = null;
+    }
+  }
+  if (audioContext && audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+}
+
+function sound(type) {
+  if (muted || !audioContext) return;
+
+  const now = audioContext.currentTime;
+  const gain = audioContext.createGain();
+  gain.connect(audioContext.destination);
+
+  if (type === "click") {
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(800, now);
+    oscillator.frequency.exponentialRampToValueAtTime(350, now + .08);
+    gain.gain.setValueAtTime(.001, now);
+    gain.gain.exponentialRampToValueAtTime(.08, now + .01);
+    gain.gain.exponentialRampToValueAtTime(.001, now + .1);
+    oscillator.connect(gain);
+    oscillator.start(now);
+    oscillator.stop(now + .11);
+  }
+
+  if (type === "whoosh") {
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(160, now);
+    oscillator.frequency.exponentialRampToValueAtTime(1000, now + .25);
+    gain.gain.setValueAtTime(.001, now);
+    gain.gain.exponentialRampToValueAtTime(.05, now + .04);
+    gain.gain.exponentialRampToValueAtTime(.001, now + .3);
+    oscillator.connect(gain);
+    oscillator.start(now);
+    oscillator.stop(now + .31);
+  }
+
+  if (type === "impact") {
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(120, now);
+    oscillator.frequency.exponentialRampToValueAtTime(45, now + .3);
+    gain.gain.setValueAtTime(.001, now);
+    gain.gain.exponentialRampToValueAtTime(.15, now + .02);
+    gain.gain.exponentialRampToValueAtTime(.001, now + .4);
+    oscillator.connect(gain);
+    oscillator.start(now);
+    oscillator.stop(now + .41);
+  }
+}
+
+/* =========================================================
+   SCENE MANAGEMENT
+========================================================= */
+
+function getScene(elapsed) {
+  return (
+    scenes.find(scene => elapsed >= scene.start && elapsed < scene.end)
+    || scenes[scenes.length - 1]
+  );
+}
+
+function activateScene(scene) {
+  if (!scene || currentScene === scene.id) return;
+
+  currentScene = scene.id;
+
+  document.querySelectorAll(".scene").forEach(element => {
+    element.classList.remove("active");
+  });
+
+  const target = document.querySelector(`.scene-${scene.id}`);
+  if (target) target.classList.add("active");
+}
+
+/* =========================================================
+   SOUND CUES
+========================================================= */
+
+const soundCues = [
+  { time: 0, sound: "whoosh" },
+  { time: 3500, sound: "click" },
+  { time: 7000, sound: "whoosh" },
+  { time: 10500, sound: "impact" },
+  { time: 14500, sound: "click" },
+  { time: 19000, sound: "whoosh" },
+  { time: 22500, sound: "whoosh" },
+  { time: 26000, sound: "impact" }
+];
+
+let firedSounds = new Set();
+
+function checkSounds(elapsed) {
+  soundCues.forEach(cue => {
+    if (elapsed >= cue.time && !firedSounds.has(cue.time)) {
+      firedSounds.add(cue.time);
+      sound(cue.sound);
+    }
+  });
+}
+
+/* =========================================================
+   MAIN LOOP
+   FIX: previously there were two near-identical loop functions
+   (animationLoop and run) — only "run" was ever actually used,
+   the other was dead code left over from an earlier draft.
+   Consolidated into a single loop below.
+========================================================= */
+
+function run(timestamp) {
+  if (startTime === null) startTime = timestamp;
+
+  const elapsed = timestamp - startTime;
+  const progress = Math.min(100, (elapsed / TOTAL_DURATION) * 100);
+
+  progressFill.style.width = `${progress}%`;
+
+  activateScene(getScene(elapsed));
+  checkSounds(elapsed);
+
+  if (elapsed < TOTAL_DURATION) {
+    animationFrame = requestAnimationFrame(run);
+  } else {
+    progressFill.style.width = "100%";
+  }
+}
+
+/* =========================================================
+   PLAY
+========================================================= */
+
+function play() {
+  cancelAnimationFrame(animationFrame);
+
+  startTime = null;
+  currentScene = null;
+  firedSounds.clear();
+  progressFill.style.width = "0%";
+
+  document.querySelectorAll(".scene").forEach(scene => {
+    scene.classList.remove("active");
+  });
+
+  const firstScene = document.querySelector(".scene-1");
+  if (firstScene) firstScene.classList.add("active");
+
+  currentScene = 1;
+
+  animationFrame = requestAnimationFrame(run);
+}
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+restartButton.addEventListener("click", () => {
+  initAudio();
+  play();
+});
+
+/* =========================================================
+   MUTE
+========================================================= */
+
+muteButton.addEventListener("click", () => {
+  muted = !muted;
+  muteButton.textContent = muted ? "🔇" : "🔊";
+});
+
+/* =========================================================
+   RECORDING MODE
+   FIX: was toggling class "recording" but the CSS rule was
+   written for "recording-mode", so clicking the button did
+   nothing visible. Now both sides agree on "recording-mode",
+   so clicking REC MODE actually hides the controls bar.
+========================================================= */
+
+recordButton.addEventListener("click", () => {
+  recordingMode = !recordingMode;
+  document.body.classList.toggle("recording-mode", recordingMode);
+  recordButton.textContent = recordingMode ? "EXIT" : "REC MODE";
+});
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+window.addEventListener("keydown", event => {
+  const key = event.key.toLowerCase();
+
+  if (key === "r") {
+    initAudio();
+    play();
+  }
+
+  if (key === "m") {
+    muteButton.click();
+  }
+
+  if (key === " ") {
+    initAudio();
+    play();
+  }
+
+  if (key === "f") {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+});
+
+/* =========================================================
+   AUDIO UNLOCK
+========================================================= */
+
+["click", "keydown", "touchstart"].forEach(eventName => {
+  window.addEventListener(eventName, initAudio, { once: true });
+});
+
+/* =========================================================
+   START
+========================================================= */
+
+window.addEventListener("load", () => {
+  document.body.setAttribute("data-ready", "true");
+  play();
+});
+</script>
 
 </body>
 </html>
