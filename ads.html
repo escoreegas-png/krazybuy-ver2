@@ -1,748 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>TEKZIKO — Your Next Customer Is Already Looking</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TEKZIKO — Business Website Ad</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
 </head>
 
 <body>
 
-<div id="stage">
+<div id="ad">
 
-  <div class="ambient-glow">
-    <span></span>
-    <span></span>
-    <span></span>
+  <!-- =====================================================
+       PREMIUM BACKGROUND
+  ====================================================== -->
+
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <div class="noise"></div>
+
+
+  <!-- =====================================================
+       TOP PROGRESS
+  ====================================================== -->
+
+  <div class="progress">
+    <div id="progressFill"></div>
   </div>
 
-  <div class="grain"></div>
 
-  <div class="timeline-bar">
-    <div class="timeline-fill" id="timelineFill"></div>
+  <!-- =====================================================
+       BRAND
+  ====================================================== -->
+
+  <div class="brand">
+
+    <span class="brand-symbol">
+      <span></span>
+      <span></span>
+    </span>
+
+    <span>TEKZIKO</span>
+
   </div>
 
-  <div class="corner-mark">TEKZIKO</div>
+
+  <!-- =====================================================
+       SCENE 1 — HOOK
+  ====================================================== -->
+
+  <section class="scene scene-1 active">
+
+    <div class="eyebrow">
+      FOR BUSINESS OWNERS
+    </div>
 
 
-  <!-- ============================================================
-       SCENE 1 — HOOK (0–2.5s)
-       ============================================================ -->
+    <h1>
 
-  <section class="scene" id="scene1">
+      YOUR BUSINESS
 
-    <div class="hook-wrap">
-
-      <span class="hook-spark">
-        <i></i>
-        <i></i>
-        <i></i>
+      <span>
+        DESERVES MORE.
       </span>
 
-      <h1 class="hook-line line-a">
-        YOUR BUSINESS
-      </h1>
-
-      <h1 class="hook-line line-b">
-        DESERVES
-        <span class="accent gradient-text">MORE.</span>
-      </h1>
-
-      <p class="hook-sub">
-        More than a profile.
-      </p>
-
-    </div>
-
-  </section>
+    </h1>
 
 
-  <!-- ============================================================
-       SCENE 2 — THE OLD WAY (2.5–5.5s)
-       ============================================================ -->
-
-  <section class="scene" id="scene2">
-
-    <div class="phone-mock" id="phoneMock">
-
-      <div class="phone-notch"></div>
-
-      <div class="phone-screen">
-
-        <div class="ig-header">
-
-          <div class="ig-avatar"></div>
-
-          <div class="ig-headtext">
-
-            <div class="ig-name">
-              bloomstudio
-            </div>
-
-            <div class="ig-sub">
-              Hair · Beauty · Makeup
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="ig-stats">
-
-          <div>
-            <b>186</b>
-            <span>Posts</span>
-          </div>
-
-          <div>
-            <b>2.8K</b>
-            <span>Followers</span>
-          </div>
-
-          <div>
-            <b>312</b>
-            <span>Following</span>
-          </div>
-
-        </div>
-
-
-        <div class="ig-grid">
-
-          <div class="ig-post"></div>
-          <div class="ig-post"></div>
-          <div class="ig-post"></div>
-
-          <div class="ig-post"></div>
-          <div class="ig-post"></div>
-          <div class="ig-post"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <p class="line-under gap1">
-      2.8K followers. 186 posts.
+    <p>
+      Not just another Instagram page.
     </p>
 
-    <p class="line-under gap2 accent-text">
-      BUT WHERE DO THEY BOOK?
-    </p>
 
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 3 — THE GAP (5.5–8.5s)
-       ============================================================ -->
-
-  <section class="scene" id="scene3">
-
-    <div class="search-bar" id="searchBar">
-
-      <svg
-        viewBox="0 0 24 24"
-        class="search-icon"
-      >
-        <circle
-          cx="10"
-          cy="10"
-          r="6.5"
-        />
-
-        <path d="M20 20l-5-5"/>
-      </svg>
-
-      <span
-        class="search-text"
-        id="searchText"
-      >
-        best salon near me
-      </span>
-
-      <span class="search-caret"></span>
-
-    </div>
-
-
-    <div class="result-card" id="resultCard">
-
-      <div class="result-avatar"></div>
-
-      <div class="result-text">
-
-        <div class="result-name">
-          bloomstudio
-        </div>
-
-        <div class="result-sub">
-          Instagram profile
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="gap-list" id="gapList">
-
-      <span class="gap-item">
-        No booking.
-      </span>
-
-      <span class="gap-item">
-        No services.
-      </span>
-
-      <span class="gap-item">
-        No pricing.
-      </span>
-
-    </div>
-
-
-    <p class="statement-final">
-      ATTENTION
-      <span class="accent">≠</span>
-      CONVERSION
-    </p>
-
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 4 — THE TRANSFORMATION (8.5–13.5s)
-       ============================================================ -->
-
-  <section class="scene" id="scene4">
-
-    <div class="transform-stage">
-
-
-      <!-- Instagram mini phone -->
-
-      <div
-        class="phone-mock mini push-side"
-        id="phoneMini"
-      >
-
-        <div class="phone-screen small">
-
-          <div class="ig-header">
-
-            <div class="ig-avatar small"></div>
-
-            <div class="ig-headtext">
-
-              <div class="ig-name">
-                bloomstudio
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="ig-grid">
-
-            <div class="ig-post"></div>
-            <div class="ig-post"></div>
-            <div class="ig-post"></div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================================================
-           WEBSITE BROWSER
-           ======================================================== -->
-
-      <div
-        class="browser-frame"
-        id="browserFrame"
-      >
-
-        <div class="browser-chrome">
-
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-
-          <div class="browser-url">
-            bloomstudio.com
-          </div>
-
-        </div>
-
-
-        <div class="site-photo photo-frame">
-
-          <img
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=85"
-            alt="Modern hair salon interior"
-          >
-
-
-          <div class="site-photo-text">
-
-            <span class="site-eyebrow">
-              HAIR &amp; MAKEUP STUDIO
-            </span>
-
-            <span class="site-headline">
-              Feel confident.<br>
-              Look your best.
-            </span>
-
-
-            <div class="site-hero-buttons">
-
-              <span
-                class="site-cta-btn"
-                id="bookBtn"
-              >
-                Book Appointment
-              </span>
-
-              <span class="site-cta-outline">
-                WhatsApp Us
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- BOOKING PANEL -->
-
-        <div
-          class="booking-modal"
-          id="bookingModal"
-        >
-
-          <div class="booking-title">
-            Book Appointment
-          </div>
-
-
-          <div class="booking-slots">
-
-            <span class="slot">
-              10:00
-            </span>
-
-            <span
-              class="slot"
-              id="slotSelected"
-            >
-              11:30
-            </span>
-
-            <span class="slot">
-              2:00
-            </span>
-
-            <span class="slot">
-              4:30
-            </span>
-
-          </div>
-
-
-          <div
-            class="booking-confirm"
-            id="confirmBtn"
-          >
-            Confirm Booking
-          </div>
-
-        </div>
-
-
-        <!-- FAKE CURSOR -->
-
-        <div
-          class="fake-cursor"
-          id="fakeCursor"
-        >
-
-          <svg viewBox="0 0 24 24">
-
-            <path d="M4 2l14 8-6 1.5L10 18z"/>
-
-          </svg>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div
-      class="toast"
-      id="toast"
-    >
-      Booking confirmed ✓
+    <div class="floating-word">
+      WEBSITE
     </div>
 
   </section>
 
 
-  <!-- ============================================================
-       SCENE 5 — BUSINESS MONTAGE (13.5–17.5s)
-       ============================================================ -->
 
-  <section class="scene" id="scene5">
+  <!-- =====================================================
+       SCENE 2 — ATTENTION
+  ====================================================== -->
 
-    <div class="montage-stage">
+  <section class="scene scene-2">
 
 
-      <!-- SALON -->
+    <div class="phone">
 
-      <div
-        class="montage-card mc1 photo-frame"
-      >
+      <!-- Phone top -->
 
-        <img
-          src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=85"
-          alt="Modern hair salon"
-        >
-
-
-        <div class="montage-text">
-
-          <span class="montage-eyebrow">
-            FOR SALONS
-          </span>
-
-          <span class="montage-line">
-            TURN VISITORS<br>
-            INTO APPOINTMENTS.
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- RESTAURANT -->
-
-      <div
-        class="montage-card mc2 photo-frame"
-      >
-
-        <img
-          src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=85"
-          alt="Modern restaurant interior"
-        >
-
-
-        <div class="montage-text">
-
-          <span class="montage-eyebrow">
-            FOR RESTAURANTS
-          </span>
-
-          <span class="montage-line">
-            TURN CURIOSITY<br>
-            INTO RESERVATIONS.
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- GYM -->
-
-      <div
-        class="montage-card mc3 photo-frame"
-      >
-
-        <img
-          src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1400&q=85"
-          alt="Modern gym"
-        >
-
-
-        <div class="montage-text">
-
-          <span class="montage-eyebrow">
-            FOR GYMS
-          </span>
-
-          <span class="montage-line">
-            TURN INTEREST<br>
-            INTO MEMBERS.
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- BOUTIQUE -->
-
-      <div
-        class="montage-card mc4 photo-frame"
-      >
-
-        <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1400&q=85"
-          alt="Fashion boutique interior"
-        >
-
-
-        <div class="montage-text">
-
-          <span class="montage-eyebrow">
-            FOR LOCAL BUSINESS
-          </span>
-
-          <span class="montage-line">
-            TURN SEARCHES<br>
-            INTO CUSTOMERS.
-          </span>
-
-        </div>
-
-      </div>
-
-
-    </div>
-
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 6 — EVERY SCREEN (17.5–20.5s)
-       ============================================================ -->
-
-  <section class="scene" id="scene6">
-
-    <div class="device-stage">
-
-
-      <!-- DESKTOP -->
-
-      <div
-        class="device desktop-device"
-        id="deviceDesktop"
-      >
-
-        <div class="device-screen photo-frame">
-
-          <img
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=85"
-            alt="Salon website on desktop"
-          >
-
-        </div>
-
-      </div>
-
-
-      <!-- TABLET -->
-
-      <div
-        class="device tablet-device"
-        id="deviceTablet"
-      >
-
-        <div class="device-screen photo-frame">
-
-          <img
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=85"
-            alt="Salon website on tablet"
-          >
-
-        </div>
-
-      </div>
-
-
-      <!-- PHONE -->
-
-      <div
-        class="device phone-device"
-        id="devicePhone"
-      >
-
-        <div class="device-notch"></div>
-
-        <div class="device-screen photo-frame">
-
-          <img
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=900&q=85"
-            alt="Salon website on mobile"
-          >
-
-        </div>
-
-      </div>
-
-
-    </div>
-
-
-    <p class="statement-mobile word-1">
-      ONE BUSINESS.
-    </p>
-
-    <p class="statement-mobile word-2 accent-text">
-      EVERY SCREEN.
-    </p>
-
-    <p class="statement-mobile word-3 small">
-      Fast. Responsive. Built for mobile.
-    </p>
-
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 7 — CAPABILITIES (20.5–24s)
-       ============================================================ -->
-
-  <section class="scene" id="scene7">
-
-    <div class="capability-wrap">
-
-      <h2 class="capability-center">
-
-        BUILT TO<br>
-
-        <span class="accent gradient-text">
-          WORK.
-        </span>
-
-      </h2>
-
-
-      <span class="orbit-label ol1">
-        FAST
-      </span>
-
-      <span class="orbit-label ol2">
-        SEO
-      </span>
-
-      <span class="orbit-label ol3">
-        BOOKING
-      </span>
-
-      <span class="orbit-label ol4">
-        WHATSAPP
-      </span>
-
-      <span class="orbit-label ol5">
-        MOBILE
-      </span>
-
-    </div>
-
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 8 — BRAND REVEAL (24–27s)
-       ============================================================ -->
-
-  <section class="scene" id="scene8">
-
-    <div class="reveal-wrap">
-
-      <span class="reveal-type-wrap">
-
-        <span class="reveal-word gradient-text">
-          TEKZIKO
-        </span>
-
-        <span class="reveal-caret"></span>
-
-      </span>
-
-
-      <div
-        class="reveal-underline"
-        id="revealUnderline"
-      ></div>
-
-
-      <p class="reveal-tag">
-        Modern websites for ambitious businesses.
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- ============================================================
-       SCENE 9 — FINAL CTA (27–30s)
-       ============================================================ -->
-
-  <section class="scene" id="scene9">
-
-    <div class="cta-wrap">
-
-
-      <h2 class="cta-headline">
-
-        YOUR NEXT CUSTOMER<br>
-
-        IS ALREADY
-
-        <span class="accent gradient-text">
-          LOOKING.
-        </span>
-
-      </h2>
-
-
-      <p class="cta-sub">
-        Give them somewhere to go.
-      </p>
-
-
-      <button
-        class="cta-button"
-        id="ctaButton"
-      >
+      <div class="phone-top">
 
         <span>
-          BUILD MY WEBSITE
+          9:41
         </span>
 
-        <svg viewBox="0 0 24 24">
+        <span>
+          ● ● ●
+        </span>
 
-          <path
-            d="M5 12h14M13 6l6 6-6 6"
-          />
-
-        </svg>
-
-      </button>
+      </div>
 
 
-      <p class="cta-audience">
-        Restaurants · Salons · Gyms · Boutiques · Local Businesses
-      </p>
+      <!-- Profile -->
+
+      <div class="profile">
+
+        <div class="profile-avatar">
+
+          <img
+            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=200&q=80"
+            alt="Business"
+          >
+
+        </div>
 
 
-      <div class="cta-footer">
-        TEKZIKO
+        <div>
+
+          <strong>
+            yourbusiness
+          </strong>
+
+          <small>
+            Beauty • Fashion • Local Business
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- Stats -->
+
+      <div class="profile-stats">
+
+        <div>
+
+          <strong>
+            128
+          </strong>
+
+          <span>
+            Posts
+          </span>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            2.4K
+          </strong>
+
+          <span>
+            Followers
+          </span>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            312
+          </strong>
+
+          <span>
+            Following
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Premium image grid -->
+
+      <div class="fake-posts">
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=500&q=80"
+            alt="Boutique"
+          >
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=80"
+            alt="Beauty"
+          >
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80"
+            alt="Business"
+          >
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=500&q=80"
+            alt="Office"
+          >
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=500&q=80"
+            alt="Workspace"
+          >
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=500&q=80"
+            alt="Team"
+          >
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Scene copy -->
+
+    <div class="scene-copy">
+
+      <span>
+        INSTAGRAM IS GREAT
+      </span>
+
+
+      <h2>
+
+        But attention
+
+        <em>
+          isn't enough.
+        </em>
+
+      </h2>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       SCENE 3 — THE PROBLEM
+  ====================================================== -->
+
+  <section class="scene scene-3">
+
+
+    <div class="question">
+
+      <span>
+        THE REAL QUESTION
+      </span>
+
+
+      <h2>
+
+        Where does your
+
+        <strong>
+          customer go next?
+        </strong>
+
+      </h2>
+
+    </div>
+
+
+    <div class="problem-stack">
+
+
+      <div class="problem">
+
+        <span class="problem-icon">
+          ×
+        </span>
+
+        <div>
+
+          <strong>
+            No clear services
+          </strong>
+
+          <small>
+            Customers have to search for information.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="problem">
+
+        <span class="problem-icon">
+          ×
+        </span>
+
+        <div>
+
+          <strong>
+            No central place to convert
+          </strong>
+
+          <small>
+            Your social feed isn't your storefront.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="problem">
+
+        <span class="problem-icon">
+          ×
+        </span>
+
+        <div>
+
+          <strong>
+            Missed enquiries
+          </strong>
+
+          <small>
+            Potential customers can simply move on.
+          </small>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       SCENE 4 — WEBSITE TRANSFORMATION
+  ====================================================== -->
+
+  <section class="scene scene-4">
+
+
+    <div class="transition-text">
+
+      <span>
+        SO WE BUILD
+      </span>
+
+
+      <h2>
+
+        A WEBSITE
+
+        <strong>
+          THAT WORKS.
+        </strong>
+
+      </h2>
+
+    </div>
+
+
+    <!-- Browser -->
+
+    <div class="browser">
+
+
+      <div class="browser-bar">
+
+
+        <div class="browser-dots">
+
+          <i></i>
+          <i></i>
+          <i></i>
+
+        </div>
+
+
+        <div class="browser-address">
+
+          yourbusiness.com
+
+        </div>
+
+      </div>
+
+
+      <!-- Website preview -->
+
+      <div class="website">
+
+
+        <nav>
+
+          <strong>
+            YOUR BRAND
+          </strong>
+
+
+          <button>
+            Book Now
+          </button>
+
+        </nav>
+
+
+        <div class="website-hero">
+
+
+          <div class="website-copy">
+
+
+            <small>
+              YOUR BUSINESS • ONLINE
+            </small>
+
+
+            <h3>
+
+              Make your
+
+              <br>
+
+              business
+
+              <br>
+
+              <span>
+                stand out.
+              </span>
+
+            </h3>
+
+
+            <button>
+              Get Started
+            </button>
+
+          </div>
+
+
+          <!-- REAL PREMIUM VISUAL -->
+
+          <div class="hero-visual">
+
+
+            <div class="visual-card card-a">
+
+              <img
+                src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85"
+                alt="Premium business"
+              >
+
+            </div>
+
+
+            <div class="visual-card card-b">
+
+              <img
+                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85"
+                alt="Luxury store"
+              >
+
+            </div>
+
+
+            <div class="visual-card card-c">
+
+              <img
+                src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85"
+                alt="Modern workspace"
+              >
+
+            </div>
+
+
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -750,44 +518,408 @@
   </section>
 
 
-  <!-- ============================================================
-       CONTROLS
-       ============================================================ -->
 
-  <div
-    class="controls"
-    id="controls"
-  >
+  <!-- =====================================================
+       SCENE 5 — FEATURES
+  ====================================================== -->
 
-    <button
-      id="btnRestart"
-      title="Restart (R)"
-    >
-      ⟲
+  <section class="scene scene-5">
+
+
+    <span class="section-label">
+      BUILT FOR YOUR BUSINESS
+    </span>
+
+
+    <h2>
+
+      Everything your
+
+      <span>
+        customer needs.
+      </span>
+
+    </h2>
+
+
+    <div class="feature-grid">
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          ✦
+        </div>
+
+        <strong>
+          Modern Design
+        </strong>
+
+        <small>
+          Built around your brand.
+        </small>
+
+      </div>
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          ⌁
+        </div>
+
+        <strong>
+          Mobile First
+        </strong>
+
+        <small>
+          Beautiful on every screen.
+        </small>
+
+      </div>
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          ↗
+        </div>
+
+        <strong>
+          Google Ready
+        </strong>
+
+        <small>
+          Designed for visibility.
+        </small>
+
+      </div>
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          ◉
+        </div>
+
+        <strong>
+          WhatsApp
+        </strong>
+
+        <small>
+          Turn visitors into chats.
+        </small>
+
+      </div>
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          □
+        </div>
+
+        <strong>
+          Bookings
+        </strong>
+
+        <small>
+          Make enquiries easier.
+        </small>
+
+      </div>
+
+
+      <div class="feature">
+
+        <div class="feature-icon">
+          ⚡
+        </div>
+
+        <strong>
+          Fast
+        </strong>
+
+        <small>
+          Quick and lightweight.
+        </small>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       SCENE 6 — EVERY SCREEN
+  ====================================================== -->
+
+  <section class="scene scene-6">
+
+
+    <div class="device-area">
+
+
+      <!-- Desktop -->
+
+      <div class="desktop-device">
+
+
+        <div class="device-header"></div>
+
+
+        <div class="device-content">
+
+
+          <div class="line big"></div>
+
+          <div class="line"></div>
+
+          <div class="line short"></div>
+
+
+          <div class="device-boxes">
+
+            <div>
+
+              <img
+                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80"
+                alt="Business"
+              >
+
+            </div>
+
+            <div>
+
+              <img
+                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80"
+                alt="Store"
+              >
+
+            </div>
+
+            <div>
+
+              <img
+                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=600&q=80"
+                alt="Team"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Phone -->
+
+      <div class="phone-device">
+
+
+        <div class="phone-speaker"></div>
+
+
+        <div class="mobile-content">
+
+
+          <div class="mobile-brand"></div>
+
+
+          <div class="mobile-image">
+
+            <img
+              src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=700&q=80"
+              alt="Business website"
+            >
+
+          </div>
+
+
+          <div class="mobile-line"></div>
+
+          <div class="mobile-line short"></div>
+
+
+          <button>
+            Book Now
+          </button>
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="responsive-copy">
+
+      <span>
+        ONE WEBSITE
+      </span>
+
+
+      <h2>
+
+        Every screen.
+
+        <strong>
+          Every customer.
+        </strong>
+
+      </h2>
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- =====================================================
+       SCENE 7 — CONVERSION
+  ====================================================== -->
+
+  <section class="scene scene-7">
+
+
+    <div class="big-message">
+
+
+      <span>
+        DON'T JUST GET
+      </span>
+
+
+      <h2>
+        ATTENTION.
+      </h2>
+
+
+      <strong>
+        GET ACTION.
+      </strong>
+
+
+    </div>
+
+
+    <div class="action-pills">
+
+      <span>
+        ENQUIRIES
+      </span>
+
+      <span>
+        BOOKINGS
+      </span>
+
+      <span>
+        ORDERS
+      </span>
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- =====================================================
+       SCENE 8 — FINAL BRAND
+  ====================================================== -->
+
+  <section class="scene scene-8">
+
+
+    <div class="final-logo">
+
+
+      <div class="logo-symbol">
+
+        <span></span>
+
+        <span></span>
+
+      </div>
+
+
+      <h2>
+        TEKZIKO
+      </h2>
+
+    </div>
+
+
+    <p class="final-tag">
+
+      Modern websites for ambitious businesses.
+
+    </p>
+
+
+    <div class="final-divider"></div>
+
+
+    <h1>
+
+      READY TO TAKE
+
+      <span>
+        YOUR BUSINESS ONLINE?
+      </span>
+
+    </h1>
+
+
+    <button class="dm-button">
+
+      <span>
+        DM “WEBSITE”
+      </span>
+
+      <b>
+        →
+      </b>
+
     </button>
 
 
-    <button
-      id="btnMute"
-      title="Mute/Unmute (M)"
-    >
+    <p class="final-small">
+
+      Restaurants • Salons • Gyms • Boutiques • Local Businesses
+
+    </p>
+
+
+  </section>
+
+
+
+  <!-- =====================================================
+       CONTROLS
+  ====================================================== -->
+
+  <div class="controls">
+
+    <button id="restart">
+      ↻
+    </button>
+
+    <button id="mute">
       🔊
     </button>
 
-
-    <button
-      id="btnFullscreen"
-      title="Fullscreen (F)"
-    >
-      ⛶
-    </button>
-
-
-    <button
-      id="btnRecord"
-      title="Toggle Recording Mode"
-    >
-      ● REC MODE
+    <button id="record">
+      REC MODE
     </button>
 
   </div>
@@ -795,6 +927,10 @@
 
 </div>
 
+
+<!-- =====================================================
+     SCRIPT
+====================================================== -->
 
 <script src="script.js"></script>
 
