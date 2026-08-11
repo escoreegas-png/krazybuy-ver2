@@ -1,193 +1,711 @@
-/* ============================================================
-   TEKZIKO V4 — ad timeline controller
-   ============================================================ */
+"use strict";
 
-(function () {
-  "use strict";
+/* =========================================================
+   TEKZIKO — Instagram SaaS Ad Controller
+========================================================= */
 
-  const TOTAL_DURATION = 30000; // ms
+const TOTAL_DURATION = 30000;
 
-  const SCENES = [
-    { id: 1, start: 0,     end: 2500  },
-    { id: 2, start: 2500,  end: 5500  },
-    { id: 3, start: 5500,  end: 8500  },
-    { id: 4, start: 8500,  end: 13500 },
-    { id: 5, start: 13500, end: 17500 },
-    { id: 6, start: 17500, end: 20500 },
-    { id: 7, start: 20500, end: 24000 },
-    { id: 8, start: 24000, end: 27000 },
-    { id: 9, start: 27000, end: 30000 }
-  ];
+const scenes = [
+  {
+    id: 1,
+    start: 0,
+    end: 3500
+  },
+  {
+    id: 2,
+    start: 3500,
+    end: 7000
+  },
+  {
+    id: 3,
+    start: 7000,
+    end: 10500
+  },
+  {
+    id: 4,
+    start: 10500,
+    end: 14500
+  },
+  {
+    id: 5,
+    start: 14500,
+    end: 19000
+  },
+  {
+    id: 6,
+    start: 19000,
+    end: 22500
+  },
+  {
+    id: 7,
+    start: 22500,
+    end: 26000
+  },
+  {
+    id: 8,
+    start: 26000,
+    end: 30000
+  }
+];
 
-  const body = document.body;
-  const sceneEls = {};
-  SCENES.forEach(s => { sceneEls[s.id] = document.getElementById("scene" + s.id); });
 
-  const timelineFill = document.getElementById("timelineFill");
-  const btnRestart = document.getElementById("btnRestart");
-  const btnMute = document.getElementById("btnMute");
-  const btnFullscreen = document.getElementById("btnFullscreen");
-  const btnRecord = document.getElementById("btnRecord");
-  const ctaButton = document.getElementById("ctaButton");
+const ad = document.getElementById("ad");
 
-  let startTime = null;
-  let rafId = null;
-  let currentSceneId = null;
-  let muted = false;
+const progressFill =
+  document.getElementById("progressFill");
 
-  /* ---------------- WebAudio synth SFX ---------------- */
-  let actx = null;
-  function ensureAudio() {
-    if (!actx) {
-      try { actx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch (e) { actx = null; }
+const restartButton =
+  document.getElementById("restart");
+
+const muteButton =
+  document.getElementById("mute");
+
+const recordButton =
+  document.getElementById("record");
+
+
+let startTime = null;
+
+let animationFrame = null;
+
+let currentScene = null;
+
+let muted = false;
+
+let recordingMode = false;
+
+let audioContext = null;
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+function initAudio() {
+
+  if (!audioContext) {
+
+    try {
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    } catch (error) {
+
+      audioContext = null;
+
     }
-    if (actx && actx.state === "suspended") actx.resume();
+
   }
 
-  function tone(freq, type, t0, dur, peak) {
-    const osc = actx.createOscillator();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t0);
-    const g = actx.createGain();
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(peak, t0 + Math.min(0.03, dur * 0.2));
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    osc.connect(g).connect(actx.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.02);
+  if (
+    audioContext &&
+    audioContext.state === "suspended"
+  ) {
+
+    audioContext.resume();
+
   }
 
-  function noiseBurst(t0, dur, peak, filterType, freqFrom, freqTo) {
-    const bufferSize = Math.floor(actx.sampleRate * dur);
-    const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-    const src = actx.createBufferSource();
-    src.buffer = buffer;
-    const filter = actx.createBiquadFilter();
-    filter.type = filterType || "bandpass";
-    filter.frequency.setValueAtTime(freqFrom, t0);
-    if (freqTo) filter.frequency.exponentialRampToValueAtTime(freqTo, t0 + dur);
-    const g = actx.createGain();
-    g.gain.setValueAtTime(0.001, t0);
-    g.gain.exponentialRampToValueAtTime(peak, t0 + dur * 0.2);
-    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    src.connect(filter).connect(g).connect(actx.destination);
-    src.start(t0);
-    src.stop(t0 + dur);
+}
+
+
+function sound(type) {
+
+  if (muted || !audioContext) {
+    return;
   }
 
-  function sfx(kind) {
-    if (muted || !actx) return;
-    const t0 = actx.currentTime;
-    switch (kind) {
-      case "impact-soft": noiseBurst(t0, 0.32, 0.13, "bandpass", 400, 1700); break;
-      case "text-impact": tone(170, "sine", t0, 0.24, 0.22); noiseBurst(t0, 0.1, 0.09, "highpass", 3000); break;
-      case "key-tick": tone(1200, "square", t0, 0.03, 0.03); break;
-      case "click": tone(760, "sine", t0, 0.08, 0.13); break;
-      case "browser-open": noiseBurst(t0, 0.4, 0.15, "bandpass", 300, 2200); tone(200, "sine", t0 + 0.05, 0.3, 0.11); break;
-      case "confirm": [523.25, 659.25, 783.99].forEach((f, i) => tone(f, "sine", t0 + i * 0.06, 0.5, 0.1)); break;
-      case "swipe": noiseBurst(t0, 0.16, 0.07, "highpass", 1500); break;
-      case "reveal": [349.2, 440, 587.3].forEach((f, i) => tone(f, "sine", t0 + i * 0.09, 0.9, 0.09)); break;
-      case "final": [440, 554.4, 659.25, 880].forEach((f, i) => tone(f, "sine", t0 + i * 0.05, 1.0, 0.09)); break;
-    }
+  const now =
+    audioContext.currentTime;
+
+
+  const gain =
+    audioContext.createGain();
+
+  gain.connect(
+    audioContext.destination
+  );
+
+
+  if (type === "click") {
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.setValueAtTime(
+      800,
+      now
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+      350,
+      now + .08
+    );
+
+    gain.gain.setValueAtTime(
+      .001,
+      now
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .08,
+      now + .01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      now + .1
+    );
+
+    oscillator.connect(gain);
+
+    oscillator.start(now);
+
+    oscillator.stop(now + .11);
+
   }
 
-  const SOUND_CUES = [
-    { time: 0,     kind: "text-impact" },
-    { time: 2500,  kind: "impact-soft" },
-    { time: 5500,  kind: "impact-soft" },
-    { time: 5900,  kind: "key-tick" },
-    { time: 6100,  kind: "key-tick" },
-    { time: 6300,  kind: "key-tick" },
-    { time: 6500,  kind: "key-tick" },
-    { time: 8500,  kind: "impact-soft" },
-    { time: 9050,  kind: "browser-open" },
-    { time: 10450, kind: "click" },
-    { time: 12070, kind: "click" },
-    { time: 12250, kind: "confirm" },
-    { time: 13500, kind: "swipe" },
-    { time: 14500, kind: "swipe" },
-    { time: 15500, kind: "swipe" },
-    { time: 16500, kind: "swipe" },
-    { time: 17500, kind: "impact-soft" },
-    { time: 20500, kind: "impact-soft" },
-    { time: 24000, kind: "reveal" },
-    { time: 27000, kind: "final" }
-  ];
-  let firedCues = new Set();
 
-  function setScene(id) {
-    if (id === currentSceneId) return;
-    currentSceneId = id;
-    Object.values(sceneEls).forEach(el => el && el.classList.remove("active"));
-    if (sceneEls[id]) sceneEls[id].classList.add("active");
-    body.setAttribute("data-scene", String(id));
+  if (type === "whoosh") {
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    oscillator.type = "triangle";
+
+    oscillator.frequency.setValueAtTime(
+      160,
+      now
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+      1000,
+      now + .25
+    );
+
+    gain.gain.setValueAtTime(
+      .001,
+      now
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .05,
+      now + .04
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      now + .3
+    );
+
+    oscillator.connect(gain);
+
+    oscillator.start(now);
+
+    oscillator.stop(now + .31);
+
   }
 
-  function tick(ts) {
-    if (startTime === null) startTime = ts;
-    const elapsed = ts - startTime;
 
-    const pct = Math.min(100, (elapsed / TOTAL_DURATION) * 100);
-    timelineFill.style.width = pct + "%";
+  if (type === "impact") {
 
-    const scene = SCENES.find(s => elapsed >= s.start && elapsed < s.end) || SCENES[SCENES.length - 1];
-    setScene(scene.id);
+    const oscillator =
+      audioContext.createOscillator();
 
-    SOUND_CUES.forEach(cue => {
-      if (!firedCues.has(cue.time) && elapsed >= cue.time) {
-        firedCues.add(cue.time);
-        sfx(cue.kind);
-      }
+    oscillator.type = "sine";
+
+    oscillator.frequency.setValueAtTime(
+      120,
+      now
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+      45,
+      now + .3
+    );
+
+    gain.gain.setValueAtTime(
+      .001,
+      now
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .15,
+      now + .02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      now + .4
+    );
+
+    oscillator.connect(gain);
+
+    oscillator.start(now);
+
+    oscillator.stop(now + .41);
+
+  }
+
+}
+
+
+/* =========================================================
+   SCENE MANAGEMENT
+========================================================= */
+
+function getScene(elapsed) {
+
+  return (
+    scenes.find(
+      scene =>
+        elapsed >= scene.start &&
+        elapsed < scene.end
+    )
+    ||
+    scenes[scenes.length - 1]
+  );
+
+}
+
+
+function activateScene(scene) {
+
+  if (
+    !scene ||
+    currentScene === scene.id
+  ) {
+
+    return;
+
+  }
+
+  currentScene = scene.id;
+
+
+  document
+    .querySelectorAll(".scene")
+    .forEach(element => {
+
+      element.classList.remove(
+        "active"
+      );
+
     });
 
-    if (elapsed < TOTAL_DURATION) {
-      rafId = requestAnimationFrame(tick);
+
+  const target =
+    document.querySelector(
+      `.scene-${scene.id}`
+    );
+
+
+  if (target) {
+
+    target.classList.add(
+      "active"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+function animationLoop(timestamp) {
+
+  if (startTime === null) {
+
+    startTime = timestamp;
+
+  }
+
+
+  const elapsed =
+    timestamp - startTime;
+
+
+  const progress =
+    Math.min(
+      100,
+      (elapsed / TOTAL_DURATION) * 100
+    );
+
+
+  progressFill.style.width =
+    `${progress}%`;
+
+
+  const scene =
+    getScene(elapsed);
+
+
+  activateScene(scene);
+
+
+  if (elapsed < TOTAL_DURATION) {
+
+    animationFrame =
+      requestAnimationFrame(
+        animationLoop
+      );
+
+  } else {
+
+    progressFill.style.width =
+      "100%";
+
+  }
+
+}
+
+
+/* =========================================================
+   SOUND CUES
+========================================================= */
+
+const soundCues = [
+
+  {
+    time: 0,
+    sound: "whoosh"
+  },
+
+  {
+    time: 3500,
+    sound: "click"
+  },
+
+  {
+    time: 7000,
+    sound: "whoosh"
+  },
+
+  {
+    time: 10500,
+    sound: "impact"
+  },
+
+  {
+    time: 14500,
+    sound: "click"
+  },
+
+  {
+    time: 19000,
+    sound: "whoosh"
+  },
+
+  {
+    time: 22500,
+    sound: "whoosh"
+  },
+
+  {
+    time: 26000,
+    sound: "impact"
+  }
+
+];
+
+
+let firedSounds =
+  new Set();
+
+
+function checkSounds(elapsed) {
+
+  soundCues.forEach(cue => {
+
+    if (
+      elapsed >= cue.time &&
+      !firedSounds.has(cue.time)
+    ) {
+
+      firedSounds.add(
+        cue.time
+      );
+
+      sound(cue.sound);
+
     }
+
+  });
+
+}
+
+
+/* =========================================================
+   MAIN LOOP WITH SOUND
+========================================================= */
+
+function run(timestamp) {
+
+  if (startTime === null) {
+
+    startTime = timestamp;
+
   }
 
-  function play() {
-    cancelAnimationFrame(rafId);
-    startTime = null;
-    currentSceneId = null;
-    firedCues = new Set();
-    timelineFill.style.width = "0%";
-    ensureAudio();
-    rafId = requestAnimationFrame(tick);
+
+  const elapsed =
+    timestamp - startTime;
+
+
+  const progress =
+    Math.min(
+      100,
+      elapsed / TOTAL_DURATION * 100
+    );
+
+
+  progressFill.style.width =
+    `${progress}%`;
+
+
+  activateScene(
+    getScene(elapsed)
+  );
+
+
+  checkSounds(elapsed);
+
+
+  if (
+    elapsed < TOTAL_DURATION
+  ) {
+
+    animationFrame =
+      requestAnimationFrame(
+        run
+      );
+
   }
 
-  function restart() { play(); }
+}
 
-  btnRestart.addEventListener("click", () => { ensureAudio(); restart(); });
-  btnMute.addEventListener("click", () => { muted = !muted; btnMute.textContent = muted ? "🔇" : "🔊"; });
-  btnFullscreen.addEventListener("click", () => {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-    else document.exitFullscreen();
-  });
 
-  let recordingMode = false;
-  btnRecord.addEventListener("click", () => {
-    recordingMode = !recordingMode;
-    body.classList.toggle("recording-mode", recordingMode);
-  });
+/* =========================================================
+   PLAY
+========================================================= */
 
-  ctaButton.addEventListener("click", () => { sfx("click"); });
+function play() {
 
-  window.addEventListener("keydown", (e) => {
-    const key = e.key.toLowerCase();
-    if (key === "r") { ensureAudio(); restart(); }
-    if (key === "f") { btnFullscreen.click(); }
-    if (key === "m") { btnMute.click(); }
-  });
+  cancelAnimationFrame(
+    animationFrame
+  );
 
-  ["click", "keydown", "touchstart"].forEach(evt => {
-    window.addEventListener(evt, ensureAudio, { once: true });
-  });
+  startTime = null;
 
-  window.addEventListener("load", () => {
-    body.setAttribute("data-scene", "1");
+  currentScene = null;
+
+  firedSounds.clear();
+
+  progressFill.style.width =
+    "0%";
+
+
+  document
+    .querySelectorAll(".scene")
+    .forEach(scene => {
+
+      scene.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  const firstScene =
+    document.querySelector(
+      ".scene-1"
+    );
+
+  if (firstScene) {
+
+    firstScene.classList.add(
+      "active"
+    );
+
+  }
+
+
+  currentScene = 1;
+
+
+  animationFrame =
+    requestAnimationFrame(
+      run
+    );
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+restartButton.addEventListener(
+  "click",
+  () => {
+
+    initAudio();
+
     play();
-  });
-})();
+
+  }
+);
+
+
+/* =========================================================
+   MUTE
+========================================================= */
+
+muteButton.addEventListener(
+  "click",
+  () => {
+
+    muted = !muted;
+
+    muteButton.textContent =
+      muted ? "🔇" : "🔊";
+
+  }
+);
+
+
+/* =========================================================
+   RECORDING MODE
+========================================================= */
+
+recordButton.addEventListener(
+  "click",
+  () => {
+
+    recordingMode =
+      !recordingMode;
+
+    document.body.classList.toggle(
+      "recording",
+      recordingMode
+    );
+
+    recordButton.textContent =
+      recordingMode
+        ? "EXIT"
+        : "REC MODE";
+
+  }
+);
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+window.addEventListener(
+  "keydown",
+  event => {
+
+    const key =
+      event.key.toLowerCase();
+
+
+    if (key === "r") {
+
+      initAudio();
+
+      play();
+
+    }
+
+
+    if (key === "m") {
+
+      muteButton.click();
+
+    }
+
+
+    if (key === " ") {
+
+      initAudio();
+
+      play();
+
+    }
+
+
+    if (key === "f") {
+
+      if (
+        !document.fullscreenElement
+      ) {
+
+        document.documentElement
+          .requestFullscreen()
+          .catch(() => {});
+
+      } else {
+
+        document
+          .exitFullscreen()
+          .catch(() => {});
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   AUDIO UNLOCK
+========================================================= */
+
+[
+  "click",
+  "keydown",
+  "touchstart"
+].forEach(eventName => {
+
+  window.addEventListener(
+    eventName,
+    initAudio,
+    {
+      once: true
+    }
+  );
+
+});
+
+
+/* =========================================================
+   START
+========================================================= */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    document.body
+      .setAttribute(
+        "data-ready",
+        "true"
+      );
+
+    play();
+
+  }
+);
