@@ -1,166 +1,27 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#2b1b14">
-  <meta name="description" content="Wobz document workspace — fast PDF, document and image tools.">
-  <link rel="icon" type="image/png" href="/images/logo.png">
-  <link rel="apple-touch-icon" href="/images/logo.png">
-  <link rel="stylesheet" href="/style.css">
-  <title>Wobz — Document Workspace</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6eee7">
+<meta name="description" content="KrazyBuy — premium all-in-one document and file workspace.">
+<title>KrazyBuy — Document Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <img src="/images/logo.png" alt="Wobz logo">
-        <div><strong>Wobz</strong><span>Document Workspace</span></div>
-      </div>
-
-      <nav class="nav" aria-label="Workspace navigation">
-        <div class="nav-label">Workspace</div>
-        <a class="nav-item active" href="#dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
-
-        <div class="nav-label">PDF</div>
-        <a class="nav-item" href="#pdf-organize"><span class="nav-icon">▤</span><span>Organize PDF</span></a>
-        <a class="nav-item" href="#pdf-edit"><span class="nav-icon">✎</span><span>Edit PDF</span></a>
-        <a class="nav-item" href="#pdf-image"><span class="nav-icon">▧</span><span>PDF → Images</span></a>
-        <a class="nav-item" href="#images-pdf"><span class="nav-icon">▥</span><span>Images → PDF</span></a>
-        <a class="nav-item" href="#pdf-compress"><span class="nav-icon">⇣</span><span>Compress PDF</span></a>
-        <a class="nav-item" href="#pdf-protect"><span class="nav-icon">⌑</span><span>Protect PDF</span></a>
-
-        <div class="nav-label">Documents</div>
-        <a class="nav-item" href="#doc-edit"><span class="nav-icon">W</span><span>Edit DOCX</span></a>
-        <a class="nav-item" href="#doc-create"><span class="nav-icon">＋</span><span>Create DOCX</span></a>
-        <a class="nav-item" href="#doc-pdf"><span class="nav-icon">↳</span><span>DOCX → PDF</span></a>
-
-        <div class="nav-label">PowerPoint</div>
-        <a class="nav-item" href="#ppt-edit"><span class="nav-icon">P</span><span>Edit PPTX</span></a>
-        <a class="nav-item" href="#ppt-pdf"><span class="nav-icon">↳</span><span>PPTX → PDF</span></a>
-
-        <div class="nav-label">Images & Files</div>
-        <a class="nav-item" href="#img-edit"><span class="nav-icon">◈</span><span>Image Editor</span></a>
-        <a class="nav-item" href="#img-convert"><span class="nav-icon">⇄</span><span>Convert Image</span></a>
-        <a class="nav-item" href="#zip-create"><span class="nav-icon">▣</span><span>Files → ZIP</span></a>
-      </nav>
-
-      <div class="sidebar-foot">
-        <span class="online-dot"></span>
-        <div><b>Backend connected</b><small>Render API</small></div>
-      </div>
-    </aside>
-
-    <div class="main">
-      <header class="topbar">
-        <button class="icon-btn mobile-menu" id="menu" aria-label="Open navigation">☰</button>
-        <div class="mobile-brand"><img src="/images/logo.png" alt=""> Wobz</div>
-        <div class="top-spacer"></div>
-        <div class="server-status" id="status"><i></i><span>Checking backend…</span></div>
-        <button class="avatar" title="Workspace">W</button>
-      </header>
-
-      <main class="content" id="dashboard">
-        <section class="hero">
-          <div class="hero-copy">
-            <span class="eyebrow">WOBZ WORKSPACE · V1</span>
-            <h1>Every document tool.<br><em>One workspace.</em></h1>
-            <p>Work with PDFs, documents, presentations and images from one clean, fast workspace.</p>
-            <div class="hero-actions">
-              <a class="btn primary" href="#pdf-image">Open PDF tools <span>→</span></a>
-              <a class="btn ghost" href="#tools">Explore tools</a>
-            </div>
-            <div class="trust-row">
-              <span>✓ Secure processing</span>
-              <span>✓ Mobile ready</span>
-              <span>✓ Render backend</span>
-            </div>
-          </div>
-          <div class="hero-card">
-            <div class="hero-glow"></div>
-            <span class="hero-card-label">WORKSPACE STATUS</span>
-            <strong id="heroStatus">Connecting…</strong>
-            <p>Frontend on Vercel · API on Render</p>
-            <div class="stats">
-              <div><b>PDF</b><small>Tools</small></div>
-              <div><b>DOC</b><small>Tools</small></div>
-              <div><b>IMG</b><small>Tools</small></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section" id="tools">
-          <div class="section-head">
-            <div><span class="eyebrow">TOOLS</span><h2>Choose a workspace</h2></div>
-            <span class="pill">Orange edition</span>
-          </div>
-
-          <div class="tool-grid">
-            <a class="tool-card featured" href="#pdf-image"><div class="tool-icon">▧</div><h3>PDF → Images</h3><p>Render every PDF page and download an organized ZIP.</p><span class="tool-link">Open tool →</span></a>
-            <a class="tool-card" href="#pdf-organize"><div class="tool-icon">▤</div><h3>Organize PDF</h3><p>Prepare pages for reorder, remove and rotate workflows.</p><span class="tool-link">Open tool →</span></a>
-            <a class="tool-card" href="#pdf-edit"><div class="tool-icon">✎</div><h3>Edit PDF</h3><p>PDF editing foundation with page and text operations.</p><span class="tool-link">Open tool →</span></a>
-            <a class="tool-card" href="#doc-edit"><div class="tool-icon">W</div><h3>Document tools</h3><p>DOCX creation, editing and conversion workflows.</p><span class="tool-link">Open tool →</span></a>
-            <a class="tool-card" href="#ppt-edit"><div class="tool-icon">P</div><h3>PowerPoint tools</h3><p>Presentation editing and conversion workflows.</p><span class="tool-link">Open tool →</span></a>
-            <a class="tool-card" href="#img-edit"><div class="tool-icon">◈</div><h3>Image tools</h3><p>Edit, convert, resize, compress and transform images.</p><span class="tool-link">Open tool →</span></a>
-          </div>
-        </section>
-
-        <section class="workspace-panel" id="pdf-image">
-          <div class="panel-head">
-            <div><span class="eyebrow">PDF TOOL</span><h2>PDF → All Images</h2><p>Upload a PDF, render every page and receive one ZIP containing the images.</p></div>
-            <span class="pill success" id="pageState">Ready</span>
-          </div>
-          <form id="pdfForm">
-            <label class="dropzone" id="dropzone" for="pdfFile">
-              <input type="file" id="pdfFile" accept=".pdf,application/pdf" required>
-              <div class="upload-icon">↑</div>
-              <strong>Drop your PDF here</strong>
-              <span>or click to browse · PDF only</span>
-              <b id="fileName">No file selected</b>
-            </label>
-            <div class="controls">
-              <label class="field"><span>Output</span><select id="pdfFormat"><option value="png">PNG</option><option value="jpg">JPG</option></select></label>
-              <button class="btn primary" type="submit" id="renderBtn">Render all pages <span>→</span></button>
-            </div>
-          </form>
-          <div class="progress" id="progress" hidden><i></i></div>
-          <div class="message" id="message"></div>
-        </section>
-
-        <section class="workspace-panel compact" id="health-panel">
-          <div class="panel-head">
-            <div><span class="eyebrow">SYSTEM</span><h2>Production health</h2><p>Live status from the Render backend.</p></div>
-            <button class="btn small" id="refreshHealth">Refresh</button>
-          </div>
-          <pre id="health">Loading…</pre>
-        </section>
-
-        <section class="placeholder-grid" id="pdf-organize">
-          <article class="mini-panel" id="pdf-edit"><span>PDF</span><h3>Organize & Edit</h3><p>The backend is ready for these routes. This Vercel frontend keeps the workspace shell ready while we wire each editor screen.</p></article>
-          <article class="mini-panel" id="doc-edit"><span>DOCX</span><h3>Documents</h3><p>DOCX creation, editing and PDF conversion can be connected to the existing Render API.</p></article>
-          <article class="mini-panel" id="ppt-edit"><span>PPTX</span><h3>Presentations</h3><p>PowerPoint tools are available in the backend and can be added screen-by-screen.</p></article>
-          <article class="mini-panel" id="img-edit"><span>IMAGE</span><h3>Image tools</h3><p>Image editing, conversion, resizing, compression and transformations are available in the backend.</p></article>
-          <article class="mini-panel" id="images-pdf"><span>PDF</span><h3>Images → PDF</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="pdf-compress"><span>PDF</span><h3>Compress & Protect</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="ppt-pdf"><span>PPTX</span><h3>PPTX → PDF</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="img-convert"><span>IMAGE</span><h3>Convert Image</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="zip-create"><span>FILES</span><h3>Files → ZIP</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="doc-create"><span>DOCX</span><h3>Create DOCX</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="doc-pdf"><span>DOCX</span><h3>DOCX → PDF</h3><p>Ready for the next frontend tool screen.</p></article>
-          <article class="mini-panel" id="pdf-protect"><span>PDF</span><h3>Protect PDF</h3><p>Ready for the next frontend tool screen.</p></article>
-        </section>
-      </main>
-    </div>
-  </div>
-
-  <div class="mobile-nav">
-    <a href="#dashboard">⌂<span>Home</span></a>
-    <a href="#tools">▦<span>Tools</span></a>
-    <a class="active" href="#pdf-image">PDF<span>Images</span></a>
-    <a href="#health-panel">✓<span>Status</span></a>
-  </div>
-
-  <div class="toast" id="toast"></div>
-  <script src="/app.js"></script>
+<a class="skip-link" href="#workspace">Skip to workspace</a>
+<div id="app" class="boot">
+  <div class="boot-mark">K</div>
+  <p>Starting KrazyBuy workspace…</p>
+</div>
+<div id="layer-modal" class="layer" hidden></div>
+<div id="layer-palette" class="layer" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="sr" class="sr-only" role="status" aria-live="polite"></div>
+<noscript>KrazyBuy needs JavaScript to run the document workspace.</noscript>
+<script src="/app.js" defer></script>
 </body>
 </html>
