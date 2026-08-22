@@ -1,17 +1,20 @@
 /* ============================================================
  * KRAZYBUY DOCUMENT WORKSPACE
- * V1.2 UPGRADED APP.JS
+ * V1.2 — VERCEL + RENDER DEPLOYMENT SAFE
  *
- * Frontend:
- * - PDF tools
- * - PowerPoint tools
- * - Document tools
- * - Spreadsheet tools
- * - Image tools
- * - ZIP tools
+ * FRONTEND:
+ *   Vercel
  *
- * IMPORTANT:
- * Backend endpoints remain the existing /api/* endpoints.
+ * BACKEND:
+ *   Render
+ *
+ * API resolution:
+ *   1. window.KRAZYBUY_CONFIG.apiBase
+ *   2. /api
+ *   3. Render backend fallback
+ *
+ * Existing tool routes are preserved.
+ * No tool endpoint names are changed.
  * ============================================================ */
 
 (() => {
@@ -19,16 +22,17 @@
 
   /* ============================================================
    * DOM HELPERS
-   * ============================================================ */
+   * ========================================================== */
 
-  const $ = (selector, root = document) => root.querySelector(selector);
+  const $ = (selector, root = document) =>
+    root.querySelector(selector);
 
   const $$ = (selector, root = document) =>
     [...root.querySelectorAll(selector)];
 
   /* ============================================================
    * BASIC HELPERS
-   * ============================================================ */
+   * ========================================================== */
 
   const esc = (value) =>
     String(value ?? '').replace(
@@ -45,7 +49,14 @@
 
   const size = (bytes) => {
     let value = Number(bytes) || 0;
-    const units = ['B', 'KB', 'MB', 'GB'];
+
+    const units = [
+      'B',
+      'KB',
+      'MB',
+      'GB',
+    ];
+
     let index = 0;
 
     while (
@@ -60,29 +71,295 @@
   };
 
   const ext = (name) => {
-    const value = String(name || '').toLowerCase();
-    const index = value.lastIndexOf('.');
+    const value =
+      String(name || '').toLowerCase();
 
-    return index < 0 ? '' : value.slice(index + 1);
+    const index =
+      value.lastIndexOf('.');
+
+    return index < 0
+      ? ''
+      : value.slice(index + 1);
   };
+
+  /* ============================================================
+   * CONFIG
+   * ========================================================== */
 
   const cfg = Object.assign(
     {
+      /*
+       * Relative /api is best when Vercel has:
+       *
+       * /api/*
+       *   -> Render backend /api/*
+       *
+       * If no Vercel rewrite exists, the application
+       * automatically probes the Render fallback.
+       */
       apiBase: '/api',
-      requestTimeoutMs: 180000,
+
+      /*
+       * Render fallback.
+       *
+       * Keep this equal to your real Render backend.
+       */
+      renderApiBase:
+        'https://wobz-ver-1-1.onrender.com/api',
+
+      requestTimeoutMs:
+        180000,
+
+      healthTimeoutMs:
+        10000,
+
+      maxFileMB:
+        200,
+
+      preferProxy:
+        true,
     },
     window.KRAZYBUY_CONFIG || {}
   );
 
-  const api = (path) =>
-    `${String(cfg.apiBase).replace(/\/$/, '')}${path}`;
+  /* ============================================================
+   * API STATE
+   * ========================================================== */
+
+  const apiState = {
+    current:
+      String(cfg.apiBase || '/api')
+        .replace(/\/$/, ''),
+
+    checked: false,
+
+    healthy: false,
+
+    mode: 'unknown',
+
+    probing: false,
+  };
+
+  /* ============================================================
+   * API URL
+   * ========================================================== */
+
+  const api = (path) => {
+    const base =
+      String(
+        apiState.current ||
+          cfg.apiBase ||
+          '/api'
+      ).replace(/\/$/, '');
+
+    return `${base}${path}`;
+  };
+
+  /* ============================================================
+   * API CANDIDATES
+   *
+   * Vercel:
+   *   https://krazybuy.online
+   *
+   * Local:
+   *   http://localhost:5174
+   *
+   * Fallback:
+   *   Render backend
+   * ========================================================== */
+
+  function getApiCandidates() {
+    const candidates = [];
+
+    const explicit =
+      window.KRAZYBUY_CONFIG?.apiBase;
+
+    if (explicit) {
+      candidates.push(
+        String(explicit).replace(/\/$/, '')
+      );
+    }
+
+    /*
+     * Relative Vercel /api proxy.
+     */
+    if (!candidates.includes('/api')) {
+      candidates.push('/api');
+    }
+
+    /*
+     * Direct Render fallback.
+     */
+    const renderBase =
+      String(
+        window.KRAZYBUY_CONFIG?.renderApiBase ||
+          cfg.renderApiBase ||
+          ''
+      ).replace(/\/$/, '');
+
+    if (
+      renderBase &&
+      !candidates.includes(renderBase)
+    ) {
+      candidates.push(renderBase);
+    }
+
+    return candidates;
+  }
+
+  /* ============================================================
+   * SAFE FETCH WITH TIMEOUT
+   * ========================================================== */
+
+  async function fetchWithTimeout(
+    url,
+    options = {},
+    timeout =
+      cfg.healthTimeoutMs
+  ) {
+    const controller =
+      new AbortController();
+
+    const timer =
+      setTimeout(
+        () =>
+          controller.abort(),
+        timeout
+      );
+
+    try {
+      return await fetch(
+        url,
+        {
+          ...options,
+          signal:
+            controller.signal,
+        }
+      );
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /* ============================================================
+   * DETERMINE API BACKEND
+   *
+   * This is the key Vercel integration.
+   *
+   * First try:
+   *   /api/health
+   *
+   * If Vercel has a rewrite:
+   *   works through Vercel
+   *
+   * Otherwise:
+   *   fallback to Render
+   * ========================================================== */
+
+  async function resolveApiBase() {
+    if (
+      apiState.probing
+    ) {
+      return apiState.current;
+    }
+
+    apiState.probing = true;
+
+    const candidates =
+      getApiCandidates();
+
+    for (
+      const candidate of candidates
+    ) {
+      try {
+        const url =
+          `${candidate}/health`;
+
+        const response =
+          await fetchWithTimeout(
+            url,
+            {
+              method: 'GET',
+              cache: 'no-store',
+              headers: {
+                Accept:
+                  'application/json',
+                'X-KrazyBuy-Client':
+                  'workspace-v1.2',
+              },
+            }
+          );
+
+        /*
+         * Only use a candidate when
+         * /health actually responds successfully.
+         */
+        if (
+          response.ok
+        ) {
+          let json = {};
+
+          try {
+            json =
+              await response.json();
+          } catch {}
+
+          apiState.current =
+            candidate;
+
+          apiState.healthy = true;
+
+          apiState.checked = true;
+
+          if (
+            candidate === '/api'
+          ) {
+            apiState.mode =
+              'vercel-proxy';
+          } else if (
+            candidate.includes(
+              'onrender.com'
+            )
+          ) {
+            apiState.mode =
+              'render-direct';
+          } else {
+            apiState.mode =
+              'custom';
+          }
+
+          apiState.probing = false;
+
+          return {
+            base: candidate,
+            data: json,
+          };
+        }
+      } catch {
+        /*
+         * Try the next candidate.
+         */
+      }
+    }
+
+    apiState.checked = true;
+    apiState.healthy = false;
+    apiState.mode = 'offline';
+    apiState.probing = false;
+
+    return {
+      base: apiState.current,
+      data: null,
+    };
+  }
 
   /* ============================================================
    * ICONS
-   * ============================================================ */
+   * ========================================================== */
 
   const icons = {
-    home: 'M3 10.5 12 3l9 7.5M5 9.8V20h14V9.8',
+    home:
+      'M3 10.5 12 3l9 7.5M5 9.8V20h14V9.8',
 
     pdf:
       'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4',
@@ -161,19 +438,23 @@
   };
 
   const ico = (name) =>
-    `<svg viewBox="0 0 24 24"
+    `<svg
+      viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       stroke-width="1.7"
       stroke-linecap="round"
       stroke-linejoin="round"
-      aria-hidden="true">
-      <path d="${icons[name] || icons.menu}"></path>
+      aria-hidden="true"
+    >
+      <path
+        d="${icons[name] || icons.menu}"
+      ></path>
     </svg>`;
 
   /* ============================================================
    * FILE TYPES
-   * ============================================================ */
+   * ========================================================== */
 
   const IMG = [
     'png',
@@ -186,7 +467,9 @@
 
   /* ============================================================
    * TOOL DEFINITIONS
-   * ============================================================ */
+   *
+   * SAME ROUTES AS YOUR CURRENT APP
+   * ========================================================== */
 
   const TOOLS = [
     {
@@ -196,7 +479,8 @@
       icon: 'copy',
       accept: ['pdf'],
       multiple: true,
-      desc: 'Combine multiple PDFs into one.',
+      desc:
+        'Combine multiple PDFs into one.',
       endpoint: '/pdf/merge',
     },
 
@@ -206,7 +490,8 @@
       group: 'PDF',
       icon: 'split',
       accept: ['pdf'],
-      desc: 'Extract pages and ranges.',
+      desc:
+        'Extract pages and ranges.',
       endpoint: '/pdf/split',
     },
 
@@ -216,7 +501,8 @@
       group: 'PDF',
       icon: 'grid',
       accept: ['pdf'],
-      desc: 'Delete, rotate and reorder PDF pages.',
+      desc:
+        'Delete, rotate and reorder PDF pages.',
       endpoint: '/pdf/edit',
     },
 
@@ -226,7 +512,8 @@
       group: 'PDF',
       icon: 'edit',
       accept: ['pdf'],
-      desc: 'Add text, watermark, page numbers and rotation.',
+      desc:
+        'Add text, watermark, page numbers and rotation.',
       endpoint: '/pdf/edit',
     },
 
@@ -236,7 +523,8 @@
       group: 'PDF',
       icon: 'compress',
       accept: ['pdf'],
-      desc: 'Optimize a PDF with server-side compression.',
+      desc:
+        'Optimize a PDF with server-side compression.',
       endpoint: '/pdf/compress',
     },
 
@@ -246,7 +534,8 @@
       group: 'PDF',
       icon: 'lock',
       accept: ['pdf'],
-      desc: 'Password protect a PDF when qpdf is available.',
+      desc:
+        'Password protect a PDF when qpdf is available.',
       endpoint: '/pdf/protect',
     },
 
@@ -256,7 +545,8 @@
       group: 'PDF',
       icon: 'image',
       accept: ['pdf'],
-      desc: 'Render all PDF pages and download a ZIP.',
+      desc:
+        'Render all PDF pages and download a ZIP.',
       endpoint: '/pdf/to-image',
     },
 
@@ -267,7 +557,8 @@
       icon: 'pdf',
       accept: IMG,
       multiple: true,
-      desc: 'Create a PDF with one image per page.',
+      desc:
+        'Create a PDF with one image per page.',
       endpoint: '/pdf/images-to-pdf',
     },
 
@@ -277,7 +568,8 @@
       group: 'PowerPoint',
       icon: 'ppt',
       accept: ['pptx'],
-      desc: 'Inspect slide text and save real replacements.',
+      desc:
+        'Inspect slide text and save real replacements.',
       endpoint: '/ppt/edit',
     },
 
@@ -287,7 +579,8 @@
       group: 'PowerPoint',
       icon: 'plus',
       accept: null,
-      desc: 'Generate a real PowerPoint presentation.',
+      desc:
+        'Generate a real PowerPoint presentation.',
       endpoint: '/ppt/create',
     },
 
@@ -297,7 +590,8 @@
       group: 'PowerPoint',
       icon: 'pdf',
       accept: ['pptx', 'ppt'],
-      desc: 'Convert a deck with LibreOffice.',
+      desc:
+        'Convert a deck with LibreOffice.',
       endpoint: '/ppt/to-pdf',
     },
 
@@ -307,7 +601,8 @@
       group: 'PowerPoint',
       icon: 'image',
       accept: ['pptx', 'ppt'],
-      desc: 'Render slides and download a ZIP.',
+      desc:
+        'Render slides and download a ZIP.',
       endpoint: '/ppt/to-images',
     },
 
@@ -318,7 +613,8 @@
       icon: 'ppt',
       accept: IMG,
       multiple: true,
-      desc: 'Create one slide per image.',
+      desc:
+        'Create one slide per image.',
       endpoint: '/ppt/images-to-pptx',
     },
 
@@ -328,7 +624,8 @@
       group: 'PowerPoint',
       icon: 'ppt',
       accept: ['pdf'],
-      desc: 'Create slide pages from a PDF.',
+      desc:
+        'Create slide pages from a PDF.',
       endpoint: '/ppt/pdf-to-pptx',
     },
 
@@ -338,7 +635,8 @@
       group: 'Documents',
       icon: 'doc',
       accept: ['docx'],
-      desc: 'Read, replace and export document text.',
+      desc:
+        'Read, replace and export document text.',
       endpoint: '/documents/edit',
     },
 
@@ -348,7 +646,8 @@
       group: 'Documents',
       icon: 'doc',
       accept: null,
-      desc: 'Generate a real DOCX document.',
+      desc:
+        'Generate a real DOCX document.',
       endpoint: '/documents/create',
     },
 
@@ -358,7 +657,8 @@
       group: 'Documents',
       icon: 'pdf',
       accept: ['docx'],
-      desc: 'Convert DOCX using the backend converter.',
+      desc:
+        'Convert DOCX using the backend converter.',
       endpoint: '/documents/to-pdf',
     },
 
@@ -368,7 +668,8 @@
       group: 'Documents',
       icon: 'doc',
       accept: ['docx'],
-      desc: 'Extract readable text from DOCX.',
+      desc:
+        'Extract readable text from DOCX.',
       endpoint: '/documents/to-txt',
     },
 
@@ -378,7 +679,8 @@
       group: 'Documents',
       icon: 'doc',
       accept: ['pdf'],
-      desc: 'Extract PDF text into a DOCX.',
+      desc:
+        'Extract PDF text into a DOCX.',
       endpoint: '/documents/pdf-to-docx',
     },
 
@@ -388,7 +690,8 @@
       group: 'Spreadsheets',
       icon: 'xls',
       accept: ['xlsx'],
-      desc: 'Inspect and edit workbook cell values.',
+      desc:
+        'Inspect and edit workbook cell values.',
       endpoint: '/xlsx/edit',
     },
 
@@ -398,7 +701,8 @@
       group: 'Spreadsheets',
       icon: 'swap',
       accept: ['csv'],
-      desc: 'Convert CSV into a workbook.',
+      desc:
+        'Convert CSV into a workbook.',
       endpoint: '/xlsx/csv-to-xlsx',
     },
 
@@ -408,7 +712,8 @@
       group: 'Spreadsheets',
       icon: 'swap',
       accept: ['xlsx'],
-      desc: 'Export the first worksheet to CSV.',
+      desc:
+        'Export the first worksheet to CSV.',
       endpoint: '/xlsx/xlsx-to-csv',
     },
 
@@ -418,7 +723,8 @@
       group: 'Spreadsheets',
       icon: 'pdf',
       accept: ['xlsx'],
-      desc: 'Render a workbook report as PDF.',
+      desc:
+        'Render a workbook report as PDF.',
       endpoint: '/xlsx/to-pdf',
     },
 
@@ -428,7 +734,8 @@
       group: 'Images & Files',
       icon: 'image',
       accept: IMG,
-      desc: 'Resize, rotate, flip and watermark.',
+      desc:
+        'Resize, rotate, flip and watermark.',
       endpoint: '/image/edit',
     },
 
@@ -438,7 +745,8 @@
       group: 'Images & Files',
       icon: 'swap',
       accept: IMG,
-      desc: 'Convert between JPG, PNG and WebP.',
+      desc:
+        'Convert between JPG, PNG and WebP.',
       endpoint: '/image/convert',
     },
 
@@ -448,7 +756,8 @@
       group: 'Images & Files',
       icon: 'image',
       accept: IMG,
-      desc: 'Resize an image while preserving quality.',
+      desc:
+        'Resize an image while preserving quality.',
       endpoint: '/image/resize',
     },
 
@@ -458,7 +767,8 @@
       group: 'Images & Files',
       icon: 'grid',
       accept: IMG,
-      desc: 'Crop exact image pixels.',
+      desc:
+        'Crop exact image pixels.',
       endpoint: '/image/crop',
     },
 
@@ -468,7 +778,8 @@
       group: 'Images & Files',
       icon: 'rotate',
       accept: IMG,
-      desc: 'Rotate an image by a chosen angle.',
+      desc:
+        'Rotate an image by a chosen angle.',
       endpoint: '/image/rotate',
     },
 
@@ -478,7 +789,8 @@
       group: 'Images & Files',
       icon: 'swap',
       accept: IMG,
-      desc: 'Flip horizontally or vertically.',
+      desc:
+        'Flip horizontally or vertically.',
       endpoint: '/image/flip',
     },
 
@@ -488,7 +800,8 @@
       group: 'Images & Files',
       icon: 'compress',
       accept: IMG,
-      desc: 'Compress image output with quality control.',
+      desc:
+        'Compress image output with quality control.',
       endpoint: '/image/compress',
     },
 
@@ -498,7 +811,8 @@
       group: 'Images & Files',
       icon: 'edit',
       accept: IMG,
-      desc: 'Add text watermark to an image.',
+      desc:
+        'Add text watermark to an image.',
       endpoint: '/image/watermark',
     },
 
@@ -510,13 +824,17 @@
       accept: null,
       multiple: true,
       folder: true,
-      desc: 'Create a ZIP while preserving folder paths.',
+      desc:
+        'Create a ZIP while preserving folder paths.',
       endpoint: '/archive/create',
     },
   ];
 
   const byId = (id) =>
-    TOOLS.find((tool) => tool.id === id);
+    TOOLS.find(
+      (tool) =>
+        tool.id === id
+    );
 
   const GROUPS = [
     'PDF',
@@ -528,79 +846,153 @@
 
   /* ============================================================
    * APPLICATION STATE
-   * ============================================================ */
+   * ========================================================== */
 
   const state = {
-    tool: 'dashboard',
+    tool:
+      'dashboard',
 
-    files: new Map(),
+    files:
+      new Map(),
 
-    server: null,
+    server:
+      null,
 
-    scratch: {},
+    scratch:
+      {},
 
-    busy: false,
+    busy:
+      false,
   };
 
   const files = () =>
-    state.files.get(state.tool) || [];
+    state.files.get(
+      state.tool
+    ) || [];
 
-  const setFiles = (value) =>
-    state.files.set(state.tool, value);
+  const setFiles = (
+    value
+  ) =>
+    state.files.set(
+      state.tool,
+      value
+    );
 
   /* ============================================================
    * ERROR NORMALIZATION
-   * ============================================================ */
+   * ========================================================== */
 
   const human = (error) => {
-    const message = String(
-      error?.message || error || ''
-    );
-
-    if (/pdftoppm|poppler/i.test(message)) {
-      return 'PDF image rendering needs Poppler (pdftoppm) on the backend.';
-    }
-
-    if (/qpdf/i.test(message)) {
-      return 'PDF password protection needs qpdf on the backend.';
-    }
-
-    if (/libreoffice|soffice/i.test(message)) {
-      return 'This conversion needs LibreOffice on the backend.';
-    }
+    const message =
+      String(
+        error?.message ||
+          error ||
+          ''
+      );
 
     if (
-      /CORS|Failed to fetch|NetworkError/i.test(
+      /pdftoppm|poppler/i.test(
         message
       )
     ) {
-      return 'The frontend could not reach the backend. Check the API proxy and backend health.';
+      return (
+        'PDF image rendering needs Poppler (pdftoppm) on the backend.'
+      );
     }
 
-    if (/413|payload too large/i.test(message)) {
-      return 'The file is too large for the backend request limit.';
+    if (
+      /qpdf/i.test(
+        message
+      )
+    ) {
+      return (
+        'PDF password protection needs qpdf on the backend.'
+      );
     }
 
-    if (/429/i.test(message)) {
-      return 'Too many requests. Please wait a moment and try again.';
+    if (
+      /libreoffice|soffice/i.test(
+        message
+      )
+    ) {
+      return (
+        'This conversion needs LibreOffice on the backend.'
+      );
     }
 
-    if (/500|502|503|504/i.test(message)) {
-      return 'The backend failed while processing the file. Check the server logs.';
+    if (
+      /cors/i.test(
+        message
+      )
+    ) {
+      return (
+        'The Render backend rejected the Vercel origin. Add your Vercel domain to the backend CORS allowlist.'
+      );
     }
 
-    return message.slice(0, 400);
+    if (
+      /failed to fetch|networkerror|network request failed/i.test(
+        message
+      )
+    ) {
+      return (
+        'The frontend could not reach the processing backend. Check the Vercel API proxy, Render URL and CORS settings.'
+      );
+    }
+
+    if (
+      /413|payload too large/i.test(
+        message
+      )
+    ) {
+      return (
+        'The file is too large for the backend request limit.'
+      );
+    }
+
+    if (
+      /429/.test(
+        message
+      )
+    ) {
+      return (
+        'Too many requests. Please try again in a moment.'
+      );
+    }
+
+    if (
+      /500|502|503|504/.test(
+        message
+      )
+    ) {
+      return (
+        'The backend failed while processing the file. Check the Render server logs.'
+      );
+    }
+
+    return (
+      message.slice(
+        0,
+        400
+      ) ||
+      'The operation failed.'
+    );
   };
 
   /* ============================================================
    * TOAST
-   * ============================================================ */
+   * ========================================================== */
 
-  function toast(message, kind = 'ok') {
-    const node = $('#toast');
+  function toast(
+    message,
+    kind = 'ok'
+  ) {
+    const node =
+      $('#toast');
 
     if (node) {
-      node.textContent = message;
+      node.textContent =
+        message;
 
       node.className =
         `toast show ${
@@ -611,90 +1003,130 @@
             : ''
         }`;
 
-      clearTimeout(toast.timer);
+      clearTimeout(
+        toast.timer
+      );
 
-      toast.timer = setTimeout(() => {
-        node.classList.remove('show');
-      }, 3500);
+      toast.timer =
+        setTimeout(
+          () =>
+            node.classList.remove(
+              'show'
+            ),
+          3500
+        );
     }
 
-    const sr = $('#sr');
+    const sr =
+      $('#sr');
 
     if (sr) {
-      sr.textContent = message;
+      sr.textContent =
+        message;
     }
   }
 
   /* ============================================================
    * FILE VALIDATION
-   * ============================================================ */
+   * ========================================================== */
 
   function fileAccept(tool) {
     return tool.accept
       ? tool.accept
-          .map((value) => `.${value}`)
+          .map(
+            (value) =>
+              `.${value}`
+          )
           .join(',')
       : '';
   }
 
-  function valid(incoming, tool) {
+  function valid(
+    incoming,
+    tool
+  ) {
     const ok = [];
     const bad = [];
 
-    for (const file of incoming) {
-      const extension = ext(file.name);
+    for (
+      const file of incoming
+    ) {
+      const extension =
+        ext(file.name);
 
       if (
         tool.accept &&
-        !tool.accept.includes(extension)
+        !tool.accept.includes(
+          extension
+        )
       ) {
         bad.push(
           `${file.name}: unsupported file type`
         );
+
         continue;
       }
 
       if (!file.size) {
-        bad.push(`${file.name}: empty file`);
+        bad.push(
+          `${file.name}: empty file`
+        );
+
         continue;
       }
 
       if (
         file.size >
-        200 * 1024 * 1024
+        cfg.maxFileMB *
+          1024 *
+          1024
       ) {
         bad.push(
-          `${file.name}: larger than 200 MB`
+          `${file.name}: larger than ${cfg.maxFileMB} MB`
         );
+
         continue;
       }
 
       ok.push(file);
     }
 
-    return { ok, bad };
+    return {
+      ok,
+      bad,
+    };
   }
 
   /* ============================================================
    * SIDEBAR
-   * ============================================================ */
+   * ========================================================== */
 
   function renderNav() {
-    const sidebar = $('#sidebar');
+    const sidebar =
+      $('#sidebar');
 
-    if (!sidebar) return;
+    if (!sidebar) {
+      return;
+    }
 
     sidebar.innerHTML = `
       <div class="brand-side">
+
         <img
           src="/images/logo.png"
           alt="KrazyBuy"
         >
 
         <div class="brand-copy">
-          <strong>KrazyBuy</strong>
-          <span>Document Workspace</span>
+          <strong>
+            KrazyBuy
+          </strong>
+
+          <span>
+            Document Workspace
+          </span>
         </div>
+
       </div>
 
       <nav class="nav-scroll">
@@ -706,31 +1138,53 @@
         <button
           class="nav-item"
           data-nav="dashboard"
+          ${
+            state.tool ===
+            'dashboard'
+              ? 'aria-current="page"'
+              : ''
+          }
         >
           ${ico('home')}
-          <span>Dashboard</span>
+          <span>
+            Dashboard
+          </span>
         </button>
 
         ${GROUPS.map(
           (group) => `
             <div class="nav-label">
-              ${esc(group.toUpperCase())}
+              ${esc(
+                group.toUpperCase()
+              )}
             </div>
 
             ${TOOLS
               .filter(
                 (tool) =>
-                  tool.group === group
+                  tool.group ===
+                  group
               )
               .map(
                 (tool) => `
                   <button
                     class="nav-item"
                     data-nav="${tool.id}"
+                    ${
+                      state.tool ===
+                      tool.id
+                        ? 'aria-current="page"'
+                        : ''
+                    }
                   >
-                    ${ico(tool.icon)}
+                    ${ico(
+                      tool.icon
+                    )}
+
                     <span>
-                      ${esc(tool.name)}
+                      ${esc(
+                        tool.name
+                      )}
                     </span>
                   </button>
                 `
@@ -748,12 +1202,15 @@
           id="serverDot"
         >
           <span class="dot"></span>
-          <b>Checking server…</b>
+
+          <b>
+            Checking server…
+          </b>
         </div>
 
         <small>
-          Files are sent only to the configured
-          processing backend.
+          Frontend on Vercel.
+          File processing on the configured backend.
         </small>
 
       </div>
@@ -762,14 +1219,18 @@
 
   /* ============================================================
    * APPLICATION SHELL
-   * ============================================================ */
+   * ========================================================== */
 
   function shell() {
-    const app = $('#app');
+    const app =
+      $('#app');
 
-    if (!app) return;
+    if (!app) {
+      return;
+    }
 
-    app.className = '';
+    app.className =
+      '';
 
     app.innerHTML = `
       <div class="shell">
@@ -792,11 +1253,16 @@
             </button>
 
             <div class="mobile-brand">
+
               <img
                 src="/images/logo.png"
                 alt="KrazyBuy"
               >
-              <span>KrazyBuy</span>
+
+              <span>
+                KrazyBuy
+              </span>
+
             </div>
 
             <div class="top-spacer"></div>
@@ -812,6 +1278,7 @@
               class="icon-btn"
               id="healthBtn"
               aria-label="Refresh backend status"
+              title="Refresh backend status"
             >
               ${ico('refresh')}
             </button>
@@ -830,59 +1297,94 @@
 
         </div>
 
-        <nav class="mobile-nav">
+        <nav
+          class="mobile-nav"
+          aria-label="Mobile navigation"
+        >
 
-          <button data-nav="dashboard">
+          <button
+            data-nav="dashboard"
+          >
             ${ico('home')}
-            <span>Home</span>
+            <span>
+              Home
+            </span>
           </button>
 
-          <button data-nav="pdf-image">
+          <button
+            data-nav="pdf-image"
+          >
             ${ico('pdf')}
-            <span>PDF</span>
+            <span>
+              PDF
+            </span>
           </button>
 
-          <button data-nav="ppt-edit">
+          <button
+            data-nav="ppt-edit"
+          >
             ${ico('ppt')}
-            <span>PPT</span>
+            <span>
+              PPT
+            </span>
           </button>
 
-          <button data-nav="doc-edit">
+          <button
+            data-nav="doc-edit"
+          >
             ${ico('doc')}
-            <span>Docs</span>
+            <span>
+              Docs
+            </span>
           </button>
 
-          <button id="moreBtn">
+          <button
+            id="moreBtn"
+          >
             ${ico('menu')}
-            <span>More</span>
+            <span>
+              More
+            </span>
           </button>
 
         </nav>
 
       </div>
 
-      <!-- GLOBAL OPERATION PROGRESS -->
-
       <div
         id="operationProgress"
         class="operation-progress"
         hidden
+        aria-live="polite"
       >
-        <div class="operation-progress-card">
 
-          <div class="operation-progress-head">
+        <div
+          class="operation-progress-card"
+        >
+
+          <div
+            class="operation-progress-head"
+          >
 
             <div>
-              <strong id="operationTitle">
+
+              <strong
+                id="operationTitle"
+              >
                 Preparing…
               </strong>
 
-              <small id="operationSubtitle">
-                Please wait
+              <small
+                id="operationSubtitle"
+              >
+                Preparing your files
               </small>
+
             </div>
 
-            <strong id="operationPercent">
+            <strong
+              id="operationPercent"
+            >
               0%
             </strong>
 
@@ -890,7 +1392,6 @@
 
           <div
             class="operation-bar"
-            aria-hidden="true"
           >
             <i
               id="operationBar"
@@ -899,15 +1400,17 @@
           </div>
 
           <div
-            id="operationBlock"
             class="operation-block"
           >
-            <span id="operationBlockText">
+            <span
+              id="operationBlockText"
+            >
               ░░░░░░░░░░░░░░░░░░░░ 0%
             </span>
           </div>
 
         </div>
+
       </div>
     `;
 
@@ -916,17 +1419,19 @@
     $('#menuBtn')?.addEventListener(
       'click',
       () =>
-        $('#sidebar')?.classList.toggle(
-          'open'
-        )
+        $('#sidebar')
+          ?.classList.toggle(
+            'open'
+          )
     );
 
     $('#moreBtn')?.addEventListener(
       'click',
       () =>
-        $('#sidebar')?.classList.toggle(
-          'open'
-        )
+        $('#sidebar')
+          ?.classList.toggle(
+            'open'
+          )
     );
 
     $('#healthBtn')?.addEventListener(
@@ -936,20 +1441,31 @@
   }
 
   /* ============================================================
-   * GLOBAL PROGRESS
-   * ============================================================ */
+   * GLOBAL OPERATION PROGRESS
+   *
+   * Real upload progress is provided by XHR.
+   *
+   * Example:
+   *
+   * ██████████████░░░░░░ 72%
+   *
+   * ========================================================== */
 
   function showOperationProgress(
     title = 'Uploading…',
-    subtitle = 'Preparing your files',
+    subtitle =
+      'Preparing your files',
     percent = 0
   ) {
     const box =
       $('#operationProgress');
 
-    if (!box) return;
+    if (!box) {
+      return;
+    }
 
-    box.hidden = false;
+    box.hidden =
+      false;
 
     updateOperationProgress(
       title,
@@ -963,10 +1479,14 @@
     subtitle,
     percent
   ) {
-    const safePercent = Math.max(
-      0,
-      Math.min(100, Number(percent) || 0)
-    );
+    const safe =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          Number(percent) || 0
+        )
+      );
 
     const titleNode =
       $('#operationTitle');
@@ -984,7 +1504,8 @@
       $('#operationBlockText');
 
     if (titleNode) {
-      titleNode.textContent = title;
+      titleNode.textContent =
+        title;
     }
 
     if (subtitleNode) {
@@ -994,25 +1515,30 @@
 
     if (percentNode) {
       percentNode.textContent =
-        `${safePercent}%`;
+        `${safe}%`;
     }
 
     if (bar) {
       bar.style.width =
-        `${safePercent}%`;
+        `${safe}%`;
     }
 
     if (block) {
-      const total = 20;
+      const total =
+        20;
 
-      const filled = Math.round(
-        (safePercent / 100) * total
-      );
+      const filled =
+        Math.round(
+          (safe / 100) *
+            total
+        );
 
       block.textContent =
-        `${'█'.repeat(filled)}${'░'.repeat(
+        `${'█'.repeat(
+          filled
+        )}${'░'.repeat(
           total - filled
-        )} ${safePercent}%`;
+        )} ${safe}%`;
     }
   }
 
@@ -1021,67 +1547,43 @@
       $('#operationProgress');
 
     if (box) {
-      box.hidden = true;
+      box.hidden =
+        true;
     }
   }
 
   /* ============================================================
    * BACKEND HEALTH
-   * ============================================================ */
+   *
+   * IMPORTANT:
+   * This automatically decides:
+   *
+   * /api
+   *    OR
+   *
+   * Render direct
+   * ========================================================== */
 
   async function health() {
     const badge =
       $('#backendBadge');
 
-    const dot =
-      $('#serverDot');
-
     if (badge) {
       badge.textContent =
-        'Checking…';
+        'Connecting…';
+
+      badge.className =
+        'pill';
     }
 
-    try {
-      const response =
-        await fetch(
-          api('/health'),
-          {
-            cache: 'no-store',
-          }
-        );
+    const result =
+      await resolveApiBase();
 
-      const json =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          json.error ||
-            `HTTP ${response.status}`
-        );
-      }
-
-      state.server = json;
-
-      if (badge) {
-        badge.textContent =
-          `Online · ${
-            json.version || 'API'
-          }`;
-
-        badge.className =
-          'pill pill-ok';
-      }
-
-      if (dot) {
-        dot.classList.remove('off');
-
-        dot.innerHTML = `
-          <span class="dot"></span>
-          <b>Backend online</b>
-        `;
-      }
-    } catch (error) {
-      state.server = null;
+    if (
+      !result.data
+    ) {
+      state.server =
+        null;
 
       if (badge) {
         badge.textContent =
@@ -1091,54 +1593,117 @@
           'pill pill-warn';
       }
 
-      if (dot) {
-        dot.classList.add('off');
+      updateServerDot(
+        false
+      );
 
-        dot.innerHTML = `
-          <span class="dot"></span>
-          <b>Backend unavailable</b>
-        `;
-      }
+      return;
+    }
+
+    state.server =
+      result.data;
+
+    const version =
+      result.data.version ||
+      result.data.name ||
+      'API';
+
+    if (badge) {
+      badge.textContent =
+        `Online · ${version}`;
+
+      badge.className =
+        'pill pill-ok';
+    }
+
+    updateServerDot(
+      true
+    );
+  }
+
+  function updateServerDot(
+    online
+  ) {
+    const dot =
+      $('#serverDot');
+
+    if (!dot) {
+      return;
+    }
+
+    if (online) {
+      dot.classList.remove(
+        'off'
+      );
+
+      dot.innerHTML = `
+        <span class="dot"></span>
+        <b>
+          Backend online
+        </b>
+      `;
+    } else {
+      dot.classList.add(
+        'off'
+      );
+
+      dot.innerHTML = `
+        <span class="dot"></span>
+        <b>
+          Backend unavailable
+        </b>
+      `;
     }
   }
 
   /* ============================================================
    * DASHBOARD
-   * ============================================================ */
+   * ========================================================== */
 
   function dashboard() {
     const workspace =
       $('#workspace');
 
-    if (!workspace) return;
+    if (!workspace) {
+      return;
+    }
 
-    const cards = TOOLS.map(
-      (tool) => `
-        <button
-          class="tool-card"
-          data-tool="${tool.id}"
-        >
+    const cards =
+      TOOLS.map(
+        (tool) => `
+          <button
+            class="tool-card"
+            data-tool="${tool.id}"
+          >
 
-          <span class="tool-ico">
-            ${ico(tool.icon)}
-          </span>
+            <span
+              class="tool-ico"
+            >
+              ${ico(
+                tool.icon
+              )}
+            </span>
 
-          <h3>
-            ${esc(tool.name)}
-          </h3>
+            <h3>
+              ${esc(
+                tool.name
+              )}
+            </h3>
 
-          <p>
-            ${esc(tool.desc)}
-          </p>
+            <p>
+              ${esc(
+                tool.desc
+              )}
+            </p>
 
-          <span class="tool-link">
-            Open workflow
-            ${ico('refresh')}
-          </span>
+            <span class="tool-link">
+              Open workflow
+              ${ico('refresh')}
+            </span>
 
-        </button>
-      `
-    ).join('');
+          </button>
+        `
+      ).join('');
 
     workspace.innerHTML = `
       <section class="hero">
@@ -1192,16 +1757,28 @@
           </div>
 
           <div class="trust">
-            <span>Real API calls</span>
-            <span>Mobile responsive</span>
-            <span>Local file workflow</span>
+
+            <span>
+              Real API calls
+            </span>
+
+            <span>
+              Mobile responsive
+            </span>
+
+            <span>
+              Vercel + Render
+            </span>
+
           </div>
 
         </div>
 
         <div class="hero-card">
 
-          <span class="pill pill-dark">
+          <span
+            class="pill pill-dark"
+          >
             KRAZYBUY V1.2
           </span>
 
@@ -1210,27 +1787,44 @@
           </strong>
 
           <p>
-            Every workflow maps to a real
-            backend route.
+            Vercel serves the workspace.
+            Render processes documents.
           </p>
 
           <div class="stat-row">
 
             <div>
-              <b>${TOOLS.length}</b>
-              <small>workflows</small>
-            </div>
+              <b>
+                ${TOOLS.length}
+              </b>
 
-            <div>
-              <b>${GROUPS.length}</b>
-              <small>families</small>
+              <small>
+                workflows
+              </small>
             </div>
 
             <div>
               <b>
-                ${state.server ? 'ON' : '—'}
+                ${GROUPS.length}
               </b>
-              <small>backend</small>
+
+              <small>
+                families
+              </small>
+            </div>
+
+            <div>
+              <b>
+                ${
+                  state.server
+                    ? 'ON'
+                    : '—'
+                }
+              </b>
+
+              <small>
+                backend
+              </small>
             </div>
 
           </div>
@@ -1242,6 +1836,7 @@
       <div class="section-head">
 
         <div>
+
           <div class="eyebrow">
             WORKFLOWS
           </div>
@@ -1249,6 +1844,7 @@
           <h2>
             Choose a real tool
           </h2>
+
         </div>
 
         <span class="pill">
@@ -1266,7 +1862,7 @@
 
   /* ============================================================
    * UPLOAD UI
-   * ============================================================ */
+   * ========================================================== */
 
   function uploadHTML(tool) {
     return `
@@ -1274,6 +1870,8 @@
         class="dropzone"
         id="dropzone"
         tabindex="0"
+        role="button"
+        aria-label="Upload files"
       >
 
         <div class="dz-orb">
@@ -1289,13 +1887,14 @@
         </div>
 
         <div class="dz-hint">
-          Drag and drop or browse from
-          your device.
+          Drag and drop or browse
+          from your device.
         </div>
 
         <div class="btn-row">
 
           <button
+            type="button"
             class="btn btn--primary"
             id="browse"
           >
@@ -1307,6 +1906,7 @@
             tool.folder
               ? `
                 <button
+                  type="button"
                   class="btn"
                   id="folder"
                 >
@@ -1320,11 +1920,13 @@
         </div>
 
         <div class="dz-meta">
+
           ${
             tool.accept
               ? tool.accept
                   .map(
-                    (value) => `.${value}`
+                    (value) =>
+                      `.${value}`
                   )
                   .join(' · ')
               : 'Any supported file'
@@ -1338,7 +1940,10 @@
               : 'single file'
           }
 
-          · max 200 MB each
+          · max
+          ${cfg.maxFileMB}
+          MB each
+
         </div>
 
       </div>
@@ -1347,9 +1952,11 @@
 
   /* ============================================================
    * FILE LIST
-   * ============================================================ */
+   * ========================================================== */
 
-  function fileList(tool) {
+  function fileList(
+    tool
+  ) {
     const selected =
       files();
 
@@ -1366,7 +1973,10 @@
 
         ${selected
           .map(
-            (file, index) => `
+            (
+              file,
+              index
+            ) => `
               <div
                 class="file-row"
                 ${
@@ -1383,7 +1993,9 @@
                 >
                   ${
                     IMG.includes(
-                      ext(file.name)
+                      ext(
+                        file.name
+                      )
                     )
                       ? 'IMG'
                       : esc(
@@ -1395,18 +2007,24 @@
                   }
                 </div>
 
-                <div class="file-meta">
+                <div
+                  class="file-meta"
+                >
 
                   <b
                     title="${esc(
                       file.name
                     )}"
                   >
-                    ${esc(file.name)}
+                    ${esc(
+                      file.name
+                    )}
                   </b>
 
                   <span>
-                    ${size(file.size)}
+                    ${size(
+                      file.size
+                    )}
 
                     ${
                       file.webkitRelativePath
@@ -1423,6 +2041,7 @@
                 </div>
 
                 <button
+                  type="button"
                   class="icon-btn icon-btn--bare"
                   data-remove="${index}"
                   aria-label="Remove ${esc(
@@ -1458,6 +2077,7 @@
           tool.multiple
             ? `
               <button
+                type="button"
                 class="btn btn--sm"
                 id="addMore"
               >
@@ -1469,6 +2089,7 @@
         }
 
         <button
+          type="button"
           class="btn btn--sm"
           id="clearFiles"
         >
@@ -1482,13 +2103,17 @@
 
   /* ============================================================
    * TOOL FIELDS
-   * ============================================================ */
+   * ========================================================== */
 
   function fields(tool) {
-    switch (tool.id) {
+    switch (
+      tool.id
+    ) {
       case 'pdf-split':
+
         return `
           <div class="field">
+
             <label>
               Pages / ranges
             </label>
@@ -1497,14 +2122,17 @@
               id="ranges"
               placeholder="1-3,5,8-10"
             >
+
           </div>
         `;
 
       case 'pdf-edit':
+
         return `
           <div class="grid-2">
 
             <div class="field field--full">
+
               <label>
                 Text to add
               </label>
@@ -1513,9 +2141,11 @@
                 id="text"
                 placeholder="Approved — internal copy"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Target page
               </label>
@@ -1526,9 +2156,11 @@
                 min="1"
                 value="1"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Font size
               </label>
@@ -1540,22 +2172,31 @@
                 max="200"
                 value="18"
               >
+
             </div>
 
-            <div class="field field--full">
+            <div
+              class="field field--full"
+            >
+
               <label>
                 Watermark
               </label>
 
-              <input id="watermark">
+              <input
+                id="watermark"
+              >
+
             </div>
 
             <div class="field">
+
               <label>
                 Rotate all pages
               </label>
 
               <select id="rotate">
+
                 <option value="0">
                   No rotation
                 </option>
@@ -1571,26 +2212,32 @@
                 <option value="270">
                   270°
                 </option>
+
               </select>
+
             </div>
 
             <label class="check">
+
               <input
                 id="pageNumbers"
                 type="checkbox"
               >
 
               Add page numbers
+
             </label>
 
           </div>
         `;
 
       case 'pdf-organize':
+
         return `
           <div class="toolbar">
 
             <button
+              type="button"
               class="btn btn--sm"
               id="loadPages"
             >
@@ -1599,6 +2246,7 @@
             </button>
 
             <button
+              type="button"
               class="btn btn--sm"
               id="selectAll"
             >
@@ -1606,6 +2254,7 @@
             </button>
 
             <button
+              type="button"
               class="btn btn--sm"
               id="selectNone"
             >
@@ -1613,6 +2262,7 @@
             </button>
 
             <button
+              type="button"
               class="btn btn--sm"
               id="rotateSelected"
             >
@@ -1621,6 +2271,7 @@
             </button>
 
             <button
+              type="button"
               class="btn btn--sm"
               id="deleteSelected"
             >
@@ -1629,6 +2280,7 @@
             </button>
 
             <button
+              type="button"
               class="btn btn--sm"
               id="restorePages"
             >
@@ -1641,20 +2293,26 @@
             class="tile-strip"
             id="tiles"
           >
+
             <div class="empty">
-              Load the PDF to see its real pages.
+              Load the PDF to see
+              its real pages.
             </div>
+
           </div>
         `;
 
       case 'pdf-compress':
+
         return `
           <div class="field">
+
             <label>
               Compression
             </label>
 
             <select id="level">
+
               <option value="medium">
                 Balanced
               </option>
@@ -1666,13 +2324,17 @@
               <option value="high">
                 Smallest
               </option>
+
             </select>
+
           </div>
         `;
 
       case 'pdf-protect':
+
         return `
           <div class="field">
+
             <label>
               Password
             </label>
@@ -1683,17 +2345,21 @@
               minlength="6"
               placeholder="At least 6 characters"
             >
+
           </div>
         `;
 
       case 'pdf-image':
+
         return `
           <div class="field">
+
             <label>
               Output format
             </label>
 
             <select id="format">
+
               <option value="png">
                 PNG
               </option>
@@ -1701,34 +2367,48 @@
               <option value="jpg">
                 JPG
               </option>
+
             </select>
+
           </div>
         `;
 
       case 'ppt-create':
+
         return `
           <div class="grid-2">
 
             <div class="field">
-              <label>Title</label>
+
+              <label>
+                Title
+              </label>
 
               <input
                 id="title"
                 value="KrazyBuy Presentation"
               >
+
             </div>
 
             <div class="field">
-              <label>Subtitle</label>
+
+              <label>
+                Subtitle
+              </label>
 
               <input
                 id="subtitle"
                 value="Created with KrazyBuy"
               >
+
             </div>
 
             <div class="field">
-              <label>Slides</label>
+
+              <label>
+                Slides
+              </label>
 
               <input
                 id="slides"
@@ -1737,25 +2417,34 @@
                 max="100"
                 value="5"
               >
+
             </div>
 
-            <div class="field field--full">
-              <label>Content</label>
+            <div
+              class="field field--full"
+            >
+
+              <label>
+                Content
+              </label>
 
               <textarea
                 id="contentText"
                 placeholder="One line per slide works well…"
               ></textarea>
+
             </div>
 
           </div>
         `;
 
       case 'ppt-edit':
+
         return `
           <div class="btn-row">
 
             <button
+              type="button"
               class="btn btn--soft"
               id="inspectSlides"
             >
@@ -1769,20 +2458,23 @@
             id="slideEditor"
             class="editor-list"
           >
+
             <div class="empty">
               Load the deck to inspect
               its real slide text.
             </div>
+
           </div>
 
           <div class="note">
             Edit the loaded slide text above.
-            KrazyBuy sends changed text
-            replacements to the backend.
+            Only changed original strings
+            are sent to the backend.
           </div>
         `;
 
       case 'doc-create':
+
         return `
           <div class="field">
 
@@ -1812,10 +2504,12 @@
         `;
 
       case 'doc-edit':
+
         return `
           <div class="btn-row">
 
             <button
+              type="button"
               class="btn btn--soft"
               id="loadDoc"
             >
@@ -1824,6 +2518,7 @@
             </button>
 
             <button
+              type="button"
               class="btn"
               id="exportDocPdf"
             >
@@ -1854,23 +2549,35 @@
           <div class="grid-2">
 
             <div class="field">
-              <label>Find</label>
+
+              <label>
+                Find
+              </label>
+
               <input id="find">
+
             </div>
 
             <div class="field">
-              <label>Replace</label>
+
+              <label>
+                Replace
+              </label>
+
               <input id="replace">
+
             </div>
 
           </div>
         `;
 
       case 'xlsx-edit':
+
         return `
           <div class="btn-row">
 
             <button
+              type="button"
               class="btn btn--soft"
               id="inspectXlsx"
             >
@@ -1884,15 +2591,18 @@
             id="sheetEditor"
             style="margin-top:12px"
           >
+
             <div class="empty">
               Load the workbook to view
               the real sheet data.
             </div>
+
           </div>
 
           <div class="grid-2">
 
             <div class="field">
+
               <label>
                 Active sheet
               </label>
@@ -1901,9 +2611,11 @@
                 id="sheet"
                 value="Sheet1"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Edited cells JSON
               </label>
@@ -1912,6 +2624,7 @@
                 id="cells"
                 placeholder='{"A1":"Updated"}'
               ></textarea>
+
             </div>
 
           </div>
@@ -1920,31 +2633,46 @@
       case 'img-edit':
       case 'img-convert':
       case 'img-resize':
+
         return `
           <div class="grid-2">
 
             <div class="field">
-              <label>Width</label>
+
+              <label>
+                Width
+              </label>
+
               <input
                 id="width"
                 type="number"
                 min="1"
               >
+
             </div>
 
             <div class="field">
-              <label>Height</label>
+
+              <label>
+                Height
+              </label>
+
               <input
                 id="height"
                 type="number"
                 min="1"
               >
+
             </div>
 
             <div class="field">
-              <label>Format</label>
+
+              <label>
+                Format
+              </label>
 
               <select id="format">
+
                 <option value="webp">
                   WebP
                 </option>
@@ -1956,11 +2684,16 @@
                 <option value="jpg">
                   JPG
                 </option>
+
               </select>
+
             </div>
 
             <div class="field">
-              <label>Quality</label>
+
+              <label>
+                Quality
+              </label>
 
               <input
                 id="quality"
@@ -1969,19 +2702,25 @@
                 max="100"
                 value="82"
               >
+
             </div>
 
             <div class="field">
-              <label>Degrees</label>
+
+              <label>
+                Degrees
+              </label>
 
               <input
                 id="degrees"
                 type="number"
                 value="90"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Flip horizontal
               </label>
@@ -1990,14 +2729,21 @@
                 id="horizontal"
                 type="checkbox"
               >
+
             </div>
 
-            <div class="field field--full">
+            <div
+              class="field field--full"
+            >
+
               <label>
                 Watermark
               </label>
 
-              <input id="watermark">
+              <input
+                id="watermark"
+              >
+
             </div>
 
           </div>
@@ -2006,17 +2752,21 @@
             id="imagePreview"
             class="preview"
           >
+
             <div class="empty">
               Select an image to preview it.
             </div>
+
           </div>
         `;
 
       case 'img-crop':
+
         return `
           <div class="grid-2">
 
             <div class="field">
+
               <label>
                 Crop width
               </label>
@@ -2026,9 +2776,11 @@
                 type="number"
                 min="1"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Crop height
               </label>
@@ -2038,10 +2790,14 @@
                 type="number"
                 min="1"
               >
+
             </div>
 
             <div class="field">
-              <label>Left</label>
+
+              <label>
+                Left
+              </label>
 
               <input
                 id="left"
@@ -2049,10 +2805,14 @@
                 min="0"
                 value="0"
               >
+
             </div>
 
             <div class="field">
-              <label>Top</label>
+
+              <label>
+                Top
+              </label>
 
               <input
                 id="top"
@@ -2060,6 +2820,7 @@
                 min="0"
                 value="0"
               >
+
             </div>
 
           </div>
@@ -2068,13 +2829,16 @@
             id="imagePreview"
             class="preview"
           >
+
             <div class="empty">
               Select an image to preview it.
             </div>
+
           </div>
         `;
 
       case 'img-rotate':
+
         return `
           <div class="field">
 
@@ -2095,13 +2859,16 @@
             id="imagePreview"
             class="preview"
           >
+
             <div class="empty">
               Select an image to preview it.
             </div>
+
           </div>
         `;
 
       case 'img-flip':
+
         return `
           <div class="field">
 
@@ -2125,10 +2892,12 @@
         `;
 
       case 'img-compress':
+
         return `
           <div class="grid-2">
 
             <div class="field">
+
               <label>
                 Quality
               </label>
@@ -2140,9 +2909,11 @@
                 max="100"
                 value="80"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Format
               </label>
@@ -2162,6 +2933,7 @@
                 </option>
 
               </select>
+
             </div>
 
           </div>
@@ -2170,17 +2942,21 @@
             id="imagePreview"
             class="preview"
           >
+
             <div class="empty">
               Select an image to preview it.
             </div>
+
           </div>
         `;
 
       case 'img-watermark':
+
         return `
           <div class="grid-2">
 
             <div class="field">
+
               <label>
                 Quality
               </label>
@@ -2192,9 +2968,11 @@
                 max="100"
                 value="80"
               >
+
             </div>
 
             <div class="field">
+
               <label>
                 Format
               </label>
@@ -2214,20 +2992,28 @@
                 </option>
 
               </select>
+
             </div>
 
-            <div class="field field--full">
+            <div
+              class="field field--full"
+            >
+
               <label>
                 Watermark text
               </label>
 
-              <input id="watermark">
+              <input
+                id="watermark"
+              >
+
             </div>
 
           </div>
         `;
 
       case 'zip-create':
+
         return `
           <div class="field">
 
@@ -2255,47 +3041,105 @@
 
   /* ============================================================
    * ACTION LABELS
-   * ============================================================ */
+   * ========================================================== */
 
   function actionLabel(tool) {
     const labels = {
-      'pdf-merge': 'Merge PDFs',
-      'pdf-split': 'Extract pages',
-      'pdf-organize': 'Apply page changes',
-      'pdf-edit': 'Apply PDF edits',
-      'pdf-compress': 'Compress PDF',
-      'pdf-protect': 'Protect PDF',
-      'pdf-image': 'Render pages',
-      'images-pdf': 'Create PDF',
+      'pdf-merge':
+        'Merge PDFs',
 
-      'ppt-edit': 'Save presentation',
-      'ppt-create': 'Create PPTX',
-      'ppt-pdf': 'Convert to PDF',
-      'ppt-images': 'Render slides',
-      'images-ppt': 'Create PPTX',
-      'pdf-ppt': 'Create PPTX',
+      'pdf-split':
+        'Extract pages',
 
-      'doc-edit': 'Save DOCX',
-      'doc-create': 'Create DOCX',
-      'doc-pdf': 'Convert to PDF',
-      'doc-txt': 'Export TXT',
-      'pdf-docx': 'Convert to DOCX',
+      'pdf-organize':
+        'Apply page changes',
 
-      'xlsx-edit': 'Save workbook',
-      'csv-xlsx': 'Convert XLSX',
-      'xlsx-csv': 'Export CSV',
-      'xlsx-pdf': 'Export PDF',
+      'pdf-edit':
+        'Apply PDF edits',
 
-      'img-edit': 'Process image',
-      'img-convert': 'Convert image',
-      'img-resize': 'Resize image',
-      'img-crop': 'Crop image',
-      'img-rotate': 'Rotate image',
-      'img-flip': 'Flip image',
-      'img-compress': 'Compress image',
-      'img-watermark': 'Watermark image',
+      'pdf-compress':
+        'Compress PDF',
 
-      'zip-create': 'Create ZIP',
+      'pdf-protect':
+        'Protect PDF',
+
+      'pdf-image':
+        'Render pages',
+
+      'images-pdf':
+        'Create PDF',
+
+      'ppt-edit':
+        'Save presentation',
+
+      'ppt-create':
+        'Create PPTX',
+
+      'ppt-pdf':
+        'Convert to PDF',
+
+      'ppt-images':
+        'Render slides',
+
+      'images-ppt':
+        'Create PPTX',
+
+      'pdf-ppt':
+        'Create PPTX',
+
+      'doc-edit':
+        'Save DOCX',
+
+      'doc-create':
+        'Create DOCX',
+
+      'doc-pdf':
+        'Convert to PDF',
+
+      'doc-txt':
+        'Export TXT',
+
+      'pdf-docx':
+        'Convert to DOCX',
+
+      'xlsx-edit':
+        'Save workbook',
+
+      'csv-xlsx':
+        'Convert XLSX',
+
+      'xlsx-csv':
+        'Export CSV',
+
+      'xlsx-pdf':
+        'Export PDF',
+
+      'img-edit':
+        'Process image',
+
+      'img-convert':
+        'Convert image',
+
+      'img-resize':
+        'Resize image',
+
+      'img-crop':
+        'Crop image',
+
+      'img-rotate':
+        'Rotate image',
+
+      'img-flip':
+        'Flip image',
+
+      'img-compress':
+        'Compress image',
+
+      'img-watermark':
+        'Watermark image',
+
+      'zip-create':
+        'Create ZIP',
     };
 
     return (
@@ -2306,9 +3150,9 @@
 
   /* ============================================================
    * SIDE INFORMATION
-   * ============================================================ */
+   * ========================================================== */
 
-  function aside(tool) {
+  function aside() {
     return `
       <aside class="aside">
 
@@ -2319,11 +3163,12 @@
             API connected
           </span>
 
-          <p style="margin-top:8px">
-            Your selected file is sent to
-            the configured processing backend.
-            The generated result is then
-            downloaded to your device.
+          <p
+            style="margin-top:8px"
+          >
+            Vercel serves this application.
+            The configured backend performs
+            the file processing.
           </p>
 
         </div>
@@ -2335,6 +3180,7 @@
           </h3>
 
           <ul>
+
             <li>
               Select your file(s).
             </li>
@@ -2354,6 +3200,7 @@
             <li>
               Download the result.
             </li>
+
           </ul>
 
         </div>
@@ -2364,18 +3211,22 @@
 
   /* ============================================================
    * TOOL VIEW
-   * ============================================================ */
+   * ========================================================== */
 
   function toolView(id) {
-    const tool = byId(id);
+    const tool =
+      byId(id);
 
     if (!tool) {
       dashboard();
       return;
     }
 
-    state.tool = id;
-    state.scratch = {};
+    state.tool =
+      id;
+
+    state.scratch =
+      {};
 
     const selected =
       files();
@@ -2392,12 +3243,18 @@
             WORKFLOW
           </div>
 
-          <h1 class="page-title">
-            ${esc(tool.name)}
+          <h1
+            class="page-title"
+          >
+            ${esc(
+              tool.name
+            )}
           </h1>
 
           <p class="lede">
-            ${esc(tool.desc)}
+            ${esc(
+              tool.desc
+            )}
           </p>
 
         </div>
@@ -2444,6 +3301,7 @@
           <div class="sticky-cta">
 
             <button
+              type="button"
               class="btn btn--primary"
               id="run"
             >
@@ -2468,14 +3326,18 @@
 
     bindTool(tool);
 
-    if (selected.length) {
-      refreshFilesUI(tool);
+    if (
+      selected.length
+    ) {
+      refreshFilesUI(
+        tool
+      );
     }
   }
 
   /* ============================================================
    * TOOL BINDING
-   * ============================================================ */
+   * ========================================================== */
 
   function bindTool(tool) {
     const browse =
@@ -2488,13 +3350,21 @@
       $('#folder');
 
     if (browse) {
-      browse.onclick = () =>
-        choose(tool, false);
+      browse.onclick =
+        () =>
+          choose(
+            tool,
+            false
+          );
     }
 
     if (folder) {
-      folder.onclick = () =>
-        choose(tool, true);
+      folder.onclick =
+        () =>
+          choose(
+            tool,
+            true
+          );
     }
 
     if (drop) {
@@ -2509,7 +3379,10 @@
             return;
           }
 
-          choose(tool, false);
+          choose(
+            tool,
+            false
+          );
         }
       );
 
@@ -2517,11 +3390,17 @@
         'keydown',
         (event) => {
           if (
-            event.key === 'Enter' ||
-            event.key === ' '
+            event.key ===
+              'Enter' ||
+            event.key ===
+              ' '
           ) {
             event.preventDefault();
-            choose(tool, false);
+
+            choose(
+              tool,
+              false
+            );
           }
         }
       );
@@ -2529,40 +3408,48 @@
       [
         'dragenter',
         'dragover',
-      ].forEach((eventName) => {
-        drop.addEventListener(
-          eventName,
-          (event) => {
-            event.preventDefault();
-            drop.classList.add(
-              'is-drag'
-            );
-          }
-        );
-      });
+      ].forEach(
+        (eventName) => {
+          drop.addEventListener(
+            eventName,
+            (event) => {
+              event.preventDefault();
+
+              drop.classList.add(
+                'is-drag'
+              );
+            }
+          );
+        }
+      );
 
       [
         'dragleave',
         'drop',
-      ].forEach((eventName) => {
-        drop.addEventListener(
-          eventName,
-          (event) => {
-            event.preventDefault();
+      ].forEach(
+        (eventName) => {
+          drop.addEventListener(
+            eventName,
+            (event) => {
+              event.preventDefault();
 
-            drop.classList.remove(
-              'is-drag'
-            );
-          }
-        );
-      });
+              drop.classList.remove(
+                'is-drag'
+              );
+            }
+          );
+        }
+      );
 
       drop.addEventListener(
         'drop',
         (event) => {
-          const incoming = [
-            ...event.dataTransfer.files,
-          ];
+          const incoming =
+            [
+              ...(event
+                .dataTransfer
+                ?.files || []),
+            ];
 
           addFiles(
             tool,
@@ -2574,14 +3461,23 @@
 
     $('#run')?.addEventListener(
       'click',
-      () => runTool(tool)
+      () =>
+        runTool(tool)
     );
 
     $('#clearFiles')?.addEventListener(
       'click',
       () => {
         setFiles([]);
-        refreshFilesUI(tool);
+
+        refreshFilesUI(
+          tool
+        );
+
+        toast(
+          'Files cleared',
+          'info'
+        );
       }
     );
 
@@ -2625,8 +3521,11 @@
       () => {
         state.scratch.pages?.forEach(
           (page) => {
-            if (!page.removed) {
-              page.sel = true;
+            if (
+              !page.removed
+            ) {
+              page.sel =
+                true;
             }
           }
         );
@@ -2640,7 +3539,8 @@
       () => {
         state.scratch.pages?.forEach(
           (page) => {
-            page.sel = false;
+            page.sel =
+              false;
           }
         );
 
@@ -2660,7 +3560,8 @@
           .forEach(
             (page) => {
               page.rot =
-                (page.rot + 90) %
+                (page.rot +
+                  90) %
                 360;
             }
           );
@@ -2680,8 +3581,11 @@
           )
           .forEach(
             (page) => {
-              page.removed = true;
-              page.sel = false;
+              page.removed =
+                true;
+
+              page.sel =
+                false;
             }
           );
 
@@ -2694,7 +3598,8 @@
       () => {
         state.scratch.pages?.forEach(
           (page) => {
-            page.removed = false;
+            page.removed =
+              false;
           }
         );
 
@@ -2715,7 +3620,7 @@
 
   /* ============================================================
    * FILE CHOOSER
-   * ============================================================ */
+   * ========================================================== */
 
   function choose(
     tool,
@@ -2727,7 +3632,8 @@
         'input'
       );
 
-    input.type = 'file';
+    input.type =
+      'file';
 
     input.accept =
       fileAccept(tool);
@@ -2740,25 +3646,30 @@
       );
 
     if (folder) {
-      input.webkitdirectory = true;
+      input.webkitdirectory =
+        true;
+
       input.setAttribute(
         'webkitdirectory',
         ''
       );
     }
 
-    input.onchange = () => {
-      const incoming = [
-        ...input.files,
-      ];
+    input.onchange =
+      () => {
+        const incoming =
+          [
+            ...(input
+              .files || []),
+          ];
 
-      addFiles(
-        tool,
-        incoming
-      );
+        addFiles(
+          tool,
+          incoming
+        );
 
-      input.remove();
-    };
+        input.remove();
+      };
 
     document.body.appendChild(
       input
@@ -2769,13 +3680,15 @@
 
   /* ============================================================
    * ADD FILES
-   * ============================================================ */
+   * ========================================================== */
 
   function addFiles(
     tool,
     incoming
   ) {
-    if (!incoming.length) {
+    if (
+      !incoming.length
+    ) {
       return;
     }
 
@@ -2787,14 +3700,18 @@
 
     let next;
 
-    if (tool.multiple) {
+    if (
+      tool.multiple
+    ) {
       next = [
         ...files(),
         ...validation.ok,
       ];
     } else {
       next =
-        validation.ok.slice(-1);
+        validation.ok.slice(
+          -1
+        );
     }
 
     const seen =
@@ -2812,7 +3729,9 @@
             return false;
           }
 
-          seen.add(key);
+          seen.add(
+            key
+          );
 
           return true;
         }
@@ -2820,19 +3739,27 @@
 
     setFiles(next);
 
-    refreshFilesUI(tool);
+    refreshFilesUI(
+      tool
+    );
 
-    if (validation.bad.length) {
+    if (
+      validation.bad
+        .length
+    ) {
       toast(
         validation.bad[0],
         'error'
       );
     }
 
-    if (validation.ok.length) {
+    if (
+      validation.ok.length
+    ) {
       toast(
         `${validation.ok.length} file${
-          validation.ok.length > 1
+          validation.ok.length >
+          1
             ? 's'
             : ''
         } added`
@@ -2840,7 +3767,9 @@
     }
 
     if (
-      tool.id.startsWith('img-')
+      tool.id.startsWith(
+        'img-'
+      )
     ) {
       previewImage();
     }
@@ -2848,47 +3777,63 @@
 
   /* ============================================================
    * FILE LIST REFRESH
-   * ============================================================ */
+   * ========================================================== */
 
-  function refreshFilesUI(tool) {
+  function refreshFilesUI(
+    tool
+  ) {
     const area =
       $('#fileArea');
 
-    if (!area) return;
+    if (!area) {
+      return;
+    }
 
     area.innerHTML =
       fileList(tool);
 
-    $$('[data-remove]').forEach(
+    $$(
+      '[data-remove]'
+    ).forEach(
       (button) => {
-        button.onclick = () => {
-          const index =
-            Number(
-              button.dataset
-                .remove
+        button.onclick =
+          () => {
+            const index =
+              Number(
+                button
+                  .dataset
+                  .remove
+              );
+
+            const next =
+              files().slice();
+
+            next.splice(
+              index,
+              1
             );
 
-          const next =
-            files().slice();
+            setFiles(
+              next
+            );
 
-          next.splice(
-            index,
-            1
-          );
+            refreshFilesUI(
+              tool
+            );
 
-          setFiles(next);
-
-          refreshFilesUI(tool);
-
-          toast(
-            'File removed'
-          );
-        };
+            toast(
+              'File removed',
+              'info'
+            );
+          };
       }
     );
 
     files().forEach(
-      (file, index) => {
+      (
+        file,
+        index
+      ) => {
         if (
           !IMG.includes(
             ext(file.name)
@@ -2902,36 +3847,45 @@
             `[data-thumb="${index}"]`
           );
 
-        if (!slot) return;
+        if (!slot) {
+          return;
+        }
 
         const url =
           URL.createObjectURL(
             file
           );
 
-        slot.innerHTML = `
-          <img
-            src="${url}"
-            alt=""
-          >
-        `;
+        slot.innerHTML =
+          `
+            <img
+              src="${url}"
+              alt=""
+            >
+          `;
 
-        slot
-          .querySelector('img')
-          .addEventListener(
-            'load',
-            () =>
-              URL.revokeObjectURL(
-                url
-              )
+        const image =
+          slot.querySelector(
+            'img'
           );
+
+        image?.addEventListener(
+          'load',
+          () =>
+            URL.revokeObjectURL(
+              url
+            ),
+          {
+            once: true,
+          }
+        );
       }
     );
   }
 
   /* ============================================================
-   * PHASE STATUS
-   * ============================================================ */
+   * LOCAL PHASE
+   * ========================================================== */
 
   function phase(
     label,
@@ -2941,9 +3895,12 @@
     const node =
       $('#phase');
 
-    if (!node) return;
+    if (!node) {
+      return;
+    }
 
-    node.hidden = false;
+    node.hidden =
+      false;
 
     node.className =
       `phase ${
@@ -2974,7 +3931,9 @@
       ${
         kind === 'busy'
           ? `
-            <div class="progress">
+            <div
+              class="progress"
+            >
 
               <i
                 style="width:${
@@ -2992,27 +3951,44 @@
   }
 
   /* ============================================================
-   * XHR REQUEST
+   * REQUEST
    *
-   * IMPORTANT:
-   * Upload progress is real XMLHttpRequest
-   * progress, not fake timer progress.
-   * ============================================================ */
+   * Uses current resolved backend.
+   *
+   * If direct Render fails because the Vercel proxy
+   * changed/unavailable, re-resolve once and retry.
+   * ========================================================== */
 
   async function request(
     path,
     body,
     expect = 'blob',
-    callbacks = {}
+    callbacks = {},
+    retry = true
   ) {
+    /*
+     * Make sure we have selected an API backend.
+     */
+    if (
+      !apiState.checked
+    ) {
+      await resolveApiBase();
+    }
+
     return new Promise(
-      (resolve, reject) => {
+      (
+        resolve,
+        reject
+      ) => {
         const xhr =
           new XMLHttpRequest();
 
+        const target =
+          api(path);
+
         xhr.open(
           'POST',
-          api(path),
+          target,
           true
         );
 
@@ -3022,9 +3998,21 @@
         xhr.timeout =
           cfg.requestTimeoutMs;
 
-        /* -----------------------------
-         * UPLOAD PROGRESS
-         * ----------------------------- */
+        xhr.setRequestHeader(
+          'X-KrazyBuy-Client',
+          'workspace-v1.2'
+        );
+
+        xhr.setRequestHeader(
+          'Accept',
+          expect === 'json'
+            ? 'application/json'
+            : '*/*'
+        );
+
+        /* ==========================================
+         * TRUE UPLOAD PROGRESS
+         * ======================================== */
 
         xhr.upload.onprogress =
           (event) => {
@@ -3033,8 +4021,10 @@
             ) {
               const percent =
                 Math.round(
-                  (event.loaded /
-                    event.total) *
+                  (
+                    event.loaded /
+                    event.total
+                  ) *
                     100
                 );
 
@@ -3046,9 +4036,9 @@
             }
           };
 
-        /* -----------------------------
-         * DOWNLOAD / RESPONSE PROGRESS
-         * ----------------------------- */
+        /* ==========================================
+         * RESPONSE PROGRESS
+         * ======================================== */
 
         xhr.onprogress =
           (event) => {
@@ -3057,8 +4047,10 @@
             ) {
               const percent =
                 Math.round(
-                  (event.loaded /
-                    event.total) *
+                  (
+                    event.loaded /
+                    event.total
+                  ) *
                     100
                 );
 
@@ -3070,174 +4062,303 @@
             }
           };
 
-        /* -----------------------------
+        /* ==========================================
          * COMPLETE
-         * ----------------------------- */
+         * ======================================== */
 
-        xhr.onload = async () => {
-          const blob =
-            xhr.response instanceof Blob
-              ? xhr.response
-              : new Blob([
-                  xhr.response ||
-                    '',
-                ]);
+        xhr.onload =
+          async () => {
+            const blob =
+              xhr.response instanceof
+              Blob
+                ? xhr.response
+                : new Blob([
+                    xhr.response ||
+                      '',
+                  ]);
 
-          if (
-            xhr.status < 200 ||
-            xhr.status >= 300
-          ) {
-            let message =
-              `Request failed (${xhr.status})`;
-
-            try {
-              const text =
-                await blob.text();
+            /*
+             * Backend error.
+             */
+            if (
+              xhr.status <
+                200 ||
+              xhr.status >=
+                300
+            ) {
+              let message =
+                `Request failed (${xhr.status})`;
 
               try {
-                const json =
-                  JSON.parse(text);
+                const text =
+                  await blob.text();
 
-                message =
-                  json.error ||
-                  json.message ||
-                  message;
-              } catch {
-                if (
-                  text.trim()
-                ) {
+                try {
+                  const json =
+                    JSON.parse(
+                      text
+                    );
+
                   message =
-                    text.trim();
+                    json.error ||
+                    json.message ||
+                    message;
+                } catch {
+                  if (
+                    text.trim()
+                  ) {
+                    message =
+                      text.trim();
+                  }
                 }
+              } catch {}
+
+              /*
+               * If /api on Vercel is not configured
+               * but Render works, automatically
+               * switch to Render.
+               */
+              if (
+                retry &&
+                apiState.current ===
+                  '/api' &&
+                (
+                  xhr.status ===
+                    404 ||
+                  xhr.status ===
+                    405 ||
+                  xhr.status ===
+                    502 ||
+                  xhr.status ===
+                    503
+                )
+              ) {
+                apiState.checked =
+                  false;
+
+                await resolveApiBase();
+
+                if (
+                  apiState.current !==
+                  '/api'
+                ) {
+                  try {
+                    const result =
+                      await request(
+                        path,
+                        body,
+                        expect,
+                        callbacks,
+                        false
+                      );
+
+                    resolve(
+                      result
+                    );
+
+                    return;
+                  } catch (
+                    retryError
+                  ) {
+                    reject(
+                      retryError
+                    );
+
+                    return;
+                  }
+                }
+              }
+
+              reject(
+                new Error(
+                  human(
+                    message
+                  )
+                )
+              );
+
+              return;
+            }
+
+            /* ====================================
+             * JSON
+             * ================================== */
+
+            if (
+              expect ===
+              'json'
+            ) {
+              try {
+                const text =
+                  await blob.text();
+
+                resolve(
+                  JSON.parse(
+                    text
+                  )
+                );
+              } catch {
+                reject(
+                  new Error(
+                    'Backend returned invalid JSON.'
+                  )
+                );
+              }
+
+              return;
+            }
+
+            /* ====================================
+             * FILENAME
+             * ================================== */
+
+            const disposition =
+              xhr.getResponseHeader(
+                'content-disposition'
+              ) || '';
+
+            let filename =
+              'krazybuy-output.bin';
+
+            const utfMatch =
+              disposition.match(
+                /filename\*=UTF-8''([^;]+)/i
+              );
+
+            const normalMatch =
+              disposition.match(
+                /filename="?([^";]+)"?/i
+              );
+
+            try {
+              if (
+                utfMatch
+              ) {
+                filename =
+                  decodeURIComponent(
+                    utfMatch[1]
+                  );
+              } else if (
+                normalMatch
+              ) {
+                filename =
+                  normalMatch[1];
               }
             } catch {}
 
+            resolve({
+              blob,
+              name:
+                filename,
+            });
+          };
+
+        /* ==========================================
+         * NETWORK ERROR
+         * ======================================== */
+
+        xhr.onerror =
+          async () => {
+            /*
+             * If relative /api doesn't work,
+             * automatically try Render once.
+             */
+            if (
+              retry &&
+              apiState.current ===
+                '/api'
+            ) {
+              apiState.checked =
+                false;
+
+              await resolveApiBase();
+
+              if (
+                apiState.current !==
+                '/api'
+              ) {
+                try {
+                  const result =
+                    await request(
+                      path,
+                      body,
+                      expect,
+                      callbacks,
+                      false
+                    );
+
+                  resolve(
+                    result
+                  );
+
+                  return;
+                } catch (
+                  retryError
+                ) {
+                  reject(
+                    retryError
+                  );
+
+                  return;
+                }
+              }
+            }
+
             reject(
               new Error(
-                human(message)
+                'Could not reach the processing backend. Check the Vercel proxy, Render backend and CORS settings.'
               )
             );
+          };
 
-            return;
-          }
-
-          /* -----------------------------
-           * JSON RESPONSE
-           * ----------------------------- */
-
-          if (
-            expect === 'json'
-          ) {
-            try {
-              const text =
-                await blob.text();
-
-              resolve(
-                JSON.parse(text)
-              );
-            } catch {
-              reject(
-                new Error(
-                  'Backend returned invalid JSON.'
-                )
-              );
-            }
-
-            return;
-          }
-
-          /* -----------------------------
-           * OUTPUT FILENAME
-           * ----------------------------- */
-
-          const disposition =
-            xhr.getResponseHeader(
-              'content-disposition'
-            ) || '';
-
-          let filename =
-            'krazybuy-output.bin';
-
-          const utfMatch =
-            disposition.match(
-              /filename\*=UTF-8''([^;]+)/i
-            );
-
-          const normalMatch =
-            disposition.match(
-              /filename="?([^";]+)"?/i
-            );
-
-          try {
-            if (utfMatch) {
-              filename =
-                decodeURIComponent(
-                  utfMatch[1]
-                );
-            } else if (
-              normalMatch
-            ) {
-              filename =
-                normalMatch[1];
-            }
-          } catch {}
-
-          resolve({
-            blob,
-            name: filename,
-          });
-        };
-
-        /* -----------------------------
-         * NETWORK ERROR
-         * ----------------------------- */
-
-        xhr.onerror = () => {
-          reject(
-            new Error(
-              'Could not reach the backend API.'
-            )
-          );
-        };
-
-        /* -----------------------------
+        /* ==========================================
          * TIMEOUT
-         * ----------------------------- */
+         * ======================================== */
 
-        xhr.ontimeout = () => {
-          reject(
-            new Error(
-              'The backend took too long to respond.'
-            )
-          );
-        };
+        xhr.ontimeout =
+          () => {
+            reject(
+              new Error(
+                'The backend took too long to respond.'
+              )
+            );
+          };
 
-        /* -----------------------------
+        /* ==========================================
          * ABORT
-         * ----------------------------- */
+         * ======================================== */
 
-        xhr.onabort = () => {
-          reject(
-            new Error(
-              'Operation cancelled.'
-            )
-          );
-        };
+        xhr.onabort =
+          () => {
+            reject(
+              new Error(
+                'Operation cancelled.'
+              )
+            );
+          };
 
         try {
-          xhr.send(body);
-        } catch (error) {
-          reject(error);
+          xhr.send(
+            body
+          );
+        } catch (
+          error
+        ) {
+          reject(
+            error
+          );
         }
       }
     );
   }
 
   /* ============================================================
-   * SAVE DOWNLOAD
-   * ============================================================ */
+   * SAVE RESULT
+   * ========================================================== */
 
-  function save(result) {
+  function save(
+    result
+  ) {
     const url =
       URL.createObjectURL(
         result.blob
@@ -3248,7 +4369,8 @@
         'a'
       );
 
-    anchor.href = url;
+    anchor.href =
+      url;
 
     anchor.download =
       result.name ||
@@ -3272,10 +4394,12 @@
   }
 
   /* ============================================================
-   * FORM DATA HELPERS
-   * ============================================================ */
+   * FORM DATA
+   * ========================================================== */
 
-  function fdOne(file) {
+  function fdOne(
+    file
+  ) {
     const form =
       new FormData();
 
@@ -3290,10 +4414,14 @@
 
   /* ============================================================
    * MAIN TOOL EXECUTION
-   * ============================================================ */
+   * ========================================================== */
 
-  async function runTool(tool) {
-    if (state.busy) {
+  async function runTool(
+    tool
+  ) {
+    if (
+      state.busy
+    ) {
       return;
     }
 
@@ -3301,13 +4429,14 @@
       const selected =
         files();
 
-      /* -----------------------------
-       * VALIDATE
-       * ----------------------------- */
-
+      /*
+       * CREATE TOOLS DON'T NEED INPUT FILES.
+       */
       if (
-        tool.id !== 'ppt-create' &&
-        tool.id !== 'doc-create' &&
+        tool.id !==
+          'ppt-create' &&
+        tool.id !==
+          'doc-create' &&
         !selected.length
       ) {
         throw new Error(
@@ -3319,7 +4448,22 @@
         );
       }
 
-      state.busy = true;
+      /*
+       * MERGE needs at least two PDFs.
+       */
+      if (
+        tool.id ===
+          'pdf-merge' &&
+        selected.length <
+          2
+      ) {
+        throw new Error(
+          'Select at least two PDF files to merge.'
+        );
+      }
+
+      state.busy =
+        true;
 
       const runButton =
         $('#run');
@@ -3328,10 +4472,6 @@
         runButton.disabled =
           true;
       }
-
-      /* -----------------------------
-       * INITIAL PROGRESS
-       * ----------------------------- */
 
       showOperationProgress(
         'Preparing…',
@@ -3350,32 +4490,33 @@
       let path =
         tool.endpoint;
 
-      /* -----------------------------
+      /* ==========================================
        * CREATE PPT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
-        tool.id === 'ppt-create'
+        tool.id ===
+        'ppt-create'
       ) {
         form =
           new FormData();
 
         form.append(
           'title',
-          $('#title')?.value ||
-            ''
+          $('#title')
+            ?.value || ''
         );
 
         form.append(
           'subtitle',
-          $('#subtitle')?.value ||
-            ''
+          $('#subtitle')
+            ?.value || ''
         );
 
         form.append(
           'slides',
-          $('#slides')?.value ||
-            '5'
+          $('#slides')
+            ?.value || '5'
         );
 
         form.append(
@@ -3385,27 +4526,39 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * CREATE DOC
-       * ----------------------------- */
+       * ======================================== */
 
       else if (
-        tool.id === 'doc-create'
+        tool.id ===
+        'doc-create'
       ) {
+        const title =
+          $('#title')
+            ?.value
+            ?.trim() || '';
+
+        const text =
+          $('#text')
+            ?.value || '';
+
+        if (!text.trim()) {
+          throw new Error(
+            'Write some document text first.'
+          );
+        }
+
         form =
           new URLSearchParams({
-            title:
-              $('#title')
-                ?.value || '',
-            text:
-              $('#text')
-                ?.value || '',
+            title,
+            text,
           });
       }
 
-      /* -----------------------------
+      /* ==========================================
        * MULTIPLE FILES
-       * ----------------------------- */
+       * ======================================== */
 
       else if (
         tool.multiple
@@ -3447,9 +4600,9 @@
         }
       }
 
-      /* -----------------------------
+      /* ==========================================
        * SINGLE FILE
-       * ----------------------------- */
+       * ======================================== */
 
       else {
         form =
@@ -3458,24 +4611,34 @@
           );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PDF SPLIT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
         'pdf-split'
       ) {
+        const ranges =
+          $('#ranges')
+            ?.value
+            ?.trim() || '';
+
+        if (!ranges) {
+          throw new Error(
+            'Enter the pages or ranges to extract.'
+          );
+        }
+
         form.append(
           'ranges',
-          $('#ranges')
-            ?.value || ''
+          ranges
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PDF EDIT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3497,12 +4660,37 @@
           }
         );
 
+        const changed =
+          Boolean(
+            $('#text')
+              ?.value
+          ) ||
+          Boolean(
+            $('#watermark')
+              ?.value
+          ) ||
+          Boolean(
+            $('#pageNumbers')
+              ?.checked
+          ) ||
+          (
+            $('#rotate')
+              ?.value || '0'
+          ) !== '0';
+
+        if (!changed) {
+          throw new Error(
+            'Add text, watermark, page numbers or rotation before running.'
+          );
+        }
+
         form.append(
           'pageNumbers',
           String(
-            $('#pageNumbers')
-              ?.checked ||
-              false
+            Boolean(
+              $('#pageNumbers')
+                ?.checked
+            )
           )
         );
 
@@ -3517,9 +4705,9 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PDF ORGANIZE
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3529,7 +4717,9 @@
           state.scratch
             .pages || [];
 
-        if (!pages.length) {
+        if (
+          !pages.length
+        ) {
           throw new Error(
             'Load the PDF pages first.'
           );
@@ -3541,7 +4731,9 @@
               !page.removed
           );
 
-        if (!kept.length) {
+        if (
+          !kept.length
+        ) {
           throw new Error(
             'At least one page must remain.'
           );
@@ -3582,7 +4774,8 @@
         form.append(
           'rotate',
           String(
-            rotations.size === 1
+            rotations.size ===
+              1
               ? [
                   ...rotations,
                 ][0]
@@ -3606,9 +4799,9 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PDF COMPRESS
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3622,9 +4815,9 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PDF PROTECT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3649,9 +4842,9 @@
         );
       }
 
-      /* -----------------------------
-       * PDF TO IMAGE
-       * ----------------------------- */
+      /* ==========================================
+       * PDF IMAGE
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3665,9 +4858,9 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * PPT EDIT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3682,7 +4875,8 @@
           (element) => {
             const index =
               Number(
-                element.dataset
+                element
+                  .dataset
                   .slideEditor
               );
 
@@ -3705,6 +4899,16 @@
             }
           }
         );
+
+        if (
+          !Object.keys(
+            replacements
+          ).length
+        ) {
+          throw new Error(
+            'Edit at least one slide text before saving.'
+          );
+        }
 
         form.append(
           'textReplacements',
@@ -3734,18 +4938,27 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * DOC EDIT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
         'doc-edit'
       ) {
+        const find =
+          $('#find')
+            ?.value || '';
+
+        if (!find) {
+          throw new Error(
+            'Enter the text to find.'
+          );
+        }
+
         form.append(
           'find',
-          $('#find')
-            ?.value || ''
+          find
         );
 
         form.append(
@@ -3760,14 +4973,29 @@
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * XLSX EDIT
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id ===
         'xlsx-edit'
       ) {
+        const cells =
+          $('#cells')
+            ?.value
+            ?.trim() || '{}';
+
+        try {
+          JSON.parse(
+            cells
+          );
+        } catch {
+          throw new Error(
+            'Edited cells must contain valid JSON.'
+          );
+        }
+
         form.append(
           'sheet',
           $('#sheet')
@@ -3777,15 +5005,13 @@
 
         form.append(
           'cells',
-          $('#cells')
-            ?.value ||
-            '{}'
+          cells
         );
       }
 
-      /* -----------------------------
+      /* ==========================================
        * IMAGE OPTIONS
-       * ----------------------------- */
+       * ======================================== */
 
       if (
         tool.id.startsWith(
@@ -3848,9 +5074,9 @@
         }
       }
 
-      /* -----------------------------
-       * IMAGE ENDPOINTS
-       * ----------------------------- */
+      /* ==========================================
+       * IMAGE ROUTES
+       * ======================================== */
 
       if (
         tool.id ===
@@ -3892,9 +5118,9 @@
           '/image/watermark';
       }
 
-      /* ========================================================
-       * REAL REQUEST
-       * ======================================================== */
+      /* ==========================================
+       * REQUEST
+       * ======================================== */
 
       const result =
         await request(
@@ -3902,16 +5128,12 @@
           form,
           'blob',
           {
-            /* -----------------------
-             * UPLOAD
-             * ----------------------- */
-
             onUpload: (
               percent,
               loaded,
               total
             ) => {
-              const fileText =
+              const transfer =
                 total
                   ? `${size(
                       loaded
@@ -3922,7 +5144,7 @@
 
               showOperationProgress(
                 'Uploading files…',
-                fileText,
+                transfer,
                 percent
               );
 
@@ -3932,10 +5154,6 @@
                 percent
               );
             },
-
-            /* -----------------------
-             * BACKEND RESPONSE
-             * ----------------------- */
 
             onDownload: (
               percent
@@ -3955,9 +5173,9 @@
           }
         );
 
-      /* ========================================================
-       * SUCCESS
-       * ======================================================== */
+      /* ==========================================
+       * COMPLETE
+       * ======================================== */
 
       showOperationProgress(
         'Completed',
@@ -3971,7 +5189,9 @@
         100
       );
 
-      save(result);
+      save(
+        result
+      );
 
       phase(
         `Done — ${result.name} downloaded.`,
@@ -3986,7 +5206,9 @@
         hideOperationProgress,
         1200
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       const message =
         human(error);
 
@@ -3995,7 +5217,7 @@
         'error'
       );
 
-      showOperationProgress(
+      updateOperationProgress(
         'Operation failed',
         message,
         100
@@ -4011,7 +5233,8 @@
         2500
       );
     } finally {
-      state.busy = false;
+      state.busy =
+        false;
 
       const runButton =
         $('#run');
@@ -4025,13 +5248,15 @@
 
   /* ============================================================
    * PPT INSPECT
-   * ============================================================ */
+   * ========================================================== */
 
   async function loadPpt() {
     const selected =
       files();
 
-    if (!selected.length) {
+    if (
+      !selected.length
+    ) {
       toast(
         'Select a PPTX first.',
         'error'
@@ -4063,23 +5288,30 @@
         items.map(
           (item) => ({
             orig:
-              item.text || '',
+              item.text ||
+              '',
             text:
-              item.text || '',
+              item.text ||
+              '',
           })
         );
 
       const editor =
         $('#slideEditor');
 
-      if (!editor) return;
+      if (!editor) {
+        return;
+      }
 
       editor.innerHTML =
         state.scratch.deck
           .length
           ? state.scratch.deck
               .map(
-                (slide, index) => `
+                (
+                  slide,
+                  index
+                ) => `
                   <div
                     class="slide-row"
                   >
@@ -4107,9 +5339,7 @@
             `;
 
       phase(
-        `Loaded ${
-          state.scratch.deck.length
-        } slide${
+        `Loaded ${state.scratch.deck.length} slide${
           state.scratch.deck.length ===
           1
             ? ''
@@ -4117,7 +5347,9 @@
         }.`,
         'ok'
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       phase(
         human(error),
         'error'
@@ -4127,7 +5359,7 @@
 
   /* ============================================================
    * DOC LOAD
-   * ============================================================ */
+   * ========================================================== */
 
   async function loadDoc() {
     const file =
@@ -4179,7 +5411,9 @@
         'Document loaded.',
         'ok'
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       phase(
         human(error),
         'error'
@@ -4189,7 +5423,7 @@
 
   /* ============================================================
    * DOC → PDF
-   * ============================================================ */
+   * ========================================================== */
 
   async function exportDocPdf() {
     const text =
@@ -4241,7 +5475,9 @@
           }
         );
 
-      save(result);
+      save(
+        result
+      );
 
       phase(
         `Done — ${result.name} downloaded.`,
@@ -4253,7 +5489,9 @@
       );
 
       hideOperationProgress();
-    } catch (error) {
+    } catch (
+      error
+    ) {
       const message =
         human(error);
 
@@ -4273,7 +5511,7 @@
 
   /* ============================================================
    * XLSX INSPECT
-   * ============================================================ */
+   * ========================================================== */
 
   async function loadXlsx() {
     const file =
@@ -4308,19 +5546,26 @@
       const editor =
         $('#sheetEditor');
 
-      if (!editor) return;
+      if (!editor) {
+        return;
+      }
 
       editor.innerHTML =
         worksheets.length
           ? worksheets
               .map(
-                (sheet, index) => {
+                (
+                  sheet,
+                  index
+                ) => {
                   const rows =
                     (
                       sheet.rows ||
                       []
                     ).map(
-                      (row) =>
+                      (
+                        row
+                      ) =>
                         Array.isArray(
                           row
                         )
@@ -4341,7 +5586,9 @@
                       </b>
                     </div>
 
-                    <div class="sheet-wrap">
+                    <div
+                      class="sheet-wrap"
+                    >
 
                       <table>
 
@@ -4405,16 +5652,17 @@
             `;
 
       phase(
-        `Loaded ${
-          worksheets.length
-        } worksheet${
-          worksheets.length === 1
+        `Loaded ${worksheets.length} worksheet${
+          worksheets.length ===
+          1
             ? ''
             : 's'
         }.`,
         'ok'
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       phase(
         human(error),
         'error'
@@ -4424,7 +5672,7 @@
 
   /* ============================================================
    * PDF PAGE INFO
-   * ============================================================ */
+   * ========================================================== */
 
   async function loadPdfPages() {
     const file =
@@ -4454,7 +5702,9 @@
       const count =
         Number(
           result?.data?.pages ||
+            result?.data?.pageCount ||
             result?.pages ||
+            result?.pageCount ||
             0
         );
 
@@ -4467,17 +5717,24 @@
       state.scratch.pages =
         Array.from(
           {
-            length: count,
+            length:
+              count,
           },
-          (_, index) => ({
+          (
+            _,
+            index
+          ) => ({
             src:
               index + 1,
 
-            rot: 0,
+            rot:
+              0,
 
-            removed: false,
+            removed:
+              false,
 
-            sel: false,
+            sel:
+              false,
           })
         );
 
@@ -4487,7 +5744,9 @@
         `${count} pages loaded.`,
         'ok'
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       phase(
         human(error),
         'error'
@@ -4497,19 +5756,23 @@
 
   /* ============================================================
    * PDF PAGE TILES
-   * ============================================================ */
+   * ========================================================== */
 
   function drawTiles() {
     const container =
       $('#tiles');
 
     const pages =
-      state.scratch.pages ||
-      [];
+      state.scratch
+        .pages || [];
 
-    if (!container) return;
+    if (!container) {
+      return;
+    }
 
-    if (!pages.length) {
+    if (
+      !pages.length
+    ) {
       container.innerHTML = `
         <div class="empty">
           No pages loaded.
@@ -4522,8 +5785,12 @@
     container.innerHTML =
       pages
         .map(
-          (page, index) => `
+          (
+            page,
+            index
+          ) => `
             <button
+              type="button"
               class="tile ${
                 page.sel
                   ? 'selected'
@@ -4534,9 +5801,7 @@
                   : ''
               }"
               data-page="${index}"
-              aria-pressed="${
-                page.sel
-              }"
+              aria-pressed="${page.sel}"
             >
 
               ${page.src}
@@ -4550,31 +5815,38 @@
         )
         .join('');
 
-    $$('[data-page]').forEach(
+    $$(
+      '[data-page]'
+    ).forEach(
       (button) => {
-        button.onclick = () => {
-          const page =
-            state.scratch.pages[
-              Number(
-                button.dataset
-                  .page
-              )
-            ];
+        button.onclick =
+          () => {
+            const page =
+              state.scratch
+                .pages[
+                Number(
+                  button
+                    .dataset
+                    .page
+                )
+              ];
 
-          if (!page) return;
+            if (!page) {
+              return;
+            }
 
-          page.sel =
-            !page.sel;
+            page.sel =
+              !page.sel;
 
-          drawTiles();
-        };
+            drawTiles();
+          };
       }
     );
   }
 
   /* ============================================================
    * IMAGE PREVIEW
-   * ============================================================ */
+   * ========================================================== */
 
   function previewImage() {
     const file =
@@ -4601,7 +5873,9 @@
     box.innerHTML = `
       <img
         src="${url}"
-        alt="${esc(file.name)}"
+        alt="${esc(
+          file.name
+        )}"
       >
     `;
 
@@ -4610,17 +5884,73 @@
         'img'
       );
 
-    if (image) {
-      image.onload = () =>
+    image?.addEventListener(
+      'load',
+      () =>
         URL.revokeObjectURL(
           url
-        );
-    }
+        ),
+      {
+        once: true,
+      }
+    );
   }
 
   /* ============================================================
-   * GLOBAL NAVIGATION
-   * ============================================================ */
+   * NAVIGATION
+   * ========================================================== */
+
+  function navigate(
+    id
+  ) {
+    if (
+      !byId(id) &&
+      id !==
+        'dashboard'
+    ) {
+      return;
+    }
+
+    state.tool =
+      id;
+
+    $('#sidebar')
+      ?.classList.remove(
+        'open'
+      );
+
+    renderNav();
+
+    if (
+      id ===
+      'dashboard'
+    ) {
+      dashboard();
+    } else {
+      toolView(id);
+    }
+
+    if (
+      location.hash !==
+      `#${id}`
+    ) {
+      history.replaceState(
+        null,
+        '',
+        `#${id}`
+      );
+    }
+
+    $('#workspace')
+      ?.focus({
+        preventScroll:
+          true,
+      });
+  }
+
+  /* ============================================================
+   * GLOBAL CLICK ROUTER
+   * ========================================================== */
 
   document.addEventListener(
     'click',
@@ -4638,26 +5968,9 @@
       if (nav) {
         event.preventDefault();
 
-        const id =
-          nav.dataset.nav;
-
-        state.tool = id;
-
-        $('#sidebar')
-          ?.classList.remove(
-            'open'
-          );
-
-        renderNav();
-
-        if (
-          id ===
-          'dashboard'
-        ) {
-          dashboard();
-        } else {
-          toolView(id);
-        }
+        navigate(
+          nav.dataset.nav
+        );
 
         return;
       }
@@ -4665,7 +5978,7 @@
       if (tool) {
         event.preventDefault();
 
-        toolView(
+        navigate(
           tool.dataset.tool
         );
       }
@@ -4674,7 +5987,7 @@
 
   /* ============================================================
    * HASH NAVIGATION
-   * ============================================================ */
+   * ========================================================== */
 
   window.addEventListener(
     'hashchange',
@@ -4685,29 +5998,52 @@
         );
 
       if (id) {
-        open(id);
+        navigate(id);
       }
     }
   );
 
-  function open(id) {
-    state.tool = id;
+  /* ============================================================
+   * KEYBOARD
+   * ========================================================== */
 
-    renderNav();
+  document.addEventListener(
+    'keydown',
+    (event) => {
+      if (
+        event.key ===
+        'Escape'
+      ) {
+        $('#sidebar')
+          ?.classList.remove(
+            'open'
+          );
+      }
 
-    if (
-      id ===
-      'dashboard'
-    ) {
-      dashboard();
-    } else {
-      toolView(id);
+      if (
+        (event.ctrlKey ||
+          event.metaKey) &&
+        event.key ===
+          'Enter'
+      ) {
+        const run =
+          $('#run');
+
+        if (
+          run &&
+          !run.disabled
+        ) {
+          event.preventDefault();
+
+          run.click();
+        }
+      }
     }
-  }
+  );
 
   /* ============================================================
    * START APPLICATION
-   * ============================================================ */
+   * ========================================================== */
 
   shell();
 
@@ -4716,14 +6052,56 @@
   health();
 
   /* ============================================================
-   * OPEN CURRENT HASH
-   * ============================================================ */
+   * RESTORE HASH
+   * ========================================================== */
 
   const initialHash =
-    location.hash.slice(1);
+    location.hash.slice(
+      1
+    );
 
-  if (initialHash) {
-    open(initialHash);
+  if (
+    initialHash &&
+    (
+      byId(
+        initialHash
+      ) ||
+      initialHash ===
+        'dashboard'
+    )
+  ) {
+    navigate(
+      initialHash
+    );
   }
+
+  /* ============================================================
+   * DEBUG API
+   *
+   * Useful from browser console:
+   *
+   * KRAZYBUY_API.status()
+   *
+   * ========================================================== */
+
+  window.KRAZYBUY_API = {
+    config:
+      cfg,
+
+    state:
+      apiState,
+
+    getBase:
+      () =>
+        apiState.current,
+
+    health,
+
+    resolve:
+      resolveApiBase,
+
+    url:
+      api,
+  };
 
 })();
