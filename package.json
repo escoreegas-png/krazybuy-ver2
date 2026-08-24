@@ -1,0 +1,17 @@
+{
+  "name": "krazybuy-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KrazyBuy product price intelligence workspace",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

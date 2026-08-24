@@ -1,37 +1,22 @@
-# Wobz Vercel Frontend — Production V1.2
+# KrazyBuy V1
 
-This is the frontend deployment package for Wobz.
+## Flow
+URL → job → upstream search → stream URL → complete SSE → product detection → exact variant filtering → store detection → dedupe → suspicious-price filtering → best available price → Retzo → clean result → UI.
 
-## Architecture
+## Run
 
-- Vercel: static frontend (`index.html`, `styles.css`, `app.js`, `images/logo.png`)
-- Render: processing API (`https://wobz-ver-1-1.onrender.com`)
-- Vercel rewrites `/api/*` to the Render API.
+```powershell
+npm install
+Copy-Item .env.example .env
+# set GROQ_API_KEY in .env when you want the Groq Retzo path
+npm start
+```
 
-## Live workflows in this package
+Open `http://localhost:5174`.
 
-- PDF merge
-- PDF split
-- PDF organize/edit foundation
-- PDF compress
-- PDF protect
-- PDF → All Images (ZIP with every page + manifest)
-- Images → PDF
-- Image edit / convert / compress
-- Files → ZIP
-- Render health/status
-
-## Intentionally disabled
-
-PPTX, DOCX and XLSX workflows are shown as planned until the deployed Render server exposes real routes for them. The frontend does not fake those operations.
-
-## Vercel
-
-Import this repository as a static project.
-
-- Framework: Other
-- Build Command: empty
-- Output Directory: `.`
-- Install Command: empty
-
-The `vercel.json` file already contains the API rewrite.
+## Files
+- `backend/server.js` — full job backend and normalization engine
+- `frontend/index.html` — workspace UI
+- `frontend/style.css` — responsive design
+- `frontend/app.js` — job/SSE client and result renderer
+- `package.json` — Node setup
