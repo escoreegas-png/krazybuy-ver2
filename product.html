@@ -1,1141 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>KrazyBuy — Product Details</title>
-
-  <!-- Inter -->
-  <link
-    rel="preconnect"
-    href="https://rsms.me"
-  >
-  <link
-    rel="stylesheet"
-    href="https://rsms.me/inter/inter.css"
-  >
-
-  <!-- KrazyBuy stylesheet -->
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
-  <!-- Favicon -->
-  <link
-    rel="icon"
-    type="image/png"
-    href="favicon.png"
-  >
-
-  <link
-    rel="apple-touch-icon"
-    href="favicon.png"
-  >
-
-  <meta
-    name="theme-color"
-    content="#07080D"
-  >
-
-  <meta
-    name="api-base"
-    content=""
-  >
-
-  <meta
-    name="application-name"
-    content="KrazyBuy"
-  >
-
-  <meta
-    name="description"
-    content="KrazyBuy AI Product Price Intelligence powered by Retz 1.0."
-  >
-
-  <!--
-    Small logo compatibility layer.
-    The actual logo artwork is krazybuy-icon.png.
-    This keeps the existing .logomark structure compatible
-    with the current application CSS.
-  -->
-  <style>
-    .kb-logo-image {
-      width: 42px;
-      height: 42px;
-      min-width: 42px;
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-    }
-
-    .kb-logo-image img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .product-brand {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .product-brand .kb-logo-image {
-      flex: 0 0 42px;
-    }
-
-    .product-brand .brand-copy {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .product-brand .brand-copy strong {
-      line-height: 1;
-    }
-
-    .product-brand .brand-copy span {
-      line-height: 1.2;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KrazyBuy — Product Details</title>
+<link rel="stylesheet" href="[rsms.me](https://rsms.me/inter/inter.css)">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#07080D">
+<meta name="api-base" content="">
 </head>
+<body data-page="product" class="product-page-standalone">
 
-<body
-  data-page="product"
-  class="product-page-standalone"
->
-
-  <!-- ============================================================
-       TOPBAR
-       ============================================================ -->
-
-  <header class="topbar product-topbar">
-
-    <div class="topbar-inner">
-
-      <!-- Mobile / menu button -->
-      <button
-        id="menuBtn"
-        class="menu-btn"
-        type="button"
-        aria-label="Open product menu"
-        aria-expanded="false"
-        aria-controls="productMenu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-
-      <!-- ========================================================
-           KRAZYBUY BRAND
-           Real KrazyBuy icon replaces old KB text monogram
-           ======================================================== -->
-
-      <a
-        class="brand product-brand"
-        href="index.html"
-        aria-label="KrazyBuy home"
-      >
-
-        <div
-          class="logomark kb-logo-image"
-          aria-hidden="true"
-        >
-          <img
-            src="krazybuy-icon.png"
-            alt=""
-            width="42"
-            height="42"
-            draggable="false"
-          >
-        </div>
-
-        <div class="brand-copy">
-          <strong>KrazyBuy</strong>
-          <span>PRODUCT INTELLIGENCE</span>
-        </div>
-
-      </a>
-
-
-      <!-- ========================================================
-           TOPBAR RIGHT
-           ======================================================== -->
-
-      <div class="topbar-right">
-
-        <div class="product-model-badge">
-
-          <span
-            class="retzo-chip-dot"
-            aria-hidden="true"
-          ></span>
-
-          <strong>Retz 1.0</strong>
-
-          <span>Price model</span>
-
-        </div>
-
-
-        <!-- Theme toggle -->
-        <button
-          id="themeToggle"
-          class="icon-btn"
-          type="button"
-          aria-label="Toggle dark mode"
-        >
-
-          <!-- Sun -->
-          <svg
-            class="icon-sun"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <circle
-              cx="12"
-              cy="12"
-              r="4.5"
-            />
-
-            <path
-              d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"
-            />
-          </svg>
-
-
-          <!-- Moon -->
-          <svg
-            class="icon-moon"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
-            />
-          </svg>
-
-        </button>
-
+<header class="topbar product-topbar">
+  <div class="topbar-inner">
+    <button id="menuBtn" class="menu-btn" type="button" aria-label="Open product menu" aria-expanded="false" aria-controls="productMenu">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand product-brand" href="index.html" aria-label="KrazyBuy home">
+      <div class="logomark kb-monogram" aria-hidden="true"><span>KB</span></div>
+      <div class="brand-copy"><strong>KrazyBuy</strong><span>PRODUCT INTELLIGENCE</span></div>
+    </a>
+    <div class="topbar-right">
+      <div class="product-model-badge">
+        <span class="retzo-chip-dot" aria-hidden="true"></span><strong>Retz 1.0</strong><span>Price model</span>
       </div>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
+<div id="productMenu" class="product-menu" hidden role="dialog" aria-label="Product page menu">
+  <a href="index.html">← New comparison</a>
+  <button id="productMenuRefresh" type="button">↻ Refresh product</button>
+  <button id="productMenuTop" type="button">↑ Back to top</button>
+</div>
+
+<div class="product-retz-orbit" aria-hidden="true">
+  <div class="product-retz-orbit-ring"></div>
+  <span class="product-retz-orbit-dot dot-a"></span>
+  <span class="product-retz-orbit-dot dot-b"></span>
+  <div class="product-retz-line"></div>
+</div>
+
+<main id="appMain" class="container product-container">
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results" hidden>
+
+    <div class="product-page-head">
+      <button id="resultBack" class="result-back" type="button" aria-label="Back to search">
+        <span aria-hidden="true">←</span> Back to search
+      </button>
+      <div class="result-page-model" aria-label="Retz model">
+        <span class="retzo-chip-dot" aria-hidden="true"></span>
+        <strong>Retz 1.0</strong>
+        <span>Price intelligence</span>
+      </div>
     </div>
 
-  </header>
+    <div class="result-header">
+      <div class="result-title-wrap">
+        <div class="result-kicker">PRODUCT DETAILS</div>
+        <p class="eyebrow">VERIFIED PRODUCT MATCH</p>
+        <h2 id="productName"></h2>
+        <p id="variantLine" class="variant-line"></p>
+      </div>
+      <div class="result-header-meta">
+        <span id="elapsed" class="elapsed-badge"></span>
+        <button id="resultNewComparison" class="result-new-btn" type="button">New comparison</button>
+      </div>
+    </div>
 
-
-  <!-- ============================================================
-       PRODUCT MENU
-       ============================================================ -->
-
-  <div
-    id="productMenu"
-    class="product-menu"
-    hidden
-    role="dialog"
-    aria-label="Product page menu"
-  >
-
-    <a href="index.html">
-      ← New comparison
-    </a>
-
-    <button
-      id="productMenuRefresh"
-      type="button"
-    >
-      ↻ Refresh product
-    </button>
-
-    <button
-      id="productMenuTop"
-      type="button"
-    >
-      ↑ Back to top
-    </button>
-
-  </div>
-
-
-  <!-- ============================================================
-       RETZ ORBIT DECORATION
-       ============================================================ -->
-
-  <div
-    class="product-retz-orbit"
-    aria-hidden="true"
-  >
-
-    <div class="product-retz-orbit-ring"></div>
-
-    <span
-      class="product-retz-orbit-dot dot-a"
-    ></span>
-
-    <span
-      class="product-retz-orbit-dot dot-b"
-    ></span>
-
-    <div class="product-retz-line"></div>
-
-  </div>
-
-
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
-
-  <main
-    id="appMain"
-    class="container product-container"
-  >
-
-    <!-- ==========================================================
-         RESULTS
-         ========================================================== -->
-
-    <section
-      id="results"
-      hidden
-    >
-
-      <!-- ========================================================
-           RESULT PAGE HEADER
-           ======================================================== -->
-
-      <div class="product-page-head">
-
-        <button
-          id="resultBack"
-          class="result-back"
-          type="button"
-          aria-label="Back to search"
-        >
-          <span aria-hidden="true">←</span>
-          Back to search
-        </button>
-
-
-        <div
-          class="result-page-model"
-          aria-label="Retz model"
-        >
-
-          <span
-            class="retzo-chip-dot"
-            aria-hidden="true"
-          ></span>
-
-          <strong>Retz 1.0</strong>
-
-          <span>Price intelligence</span>
-
+    <div class="hero-card">
+      <div class="img-zone">
+        <div class="img-box">
+          <img id="productImage" alt="" hidden>
+          <div id="imageFallback" class="img-fallback" hidden>
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none">
+              <path d="M6 3v18M6 12l9-9M6 12l10 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
-
+        <div id="thumbRow" class="thumb-row" hidden></div>
+        <button id="viewAllImages" type="button" class="btn-tertiary" hidden>View all images</button>
       </div>
 
-
-      <!-- ========================================================
-           PRODUCT TITLE
-           ======================================================== -->
-
-      <div class="result-header">
-
-        <div class="result-title-wrap">
-
-          <div class="result-kicker">
-            PRODUCT DETAILS
-          </div>
-
-          <p class="eyebrow">
-            VERIFIED PRODUCT MATCH
-          </p>
-
-          <h2 id="productName"></h2>
-
-          <p
-            id="variantLine"
-            class="variant-line"
-          ></p>
-
+      <div class="info-zone">
+        <p id="productBrand" class="brand-label"></p>
+        <h3 id="productTitle"></h3>
+        <p id="productModel" class="model-line"></p>
+        <div id="variantChips" class="chip-row"></div>
+        <p id="ratingLine" class="rating-line"></p>
+        <p id="productDescShort" class="desc-short"></p>
+        <div class="price-block">
+          <strong id="heroPrice"></strong>
+          <s id="heroOriginal"></s>
+          <span id="heroSavings" class="savings-pill" hidden></span>
         </div>
-
-
-        <div class="result-header-meta">
-
-          <span
-            id="elapsed"
-            class="elapsed-badge"
-          ></span>
-
-          <button
-            id="resultNewComparison"
-            class="result-new-btn"
-            type="button"
-          >
-            New comparison
-          </button>
-
-        </div>
-
+        <p id="pricesChecked" class="prices-checked"></p>
       </div>
 
+      <div class="bp-card">
+        <p class="bp-label">Best verified price</p>
+        <strong id="bpAmount" class="bp-amount"></strong>
+        <div id="bpStore" class="bp-store"></div>
+        <div id="bpBadges" class="bp-badges"></div>
+        <div class="bp-actions">
+          <a id="bpOpen" class="bp-open" target="_blank" rel="noopener noreferrer" hidden>Open store →</a>
+          <button id="bpCopy" type="button" class="bp-copy">Copy link</button>
+        </div>
+        <button id="bpShare" type="button" class="bp-share">Share result ↗</button>
+      </div>
+    </div>
 
-      <!-- ========================================================
-           PRODUCT HERO
-           ======================================================== -->
+    <div id="statsGrid" class="stats-strip"></div>
 
-      <div class="hero-card">
+    <div class="results-grid">
+      <div class="col-left">
 
-
-        <!-- PRODUCT IMAGE -->
-        <div class="img-zone">
-
-          <div class="img-box">
-
-            <img
-              id="productImage"
-              alt=""
-              hidden
-            >
-
-            <div
-              id="imageFallback"
-              class="img-fallback"
-              hidden
-            >
-
-              <svg
-                viewBox="0 0 24 24"
-                width="36"
-                height="36"
-                fill="none"
-              >
-
-                <path
-                  d="M6 3v18M6 12l9-9M6 12l10 9"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-
-              </svg>
-
-            </div>
-
+        <div class="panel" id="offersPanel">
+          <div class="panel-head">
+            <h3>Best offers</h3>
+            <span id="offersLabel" class="count-badge"></span>
           </div>
-
-
-          <div
-            id="thumbRow"
-            class="thumb-row"
-            hidden
-          ></div>
-
-
-          <button
-            id="viewAllImages"
-            type="button"
-            class="btn-tertiary"
-            hidden
-          >
-            View all images
-          </button>
-
+          <p class="panel-sub">Exact variant listings; trust status is shown separately from store identification.</p>
+          <div id="offersList" class="offers-list"></div>
         </div>
 
-
-        <!-- PRODUCT INFORMATION -->
-        <div class="info-zone">
-
-          <p
-            id="productBrand"
-            class="brand-label"
-          ></p>
-
-          <h3 id="productTitle"></h3>
-
-          <p
-            id="productModel"
-            class="model-line"
-          ></p>
-
-
-          <div
-            id="variantChips"
-            class="chip-row"
-          ></div>
-
-
-          <p
-            id="ratingLine"
-            class="rating-line"
-          ></p>
-
-
-          <p
-            id="productDescShort"
-            class="desc-short"
-          ></p>
-
-
-          <!-- PRICE -->
-          <div class="price-block">
-
-            <strong id="heroPrice"></strong>
-
-            <s id="heroOriginal"></s>
-
-            <span
-              id="heroSavings"
-              class="savings-pill"
-              hidden
-            ></span>
-
+        <div class="panel">
+          <div class="panel-head"><h3>Price comparison</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Store</th><th>Listing</th><th>Availability</th><th>Price</th><th>Effective</th><th>Trust</th><th></th></tr>
+              </thead>
+              <tbody id="compareTableBody"></tbody>
+            </table>
           </div>
-
-
-          <p
-            id="pricesChecked"
-            class="prices-checked"
-          ></p>
-
         </div>
 
-
-        <!-- BEST PRICE -->
-        <div class="bp-card">
-
-          <p class="bp-label">
-            Best verified price
-          </p>
-
-          <strong
-            id="bpAmount"
-            class="bp-amount"
-          ></strong>
-
-
-          <div
-            id="bpStore"
-            class="bp-store"
-          ></div>
-
-
-          <div
-            id="bpBadges"
-            class="bp-badges"
-          ></div>
-
-
-          <div class="bp-actions">
-
-            <a
-              id="bpOpen"
-              class="bp-open"
-              target="_blank"
-              rel="noopener noreferrer"
-              hidden
-            >
-              Open store →
-            </a>
-
-            <button
-              id="bpCopy"
-              type="button"
-              class="bp-copy"
-            >
-              Copy link
-            </button>
-
-          </div>
-
-
-          <button
-            id="bpShare"
-            type="button"
-            class="bp-share"
-          >
-            Share result ↗
-          </button>
-
+        <div class="panel suspicious" id="suspiciousPanel" hidden>
+          <span class="excluded-tag">Excluded prices</span>
+          <p class="panel-sub">These listings failed KrazyBuy's price protection checks and were not used in the comparison.</p>
+          <div id="suspiciousList" class="suspicious-list"></div>
         </div>
 
+        <div class="panel" id="rangePanel" hidden>
+          <div class="panel-head"><h3>Valid price range</h3></div>
+          <div class="range-track">
+            <div id="rangeFill" class="range-fill"></div>
+            <span id="dotLow" class="range-dot"></span>
+            <span id="dotMed" class="range-dot"></span>
+            <span id="dotHigh" class="range-dot"></span>
+          </div>
+          <div class="range-labels">
+            <div><span>Lowest</span><strong id="rangeLow"></strong></div>
+            <div class="c"><span>Median</span><strong id="rangeMed"></strong></div>
+            <div class="r"><span>Highest</span><strong id="rangeHigh"></strong></div>
+          </div>
+        </div>
+
+        <div class="panel" id="savingsPanel" hidden>
+          <div class="panel-head"><h3>Savings opportunities</h3></div>
+          <div id="savingsList" class="savings-grid"></div>
+        </div>
+
+        <div class="panel" id="specsPanel" hidden>
+          <div class="panel-head"><h3>Technical details</h3></div>
+          <dl id="specsGrid" class="spec-grid"></dl>
+        </div>
+
+        <div class="panel" id="overviewPanel" hidden>
+          <div class="panel-head"><h3>Product overview</h3></div>
+          <p id="productDescFull" class="desc-full clamped"></p>
+          <button id="descToggle" type="button" class="btn-tertiary" hidden>Show more</button>
+        </div>
+
+        <details class="panel details-panel" id="detailsPanel" hidden>
+          <summary>Comparison details</summary>
+          <dl id="detailsGrid" class="spec-grid"></dl>
+        </details>
       </div>
 
-
-      <!-- ========================================================
-           STATS
-           ======================================================== -->
-
-      <div
-        id="statsGrid"
-        class="stats-strip"
-      ></div>
-
-
-      <!-- ========================================================
-           RESULTS GRID
-           ======================================================== -->
-
-      <div class="results-grid">
-
-
-        <!-- ======================================================
-             LEFT COLUMN
-             ====================================================== -->
-
-        <div class="col-left">
-
-
-          <!-- BEST OFFERS -->
-          <div
-            class="panel"
-            id="offersPanel"
-          >
-
-            <div class="panel-head">
-
-              <h3>
-                Best offers
-              </h3>
-
-              <span
-                id="offersLabel"
-                class="count-badge"
-              ></span>
-
+      <div class="col-right">
+        <div class="panel retzo-panel" id="verdict">
+          <div class="panel-head"><h3>Retz 1.0 verdict</h3></div>
+          <div class="score-row">
+            <div id="scoreRing" class="score-ring"><span id="retzoScore"></span></div>
+            <div>
+              <span id="retzoLabel" class="verdict-badge"></span>
+              <p id="retzoConfidence" class="retzo-confidence"></p>
             </div>
-
-            <p class="panel-sub">
-              Exact variant listings; trust status is shown separately from store identification.
-            </p>
-
-            <div
-              id="offersList"
-              class="offers-list"
-            ></div>
-
           </div>
-
-
-          <!-- PRICE COMPARISON -->
-          <div class="panel">
-
-            <div class="panel-head">
-              <h3>
-                Price comparison
-              </h3>
-            </div>
-
-
-            <div class="table-wrap">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-                    <th>Store</th>
-                    <th>Listing</th>
-                    <th>Availability</th>
-                    <th>Price</th>
-                    <th>Effective</th>
-                    <th>Trust</th>
-                    <th></th>
-                  </tr>
-
-                </thead>
-
-
-                <tbody
-                  id="compareTableBody"
-                ></tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-
-          <!-- SUSPICIOUS / EXCLUDED -->
-          <div
-            class="panel suspicious"
-            id="suspiciousPanel"
-            hidden
-          >
-
-            <span class="excluded-tag">
-              Excluded prices
-            </span>
-
-            <p class="panel-sub">
-              These listings failed KrazyBuy's price protection checks and were not used in the comparison.
-            </p>
-
-            <div
-              id="suspiciousList"
-              class="suspicious-list"
-            ></div>
-
-          </div>
-
-
-          <!-- PRICE RANGE -->
-          <div
-            class="panel"
-            id="rangePanel"
-            hidden
-          >
-
-            <div class="panel-head">
-              <h3>
-                Valid price range
-              </h3>
-            </div>
-
-
-            <div class="range-track">
-
-              <div
-                id="rangeFill"
-                class="range-fill"
-              ></div>
-
-              <span
-                id="dotLow"
-                class="range-dot"
-              ></span>
-
-              <span
-                id="dotMed"
-                class="range-dot"
-              ></span>
-
-              <span
-                id="dotHigh"
-                class="range-dot"
-              ></span>
-
-            </div>
-
-
-            <div class="range-labels">
-
-              <div>
-                <span>Lowest</span>
-                <strong id="rangeLow"></strong>
-              </div>
-
-              <div class="c">
-                <span>Median</span>
-                <strong id="rangeMed"></strong>
-              </div>
-
-              <div class="r">
-                <span>Highest</span>
-                <strong id="rangeHigh"></strong>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- SAVINGS -->
-          <div
-            class="panel"
-            id="savingsPanel"
-            hidden
-          >
-
-            <div class="panel-head">
-              <h3>
-                Savings opportunities
-              </h3>
-            </div>
-
-            <div
-              id="savingsList"
-              class="savings-grid"
-            ></div>
-
-          </div>
-
-
-          <!-- TECHNICAL DETAILS -->
-          <div
-            class="panel"
-            id="specsPanel"
-            hidden
-          >
-
-            <div class="panel-head">
-              <h3>
-                Technical details
-              </h3>
-            </div>
-
-            <dl
-              id="specsGrid"
-              class="spec-grid"
-            ></dl>
-
-          </div>
-
-
-          <!-- PRODUCT OVERVIEW -->
-          <div
-            class="panel"
-            id="overviewPanel"
-            hidden
-          >
-
-            <div class="panel-head">
-              <h3>
-                Product overview
-              </h3>
-            </div>
-
-            <p
-              id="productDescFull"
-              class="desc-full clamped"
-            ></p>
-
-            <button
-              id="descToggle"
-              type="button"
-              class="btn-tertiary"
-              hidden
-            >
-              Show more
-            </button>
-
-          </div>
-
-
-          <!-- COMPARISON DETAILS -->
-          <details
-            class="panel details-panel"
-            id="detailsPanel"
-            hidden
-          >
-
-            <summary>
-              Comparison details
-            </summary>
-
-            <dl
-              id="detailsGrid"
-              class="spec-grid"
-            ></dl>
-
-          </details>
-
+          <h4 id="retzoHeadline"></h4>
+          <p id="retzoSummary" class="retzo-summary"></p>
+          <div id="retzoReasonsWrap" hidden><ul id="retzoReasons" class="retzo-reasons"></ul></div>
+          <div id="retzoWarningsWrap" hidden><ul id="retzoWarnings" class="retzo-warnings"></ul></div>
+          <div id="retzoRecommendation" class="retzo-rec"></div>
         </div>
 
-
-        <!-- ======================================================
-             RIGHT COLUMN
-             ====================================================== -->
-
-        <div class="col-right">
-
-
-          <!-- RETZ VERDICT -->
-          <div
-            class="panel retzo-panel"
-            id="verdict"
-          >
-
-            <div class="panel-head">
-
-              <h3>
-                Retz 1.0 verdict
-              </h3>
-
-            </div>
-
-
-            <div class="score-row">
-
-              <div
-                id="scoreRing"
-                class="score-ring"
-              >
-                <span id="retzoScore"></span>
-              </div>
-
-
-              <div>
-
-                <span
-                  id="retzoLabel"
-                  class="verdict-badge"
-                ></span>
-
-                <p
-                  id="retzoConfidence"
-                  class="retzo-confidence"
-                ></p>
-
-              </div>
-
-            </div>
-
-
-            <h4 id="retzoHeadline"></h4>
-
-
-            <p
-              id="retzoSummary"
-              class="retzo-summary"
-            ></p>
-
-
-            <div
-              id="retzoReasonsWrap"
-              hidden
-            >
-
-              <ul
-                id="retzoReasons"
-                class="retzo-reasons"
-              ></ul>
-
-            </div>
-
-
-            <div
-              id="retzoWarningsWrap"
-              hidden
-            >
-
-              <ul
-                id="retzoWarnings"
-                class="retzo-warnings"
-              ></ul>
-
-            </div>
-
-
-            <div
-              id="retzoRecommendation"
-              class="retzo-rec"
-            ></div>
-
-          </div>
-
-
-          <!-- BUY TIMING -->
-          <div
-            class="panel"
-            id="timingPanel"
-            hidden
-          >
-
-            <div class="panel-head">
-
-              <h3>
-                Buy timing
-              </h3>
-
-            </div>
-
-            <span
-              id="timingBadge"
-              class="timing-badge"
-            ></span>
-
-            <p
-              id="timingText"
-              class="panel-sub"
-            ></p>
-
-          </div>
-
-
-          <!-- STORE CONFIDENCE -->
-          <div
-            class="panel"
-            id="trustPanel"
-            hidden
-          >
-
-            <div class="panel-head">
-
-              <h3>
-                Store confidence
-              </h3>
-
-            </div>
-
-            <div
-              id="trustList"
-              class="trust-list"
-            ></div>
-
-          </div>
-
+        <div class="panel" id="timingPanel" hidden>
+          <div class="panel-head"><h3>Buy timing</h3></div>
+          <span id="timingBadge" class="timing-badge"></span>
+          <p id="timingText" class="panel-sub"></p>
         </div>
 
+        <div class="panel" id="trustPanel" hidden>
+          <div class="panel-head"><h3>Store confidence</h3></div>
+          <div id="trustList" class="trust-list"></div>
+        </div>
       </div>
+    </div>
 
-
-      <!-- ========================================================
-           SYSTEM STATUS
-           ======================================================== -->
-
-      <section
-        class="system-strip"
-        aria-label="KrazyBuy system status"
-      >
-
-        <div class="system-card">
-
-          <span
-            id="footerDot"
-            class="health-dot"
-            aria-hidden="true"
-          ></span>
-
-          <span id="footerStatus">
-            Checking systems…
-          </span>
-
-          <span class="system-divider">
-            ·
-          </span>
-
-          <span>
-            Retz 1.0 · Powered by Retzo AI
-          </span>
-
-        </div>
-
-      </section>
-
-
-      <!-- ========================================================
-           DEBUG PANEL
-           ======================================================== -->
-
-      <section
-        id="debugPanel"
-        class="panel debug-panel"
-        hidden
-      >
-
-        <div class="panel-head">
-
-          <h3>
-            Diagnostics
-          </h3>
-
-          <span
-            id="debugEventCount"
-            class="count-badge"
-          ></span>
-
-        </div>
-
-
-        <pre id="debugOutput"></pre>
-
-      </section>
-
+    <section class="system-strip" aria-label="KrazyBuy system status">
+      <div class="system-card">
+        <span id="footerDot" class="health-dot" aria-hidden="true"></span>
+        <span id="footerStatus">Checking systems…</span>
+        <span class="system-divider">·</span>
+        <span>Retz 1.0 · Powered by Retzo AI</span>
+      </div>
     </section>
 
-  </main>
+    <section id="debugPanel" class="panel debug-panel" hidden>
+      <div class="panel-head"><h3>Diagnostics</h3><span id="debugEventCount" class="count-badge"></span></div>
+      <pre id="debugOutput"></pre>
+    </section>
+  </section>
 
+</main>
 
-  <!-- ============================================================
-       LIGHTBOX
-       ============================================================ -->
+<!-- ============ LIGHTBOX ============ -->
+<div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Product image viewer">
+  <button id="lightboxClose" class="lb-btn lb-close" type="button" aria-label="Close image viewer">✕</button>
+  <button id="lightboxPrev" class="lb-btn lb-prev" type="button" aria-label="Previous image" hidden>←</button>
+  <img id="lightboxImg" alt="Product image, enlarged">
+  <button id="lightboxNext" class="lb-btn lb-next" type="button" aria-label="Next image" hidden>→</button>
+</div>
+<!-- ============================================================
+     CUELINKS AFFILIATE TRACKING
+     ============================================================ -->
+<script type="text/javascript">
+  var cId = '286505';
 
-  <div
-    id="lightbox"
-    class="lightbox"
-    hidden
-    role="dialog"
-    aria-modal="true"
-    aria-label="Product image viewer"
-  >
+  (function(d, t) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src =
+      (document.location.protocol == 'https:'
+        ? 'https://cdn0.cuelinks.com/js/'
+        : 'http://cdn0.cuelinks.com/js/')
+      + 'cuelinksv2.js';
 
-    <button
-      id="lightboxClose"
-      class="lb-btn lb-close"
-      type="button"
-      aria-label="Close image viewer"
-    >
-      ✕
-    </button>
+    document.getElementsByTagName('body')[0].appendChild(s);
+  }());
+</script>
 
-
-    <button
-      id="lightboxPrev"
-      class="lb-btn lb-prev"
-      type="button"
-      aria-label="Previous image"
-      hidden
-    >
-      ←
-    </button>
-
-
-    <img
-      id="lightboxImg"
-      alt="Product image, enlarged"
-    >
-
-
-    <button
-      id="lightboxNext"
-      class="lb-btn lb-next"
-      type="button"
-      aria-label="Next image"
-      hidden
-    >
-      →
-    </button>
-
-  </div>
-
-
-  <!-- ============================================================
-       APP JAVASCRIPT
-       ============================================================ -->
-
-  <script
-    src="app.js"
-    defer
-  ></script>
-
+<script src="app.js" defer></script>
 </body>
 </html>
