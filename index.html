@@ -1,37 +1,1728 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0B192C">
-  <meta name="description" content="KrazyBuy — document and file workspace for PDFs, documents, spreadsheets, images and archives.">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
-  <link rel="apple-touch-icon" href="/images/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css">
-  <title>KrazyBuy — Document & File Workspace</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>KrazyBuy — AI Price Intelligence</title>
+
+  <link
+    rel="stylesheet"
+    href="https://rsms.me/inter/inter.css"
+  >
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- KrazyBuy favicon -->
+  <link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+
+  <meta
+    name="theme-color"
+    content="#07080D"
+  >
+
+  <meta
+    name="api-base"
+    content=""
+  >
+
+  <!-- =========================================================
+       KRAZYBUY LOGO OVERRIDES
+       ========================================================= -->
+  <style>
+    /* ---------------------------------------------------------
+       TOPBAR BRAND
+       --------------------------------------------------------- */
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand .logomark {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      min-height: 52px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      overflow: visible;
+    }
+
+    .brand .logomark img {
+      width: 52px;
+      height: 52px;
+      display: block;
+      object-fit: contain;
+
+      filter:
+        drop-shadow(0 0 8px rgba(142, 53, 255, .38))
+        drop-shadow(0 0 18px rgba(0, 93, 255, .18));
+    }
+
+    /* ---------------------------------------------------------
+       SIDEBAR LOGO
+       --------------------------------------------------------- */
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .sidebar-mark {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      padding: 0;
+    }
+
+    .sidebar-mark img {
+      width: 42px;
+      height: 42px;
+      display: block;
+      object-fit: contain;
+
+      filter:
+        drop-shadow(0 0 7px rgba(142, 53, 255, .40))
+        drop-shadow(0 0 14px rgba(0, 93, 255, .18));
+    }
+
+    /* ---------------------------------------------------------
+       ACCOUNT AVATAR
+       --------------------------------------------------------- */
+
+    .account-avatar {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+
+      width: 38px;
+      height: 38px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+      overflow: visible;
+    }
+
+    .account-avatar img {
+      width: 38px;
+      height: 38px;
+      display: block;
+      object-fit: contain;
+
+      filter:
+        drop-shadow(0 0 6px rgba(142, 53, 255, .35))
+        drop-shadow(0 0 12px rgba(0, 93, 255, .15));
+    }
+
+    /* ---------------------------------------------------------
+       RESPONSIVE LOGO
+       --------------------------------------------------------- */
+
+    @media (max-width: 700px) {
+      .brand .logomark {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+      }
+
+      .brand .logomark img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .brand-copy strong {
+        font-size: 15px;
+      }
+
+      .brand-copy span {
+        font-size: 8px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <a class="skip-link" href="#workspace">Skip to workspace</a>
-  <div id="app" class="boot">
-    <div class="boot-mark"><img src="/images/logo.svg" alt="KrazyBuy"></div>
-    <p>Starting KrazyBuy…</p>
+
+<!-- ============================================================
+     TOPBAR
+     ============================================================ -->
+
+<header class="topbar">
+  <div class="topbar-inner">
+
+    <button
+      id="menuBtn"
+      class="menu-btn"
+      type="button"
+      aria-label="Open KrazyBuy menu"
+      aria-expanded="false"
+      aria-controls="sidebar"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+
+    <!-- KRAZYBUY BRAND -->
+    <div class="brand">
+
+      <div
+        class="logomark kb-monogram"
+        aria-hidden="true"
+      >
+        <img
+          src="krazybuy-icon.png"
+          alt=""
+        >
+      </div>
+
+      <div class="sr-only">
+        KrazyBuy logo
+      </div>
+
+      <div class="brand-copy">
+        <strong>KrazyBuy</strong>
+        <span>AI PRICE INTELLIGENCE · Retz 1.0</span>
+      </div>
+
+    </div>
+
+
+    <div class="topbar-right">
+
+      <span
+        id="demoBadge"
+        class="demo-badge"
+        hidden
+      >
+        DEMO MODE
+      </span>
+
+
+      <span class="kbd-hint">
+        Press <kbd>/</kbd> to search
+      </span>
+
+
+      <button
+        id="themeToggle"
+        class="icon-btn"
+        type="button"
+        aria-label="Toggle dark mode"
+      >
+
+        <svg
+          class="icon-sun"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="4.5"
+          />
+
+          <path
+            d="
+              M12 2v2.5
+              M12 19.5V22
+              M2 12h2.5
+              M19.5 12H22
+              M4.6 4.6l1.8 1.8
+              M17.6 17.6l1.8 1.8
+              M4.6 19.4l1.8-1.8
+              M17.6 6.4l-1.8-1.8
+            "
+          />
+        </svg>
+
+
+        <svg
+          class="icon-moon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="
+              M21 12.8
+              A9 9 0 1 1 11.2 3
+              A7 7 0 0 0 21 12.8Z
+            "
+          />
+        </svg>
+
+      </button>
+
+
+      <div class="health">
+
+        <span
+          id="healthDot"
+          class="health-dot"
+          aria-hidden="true"
+        ></span>
+
+        <span id="healthText">
+          Checking engine…
+        </span>
+
+      </div>
+
+    </div>
+
   </div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <div id="sr" class="sr-only" role="status" aria-live="polite"></div>
-  <script>
-    window.KRAZYBUY_CONFIG = {
-      apiBase: "/api",
-      renderApiBase: "https://wobz-ver-1-1.onrender.com/api",
-      requestTimeoutMs: 180000,
-      healthTimeoutMs: 10000,
-      maxFileMB: 200
-    };
-  </script>
-  <script src="/app.js" defer></script>
+</header>
+
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+
+<aside
+  id="sidebar"
+  class="sidebar"
+  aria-label="KrazyBuy navigation"
+>
+
+  <div class="sidebar-head">
+
+    <div class="sidebar-brand">
+
+      <div
+        class="sidebar-mark"
+        aria-hidden="true"
+      >
+        <img
+          src="krazybuy-icon.png"
+          alt=""
+        >
+      </div>
+
+      <div>
+        <strong>KrazyBuy</strong>
+        <span>Price Intelligence</span>
+      </div>
+
+    </div>
+
+
+    <button
+      id="sidebarClose"
+      class="sidebar-close"
+      type="button"
+      aria-label="Close menu"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <button
+    id="newComparisonBtn"
+    class="new-comparison"
+    type="button"
+  >
+
+    <span
+      class="new-plus"
+      aria-hidden="true"
+    >
+      ＋
+    </span>
+
+    <span>
+      New comparison
+    </span>
+
+    <kbd>
+      Ctrl K
+    </kbd>
+
+  </button>
+
+
+  <div class="sidebar-section-title">
+
+    History
+
+    <span
+      id="recentCountLabel"
+      class="count-badge"
+      hidden
+    ></span>
+
+  </div>
+
+
+  <div
+    id="recentList"
+    class="history-list"
+  ></div>
+
+
+  <div class="sidebar-spacer"></div>
+
+
+  <div
+    class="sidebar-account"
+    id="accountCard"
+  >
+
+    <div
+      class="account-avatar"
+      aria-hidden="true"
+    >
+      <img
+        src="krazybuy-icon.png"
+        alt=""
+      >
+    </div>
+
+
+    <div class="account-copy">
+
+      <strong id="authBtnLabel">
+        Sign in
+      </strong>
+
+      <span>
+        Save comparisons &amp; sync history
+      </span>
+
+    </div>
+
+
+    <button
+      id="authBtn"
+      class="account-action"
+      type="button"
+      aria-label="Sign in"
+    >
+      →
+    </button>
+
+  </div>
+
+</aside>
+
+
+<div
+  id="sidebarOverlay"
+  class="sidebar-overlay"
+  hidden
+></div>
+
+
+<!-- ============================================================
+     MAIN APPLICATION
+     ============================================================ -->
+
+<main
+  id="appMain"
+  class="container"
+>
+
+  <!-- ==========================================================
+       HOME
+       ========================================================== -->
+
+  <section id="home">
+
+    <div class="hero">
+
+      <p class="eyebrow anim-1">
+        ✦ KRAZYBUY PRICE INTELLIGENCE
+      </p>
+
+
+      <h1 class="anim-2">
+        Find the price
+        <br>
+        <span>
+          that actually makes sense.
+        </span>
+      </h1>
+
+
+      <p class="subline anim-3">
+        Paste a product URL. KrazyBuy detects the store,
+        matches the exact variant, compares valid offers,
+        and lets Retz 1.0 explain whether the price actually
+        makes sense.
+      </p>
+
+
+      <!-- SEARCH -->
+
+      <form
+        id="searchForm"
+        class="search-card anim-4"
+        autocomplete="off"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          class="search-icon"
+          aria-hidden="true"
+        >
+          <circle
+            cx="11"
+            cy="11"
+            r="7"
+          />
+
+          <path
+            d="m20 20-3.5-3.5"
+          />
+        </svg>
+
+
+        <input
+          id="productUrl"
+          type="url"
+          placeholder="Paste a product page URL — Amazon, Flipkart, Croma…"
+          aria-label="Product page URL"
+          spellcheck="false"
+        >
+
+
+        <span
+          id="slashHint"
+          class="slash-hint"
+          aria-hidden="true"
+        >
+          ⌨ /
+        </span>
+
+
+        <button
+          id="compareBtn"
+          type="submit"
+          class="btn-primary"
+        >
+
+          <span class="btn-label">
+            Compare prices →
+          </span>
+
+          <span
+            class="btn-loading"
+            hidden
+          >
+            <span
+              class="spinner"
+              aria-hidden="true"
+            ></span>
+
+            Comparing…
+          </span>
+
+        </button>
+
+      </form>
+
+
+      <p
+        id="urlError"
+        class="url-error"
+        hidden
+        role="alert"
+      >
+        That doesn't look like a product page URL.
+        Try an Amazon, Flipkart or Croma link.
+      </p>
+
+
+      <div class="assurance anim-4">
+
+        <span>
+          ✓ Exact variant matching
+        </span>
+
+        <i>·</i>
+
+        <span>
+          ✓ Live store detection
+        </span>
+
+        <i>·</i>
+
+        <span>
+          ✓ Price protection filter
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- MARKETPLACES -->
+
+    <section class="marketplaces">
+
+      <p class="section-label">
+        Works across 40+ marketplaces
+      </p>
+
+      <div
+        id="marketChips"
+        class="market-row"
+      ></div>
+
+    </section>
+
+
+    <!-- VALUE CARDS -->
+
+    <section
+      class="home-value-grid"
+      aria-label="KrazyBuy capabilities"
+    >
+
+      <article class="value-card">
+
+        <div class="value-card-main">
+
+          <div class="value-icon">
+            01
+          </div>
+
+          <div>
+
+            <span class="value-kicker">
+              Exact variant matching
+            </span>
+
+            <h2>
+              Same model. Same storage. Same product.
+            </h2>
+
+            <p>
+              KrazyBuy compares usable listings instead
+              of blindly picking the lowest number.
+            </p>
+
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="value-card">
+
+        <div class="value-card-main">
+
+          <div class="value-icon">
+            02
+          </div>
+
+          <div>
+
+            <span class="value-kicker">
+              Price protection
+            </span>
+
+            <h3>
+              Bad prices get filtered.
+            </h3>
+
+            <p>
+              Suspicious offers stay visible for review
+              but do not control the winner.
+            </p>
+
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="value-card">
+
+        <div class="value-card-main">
+
+          <div class="value-icon">
+            03
+          </div>
+
+          <div>
+
+            <span class="value-kicker">
+              Retz 1.0
+            </span>
+
+            <h3>
+              A verdict, not just a number.
+            </h3>
+
+            <p>
+              Retz explains confidence, warnings, savings
+              and whether the deal makes sense.
+            </p>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+
+    <section
+      class="how-section"
+      aria-label="How KrazyBuy works"
+    >
+
+      <div class="how-head">
+
+        <div>
+
+          <span class="section-label">
+            HOW IT WORKS
+          </span>
+
+          <h3>
+            Three steps to a smarter checkout.
+          </h3>
+
+        </div>
+
+
+        <span class="how-pill">
+          Live comparison engine
+        </span>
+
+      </div>
+
+
+      <div class="how-grid">
+
+        <div class="how-step">
+
+          <span>1</span>
+
+          <strong>
+            Paste a product URL
+          </strong>
+
+          <p>
+            Start with Amazon, Flipkart, Croma
+            or another supported store.
+          </p>
+
+        </div>
+
+
+        <div class="how-step">
+
+          <span>2</span>
+
+          <strong>
+            Watch the engine work
+          </strong>
+
+          <p>
+            The backend collects, normalizes
+            and filters every candidate offer.
+          </p>
+
+        </div>
+
+
+        <div class="how-step">
+
+          <span>3</span>
+
+          <strong>
+            Take the best valid deal
+          </strong>
+
+          <p>
+            Open the winning store with price,
+            trust and Retz context ready.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </section>
+
+
+  <!-- ==========================================================
+       LOADING
+       ========================================================== -->
+
+  <section
+    id="progressPanel"
+    class="progress-panel"
+    hidden
+  >
+
+    <span
+      id="progressTimer"
+      class="progress-timer"
+      aria-hidden="true"
+    >
+      0.0s
+    </span>
+
+
+    <div
+      class="product-progress-visual"
+      aria-hidden="true"
+    >
+      <span></span>
+    </div>
+
+
+    <div class="progress-below">
+
+      <div class="progress-track">
+        <div
+          id="progressBar"
+          class="progress-fill"
+        ></div>
+      </div>
+
+
+      <p
+        id="progressMessage"
+        class="progress-message"
+        aria-live="polite"
+      >
+        Starting comparison…
+      </p>
+
+
+      <ul
+        id="progressSteps"
+        class="step-pills"
+        aria-hidden="true"
+      ></ul>
+
+
+      <p class="progress-sub">
+        KrazyBuy is checking exact variants across stores
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ==========================================================
+       ERROR
+       ========================================================== -->
+
+  <section
+    id="errorPanel"
+    class="error-panel"
+    hidden
+  >
+
+    <h3>
+      Comparison failed
+    </h3>
+
+    <p id="errorMessage"></p>
+
+    <button
+      id="errorRetry"
+      type="button"
+      class="btn-secondary"
+    >
+      Try again
+    </button>
+
+  </section>
+
+
+  <!-- ==========================================================
+       RESULTS
+       ========================================================== -->
+
+  <section
+    id="results"
+    hidden
+  >
+
+    <!-- RESULT TOP -->
+
+    <div class="product-page-head">
+
+      <button
+        id="resultBack"
+        class="result-back"
+        type="button"
+        aria-label="Back to search"
+      >
+        <span aria-hidden="true">
+          ←
+        </span>
+
+        Back to search
+      </button>
+
+
+      <div
+        class="result-page-model"
+        aria-label="Retz model"
+      >
+
+        <span
+          class="retzo-chip-dot"
+          aria-hidden="true"
+        ></span>
+
+        <strong>
+          Retz 1.0
+        </strong>
+
+        <span>
+          Price intelligence
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- RESULT HEADER -->
+
+    <div class="result-header">
+
+      <div class="result-title-wrap">
+
+        <div class="result-kicker">
+          PRODUCT DETAILS
+        </div>
+
+        <p class="eyebrow">
+          VERIFIED PRODUCT MATCH
+        </p>
+
+        <h2 id="productName"></h2>
+
+        <p
+          id="variantLine"
+          class="variant-line"
+        ></p>
+
+      </div>
+
+
+      <div class="result-header-meta">
+
+        <span
+          id="elapsed"
+          class="elapsed-badge"
+        ></span>
+
+        <button
+          id="resultNewComparison"
+          class="result-new-btn"
+          type="button"
+        >
+          New comparison
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT HERO -->
+
+    <div class="hero-card">
+
+      <div class="img-zone">
+
+        <div class="img-box">
+
+          <img
+            id="productImage"
+            alt=""
+            hidden
+          >
+
+          <div
+            id="imageFallback"
+            class="img-fallback"
+            hidden
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              width="36"
+              height="36"
+              fill="none"
+            >
+              <path
+                d="M6 3v18M6 12l9-9M6 12l10 9"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="thumbRow"
+          class="thumb-row"
+          hidden
+        ></div>
+
+
+        <button
+          id="viewAllImages"
+          type="button"
+          class="btn-tertiary"
+          hidden
+        >
+          View all images
+        </button>
+
+      </div>
+
+
+      <!-- PRODUCT INFO -->
+
+      <div class="info-zone">
+
+        <p
+          id="productBrand"
+          class="brand-label"
+        ></p>
+
+        <h3 id="productTitle"></h3>
+
+        <p
+          id="productModel"
+          class="model-line"
+        ></p>
+
+
+        <div
+          id="variantChips"
+          class="chip-row"
+        ></div>
+
+
+        <p
+          id="ratingLine"
+          class="rating-line"
+        ></p>
+
+
+        <p
+          id="productDescShort"
+          class="desc-short"
+        ></p>
+
+
+        <div class="price-block">
+
+          <strong id="heroPrice"></strong>
+
+          <s id="heroOriginal"></s>
+
+          <span
+            id="heroSavings"
+            class="savings-pill"
+            hidden
+          ></span>
+
+        </div>
+
+
+        <p
+          id="pricesChecked"
+          class="prices-checked"
+        ></p>
+
+      </div>
+
+
+      <!-- BEST PRICE -->
+
+      <div class="bp-card">
+
+        <p class="bp-label">
+          Best verified price
+        </p>
+
+        <strong
+          id="bpAmount"
+          class="bp-amount"
+        ></strong>
+
+
+        <div
+          id="bpStore"
+          class="bp-store"
+        ></div>
+
+
+        <div
+          id="bpBadges"
+          class="bp-badges"
+        ></div>
+
+
+        <div class="bp-actions">
+
+          <a
+            id="bpOpen"
+            class="bp-open"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            Open store →
+          </a>
+
+
+          <button
+            id="bpCopy"
+            type="button"
+            class="bp-copy"
+          >
+            Copy link
+          </button>
+
+        </div>
+
+
+        <button
+          id="bpShare"
+          type="button"
+          class="bp-share"
+        >
+          Share result ↗
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div
+      id="statsGrid"
+      class="stats-strip"
+    ></div>
+
+
+    <!-- RESULTS GRID -->
+
+    <div class="results-grid">
+
+      <div class="col-left">
+
+        <!-- BEST OFFERS -->
+
+        <div
+          class="panel"
+          id="offersPanel"
+        >
+
+          <div class="panel-head">
+
+            <h3>
+              Best offers
+            </h3>
+
+            <span
+              id="offersLabel"
+              class="count-badge"
+            ></span>
+
+          </div>
+
+
+          <p class="panel-sub">
+            Exact variant listings that passed
+            all KrazyBuy filters.
+          </p>
+
+
+          <div
+            id="offersList"
+            class="offers-list"
+          ></div>
+
+        </div>
+
+
+        <!-- PRICE COMPARISON -->
+
+        <div class="panel">
+
+          <div class="panel-head">
+            <h3>
+              Price comparison
+            </h3>
+          </div>
+
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Store</th>
+                  <th>Listing</th>
+                  <th>Availability</th>
+                  <th>Price</th>
+                  <th>Effective</th>
+                  <th>Trust</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+
+              <tbody
+                id="compareTableBody"
+              ></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+        <!-- SUSPICIOUS -->
+
+        <div
+          class="panel suspicious"
+          id="suspiciousPanel"
+          hidden
+        >
+
+          <span class="excluded-tag">
+            Excluded prices
+          </span>
+
+
+          <p class="panel-sub">
+            These listings failed KrazyBuy's
+            price protection checks and were not
+            used in the comparison.
+          </p>
+
+
+          <div
+            id="suspiciousList"
+            class="suspicious-list"
+          ></div>
+
+        </div>
+
+
+        <!-- RANGE -->
+
+        <div
+          class="panel"
+          id="rangePanel"
+          hidden
+        >
+
+          <div class="panel-head">
+            <h3>
+              Valid price range
+            </h3>
+          </div>
+
+
+          <div class="range-track">
+
+            <div
+              id="rangeFill"
+              class="range-fill"
+            ></div>
+
+            <span
+              id="dotLow"
+              class="range-dot"
+            ></span>
+
+            <span
+              id="dotMed"
+              class="range-dot"
+            ></span>
+
+            <span
+              id="dotHigh"
+              class="range-dot"
+            ></span>
+
+          </div>
+
+
+          <div class="range-labels">
+
+            <div>
+              <span>Lowest</span>
+              <strong id="rangeLow"></strong>
+            </div>
+
+            <div class="c">
+              <span>Median</span>
+              <strong id="rangeMed"></strong>
+            </div>
+
+            <div class="r">
+              <span>Highest</span>
+              <strong id="rangeHigh"></strong>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SAVINGS -->
+
+        <div
+          class="panel"
+          id="savingsPanel"
+          hidden
+        >
+
+          <div class="panel-head">
+            <h3>
+              Savings opportunities
+            </h3>
+          </div>
+
+
+          <div
+            id="savingsList"
+            class="savings-grid"
+          ></div>
+
+        </div>
+
+
+        <!-- SPECS -->
+
+        <div
+          class="panel"
+          id="specsPanel"
+          hidden
+        >
+
+          <div class="panel-head">
+            <h3>
+              Technical details
+            </h3>
+          </div>
+
+
+          <dl
+            id="specsGrid"
+            class="spec-grid"
+          ></dl>
+
+        </div>
+
+
+        <!-- OVERVIEW -->
+
+        <div
+          class="panel"
+          id="overviewPanel"
+          hidden
+        >
+
+          <div class="panel-head">
+            <h3>
+              Product overview
+            </h3>
+          </div>
+
+
+          <p
+            id="productDescFull"
+            class="desc-full clamped"
+          ></p>
+
+
+          <button
+            id="descToggle"
+            type="button"
+            class="btn-tertiary"
+            hidden
+          >
+            Show more
+          </button>
+
+        </div>
+
+
+        <!-- DETAILS -->
+
+        <details
+          class="panel details-panel"
+          id="detailsPanel"
+          hidden
+        >
+
+          <summary>
+            Comparison details
+          </summary>
+
+
+          <dl
+            id="detailsGrid"
+            class="spec-grid"
+          ></dl>
+
+        </details>
+
+      </div>
+
+
+      <!-- ======================================================
+           RIGHT COLUMN
+           ====================================================== -->
+
+      <div class="col-right">
+
+        <!-- RETZ VERDICT -->
+
+        <div
+          class="panel retzo-panel"
+          id="verdict"
+        >
+
+          <div class="panel-head">
+
+            <h3>
+              Retz 1.0 verdict
+            </h3>
+
+          </div>
+
+
+          <div class="score-row">
+
+            <div
+              id="scoreRing"
+              class="score-ring"
+            >
+              <span id="retzoScore"></span>
+            </div>
+
+
+            <div>
+
+              <span
+                id="retzoLabel"
+                class="verdict-badge"
+              ></span>
+
+
+              <p
+                id="retzoConfidence"
+                class="retzo-confidence"
+              ></p>
+
+            </div>
+
+          </div>
+
+
+          <h4 id="retzoHeadline"></h4>
+
+
+          <p
+            id="retzoSummary"
+            class="retzo-summary"
+          ></p>
+
+
+          <div
+            id="retzoReasonsWrap"
+            hidden
+          >
+
+            <ul
+              id="retzoReasons"
+              class="retzo-reasons"
+            ></ul>
+
+          </div>
+
+
+          <div
+            id="retzoWarningsWrap"
+            hidden
+          >
+
+            <ul
+              id="retzoWarnings"
+              class="retzo-warnings"
+            ></ul>
+
+          </div>
+
+
+          <div
+            id="retzoRecommendation"
+            class="retzo-rec"
+          ></div>
+
+        </div>
+
+
+        <!-- BUY TIMING -->
+
+        <div
+          class="panel"
+          id="timingPanel"
+          hidden
+        >
+
+          <div class="panel-head">
+
+            <h3>
+              Buy timing
+            </h3>
+
+          </div>
+
+
+          <span
+            id="timingBadge"
+            class="timing-badge"
+          ></span>
+
+
+          <p
+            id="timingText"
+            class="panel-sub"
+          ></p>
+
+        </div>
+
+
+        <!-- STORE TRUST -->
+
+        <div
+          class="panel"
+          id="trustPanel"
+          hidden
+        >
+
+          <div class="panel-head">
+
+            <h3>
+              Store confidence
+            </h3>
+
+          </div>
+
+
+          <div
+            id="trustList"
+            class="trust-list"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         SYSTEM STATUS
+         ======================================================== -->
+
+    <section
+      class="system-strip"
+      aria-label="KrazyBuy system status"
+    >
+
+      <div class="system-card">
+
+        <span
+          id="footerDot"
+          class="health-dot"
+          aria-hidden="true"
+        ></span>
+
+
+        <span id="footerStatus">
+          Checking systems…
+        </span>
+
+
+        <span class="system-divider">
+          ·
+        </span>
+
+
+        <span>
+          Retz 1.0 · Powered by Retzo AI
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         DEBUG
+         ======================================================== -->
+
+    <section
+      id="debugPanel"
+      class="panel debug-panel"
+      hidden
+    >
+
+      <div class="panel-head">
+
+        <h3>
+          Diagnostics
+        </h3>
+
+        <span
+          id="debugEventCount"
+          class="count-badge"
+        ></span>
+
+      </div>
+
+
+      <pre id="debugOutput"></pre>
+
+    </section>
+
+  </section>
+
+</main>
+
+
+<!-- ============================================================
+     LIGHTBOX
+     ============================================================ -->
+
+<div
+  id="lightbox"
+  class="lightbox"
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="Product image viewer"
+>
+
+  <button
+    id="lightboxClose"
+    class="lb-btn lb-close"
+    type="button"
+    aria-label="Close image viewer"
+  >
+    ✕
+  </button>
+
+
+  <button
+    id="lightboxPrev"
+    class="lb-btn lb-prev"
+    type="button"
+    aria-label="Previous image"
+    hidden
+  >
+    ←
+  </button>
+
+
+  <img
+    id="lightboxImg"
+    alt="Product image, enlarged"
+  >
+
+
+  <button
+    id="lightboxNext"
+    class="lb-btn lb-next"
+    type="button"
+    aria-label="Next image"
+    hidden
+  >
+    →
+  </button>
+
+</div>
+
+
+<!-- ============================================================
+     APPLICATION JAVASCRIPT
+     ============================================================ -->
+
+<script src="app.js" defer></script>
+
 </body>
 </html>
