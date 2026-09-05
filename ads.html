@@ -119,6 +119,8 @@ p{ margin:0; }
 #opening{
   position:fixed; inset:0; z-index:100;
   display:flex; align-items:center; justify-content:center;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:32px 16px;
   background:
     radial-gradient(120% 90% at 50% -10%, var(--blush) 0%, transparent 60%),
     radial-gradient(120% 90% at 50% 110%, var(--peach) 0%, transparent 55%),
@@ -128,14 +130,21 @@ p{ margin:0; }
 #opening.hide{ opacity:0; visibility:hidden; pointer-events:none; }
 #opening::before, #opening::after{
   content:''; position:absolute; width:280px; height:280px;
+  pointer-events:none; z-index:0;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23AD8A52' stroke-width='1.1' opacity='0.5'%3E%3Cpath d='M10 190 C 40 130, 30 80, 70 40 C 100 10, 150 8, 180 20'/%3E%3Ccircle cx='60' cy='70' r='9'/%3E%3Ccircle cx='90' cy='45' r='7'/%3E%3Ccircle cx='40' cy='120' r='7'/%3E%3Ccircle cx='25' cy='150' r='6'/%3E%3Cpath d='M55 65 q10 -18 24 -6'/%3E%3Cpath d='M83 40 q10 -14 22 -4'/%3E%3C/g%3E%3C/svg%3E") no-repeat center/contain;
 }
 #opening::before{ top:-40px; left:-50px; }
 #opening::after{ bottom:-40px; right:-50px; transform:rotate(180deg); }
 
 .opening-inner{
-  position:relative; text-align:center; padding:40px 28px; max-width:480px;
+  position:relative; z-index:2; pointer-events:auto;
+  text-align:center; padding:24px 20px; max-width:480px; margin:auto;
   animation: floatIn 1.4s var(--ease-lux) both;
+}
+@media (max-height:680px){
+  .opening-inner .couple-names{ font-size:clamp(38px,10vw,60px); margin:8px 0; }
+  .opening-inner .line{ font-size:15px; margin:2px 0; }
+  .opening-inner .btn{ margin-top:18px; }
 }
 @keyframes floatIn{ from{ opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
 
@@ -162,6 +171,11 @@ p{ margin:0; }
   font-size:12.5px; letter-spacing:.24em; text-transform:uppercase; font-weight:500;
   transition:transform .5s var(--ease-lux), box-shadow .5s var(--ease-lux), background .3s ease;
   box-shadow:var(--shadow-soft);
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+button, .choice-btn, .envelope, .nav-toggle, #music-toggle, .lb-close, .lb-prev, .lb-next{
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
 }
 .btn:hover{ transform:translateY(-2px); background:var(--wine-deep); }
 .btn.ghost{
@@ -1253,15 +1267,18 @@ const BLOSSOM_CONFIG = {
   /* ---------- opening screen ---------- */
   const opening = document.getElementById('opening');
   const nav = document.getElementById('site-nav');
-  document.getElementById('open-invitation-btn').addEventListener('click', ()=>{
+  function openInvitation(){
+    if(opening.classList.contains('hide')) return;
     opening.classList.add('hide');
     nav.classList.add('show');
-    document.body.style.overflow = '';
     startMusic();
     setTimeout(()=>{ document.getElementById('hero').scrollIntoView({behavior:'smooth'}); }, 500);
-  });
-  document.body.style.overflow = 'hidden';
-  setTimeout(()=>{ if(opening.classList.contains('hide')) document.body.style.overflow=''; }, 1200);
+  }
+  const openBtn = document.getElementById('open-invitation-btn');
+  openBtn.addEventListener('click', openInvitation);
+  /* belt-and-braces: some in-app mobile browsers (Instagram/WhatsApp webview)
+     swallow the first click event on a fresh page load, so also bind touchend */
+  openBtn.addEventListener('touchend', function(e){ e.preventDefault(); openInvitation(); }, {passive:false});
 
   /* show nav after scrolling a bit even without hard reload state */
   window.addEventListener('scroll', ()=>{
